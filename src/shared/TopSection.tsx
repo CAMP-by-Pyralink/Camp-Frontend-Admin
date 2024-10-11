@@ -1,7 +1,11 @@
 import profilePic from "../assets/profilepic.png";
 import settings from "../assets/svgs/settings.svg";
 // import CustomizationSetting from "./CustomizationSetting";
-const TopSection = ({ handleCustomizationClick }) => {
+const TopSection = ({
+  handleCustomizationClick,
+}: {
+  handleCustomizationClick: () => void;
+}) => {
   return (
     <div className=" flex justify-between relative">
       {/* searchbox */}
