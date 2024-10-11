@@ -1,6 +1,6 @@
 import riskIcon from "../../../assets/svgs/Drisks.svg";
 import assetIcon from "../../../assets/svgs/Dasseets.svg";
-import scoreIcon from "../../../assets/svgs/DScore.svg";
+// import scoreIcon from "../../../assets/svgs/DScore.svg";
 import scanIcon from "../../../assets/svgs/Dscan.svg";
 import infoIcon from "../../../assets/svgs/info.svg";
 
@@ -17,7 +17,8 @@ const QuickStat = () => {
       title: "Safety Score",
       number: "24",
       percentage: "-40%",
-      icon: scoreIcon,
+      // icon: scoreIcon,
+      icon: assetIcon,
     },
     { title: "Total Scans", number: "200", percentage: "+55%", icon: scanIcon },
   ];
