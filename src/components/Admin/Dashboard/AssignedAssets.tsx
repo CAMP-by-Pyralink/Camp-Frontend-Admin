@@ -10,7 +10,7 @@ const AssignedAssets = () => {
     setIsOpen((prev) => !prev);
   };
 
-  const handleSelectContent = (content) => {
+  const handleSelectContent = (content: string) => {
     setSelectedContent(content);
     setIsOpen(false); // Close the dropdown after selection
   };

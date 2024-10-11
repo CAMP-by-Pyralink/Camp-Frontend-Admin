@@ -6,7 +6,13 @@ import Slider from "@mui/material/Slider";
 import { useState } from "react";
 import { useCustomization } from "../contexts/CustomizationContext";
 
-const CustomizationSetting = ({ handleCustomizationClick }) => {
+type CustomizationSettingProps = {
+  handleCustomizationClick: () => void; // Adjust this type based on the function's signature
+};
+
+const CustomizationSetting: React.FC<CustomizationSettingProps> = ({
+  handleCustomizationClick,
+}) => {
   const [value, setValue] = useState<number>(30);
   const [selectedColor, setSelectedColor] = useState("Default");
   // const [openCustomizationSetting, setOpenCustomizationSetting] =
@@ -18,7 +24,7 @@ const CustomizationSetting = ({ handleCustomizationClick }) => {
   const {
     logo,
     font,
-    fontSize,
+    // fontSize,
     themeColor,
     setLogo,
     setFont,
