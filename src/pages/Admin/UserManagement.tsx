@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import CreateUserModal from "../../components/Admin/UserManagement/CreateUserModal";
-
+// interface CreateUserModalProps {
+//   onClose: () => void;
+// }
 const UserManagement = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); // State to manage modal visibility
 

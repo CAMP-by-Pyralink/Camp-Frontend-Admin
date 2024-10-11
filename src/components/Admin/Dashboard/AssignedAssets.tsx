@@ -70,7 +70,7 @@ const AssignedAssets = () => {
             fill="#8884d8"
             label={false} // Disable default labels
           >
-            {pieData.map((entry, index) => (
+            {pieData.map((_, index) => (
               <Cell
                 key={`cell-${index}`}
                 fill={COLORS[index % COLORS.length]}

@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 interface Permission {
   id: string;
   label: string;
   description: string;
+}
+interface CreateUserModalProps {
+  onClose: () => void;
 }
 
 const permissions: Permission[] = [
@@ -29,7 +32,7 @@ const permissions: Permission[] = [
   },
 ];
 
-const CreateUserModal: React.FC = ({ onClose }) => {
+const CreateUserModal: React.FC<CreateUserModalProps> = ({ onClose }) => {
   const [activeTab, setActiveTab] = useState<"manual" | "csv">("manual");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("Admin");

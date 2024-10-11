@@ -1,7 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, ReactNode } from "react";
 import { Suspense } from "react";
 
-const DelayedSuspense = ({ children, fallback, delay = 10000 }) => {
+interface DelayedSuspenseProps {
+  children: ReactNode; // Children can be any valid ReactNode
+  fallback: ReactNode; // Fallback should also be a ReactNode
+  delay?: number; // Delay is optional and defaults to 10000
+}
+
+const DelayedSuspense: React.FC<DelayedSuspenseProps> = ({
+  children,
+  fallback,
+  delay = 10000,
+}) => {
   const [isDelayOver, setIsDelayOver] = useState(false);
 
   useEffect(() => {

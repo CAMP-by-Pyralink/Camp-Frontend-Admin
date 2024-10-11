@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, ReactNode } from "react";
 
 interface CustomizationContextProps {
   logo: string | null;
@@ -11,11 +11,17 @@ interface CustomizationContextProps {
   setThemeColor: (color: string) => void;
 }
 
+interface CustomizationProviderProps {
+  children: ReactNode; // Define the children prop type
+}
+
 const CustomizationContext = createContext<
   CustomizationContextProps | undefined
 >(undefined);
 
-export const CustomizationProvider: React.FC = ({ children }) => {
+export const CustomizationProvider: React.FC<CustomizationProviderProps> = ({
+  children,
+}) => {
   const [logo, setLogo] = useState<string | null>(null);
   const [font, setFont] = useState<string>("");
   const [fontSize, setFontSize] = useState<number>(16);
@@ -34,7 +40,7 @@ export const CustomizationProvider: React.FC = ({ children }) => {
         setThemeColor,
       }}
     >
-      {children}
+      {children} {/* Render children */}
     </CustomizationContext.Provider>
   );
 };
