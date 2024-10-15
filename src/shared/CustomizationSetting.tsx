@@ -1,10 +1,14 @@
 import logoIcon from "../assets/svgs/logoicon.svg";
 import downArrow from "../assets/svgs/downarrfilled.svg";
-import Box from "@mui/material/Box";
-import Stack from "@mui/material/Stack";
-import Slider from "@mui/material/Slider";
-import { useState } from "react";
+// import Box from "@mui/material/Box";
+// import Stack from "@mui/material/Stack";
+// import Slider from "@mui/material/Slider";
+import { useRef, useState } from "react";
 import { useCustomization } from "../contexts/CustomizationContext";
+import closeIcon from "../assets/svgs/close.svg";
+import NotificationPreference from "../components/Customization/NotificationPreference";
+import LanguageGeoLocation from "../components/Customization/LanguageGeoLocation";
+import PrivacySettings from "../components/Customization/PrivacySettings";
 
 type CustomizationSettingProps = {
   handleCustomizationClick: () => void; // Adjust this type based on the function's signature
@@ -15,6 +19,8 @@ const CustomizationSetting: React.FC<CustomizationSettingProps> = ({
 }) => {
   const [value, setValue] = useState<number>(30);
   const [selectedColor, setSelectedColor] = useState("Default");
+  const [isOpen, setIsOpen] = useState(false); // State for dropdown visibility
+  const inputRef = useRef(null);
 
   const {
     logo,
@@ -22,17 +28,17 @@ const CustomizationSetting: React.FC<CustomizationSettingProps> = ({
     themeColor,
     setLogo,
     setFont,
-    setFontSize,
+    // setFontSize,
     setThemeColor,
   } = useCustomization();
 
   const [hexCode, setHexCode] = useState<string>(themeColor);
 
-  // Handle slider change
-  const handleChange = (newValue: number | number[]) => {
-    setValue(newValue as number);
-    setFontSize(newValue as number); // Update the font size
-  };
+  // // Handle slider change
+  // const handleChange = (newValue: number | number[]) => {
+  //   setValue(newValue as number);
+  //   setFontSize(newValue as number); // Update the font size
+  // };
 
   // Handle file upload for logo
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,6 +57,16 @@ const CustomizationSetting: React.FC<CustomizationSettingProps> = ({
     const newHex = e.target.value;
     setHexCode(newHex); // Update hex input state
     setThemeColor(newHex); // Set the new theme color
+  };
+
+  const handleFontChange = (selectedFont) => {
+    setFont(selectedFont);
+    setIsOpen(false); // Close dropdown after selection
+    // Update placeholder text to selected font name
+    const inputElement = inputRef.current;
+    if (inputElement) {
+      inputElement.placeholder = selectedFont;
+    }
   };
 
   // Predefined color themes
@@ -77,14 +93,40 @@ const CustomizationSetting: React.FC<CustomizationSettingProps> = ({
     },
   ];
 
+  const handleClick = () => {
+    setIsOpen(!isOpen); // Toggle dropdown visibility
+  };
+
+  const popularFonts = [
+    "Arial",
+    "Courier New",
+    "Georgia",
+    "Helvetica",
+    "Impact",
+    "Inter",
+    "Poppins",
+    "Roboto",
+    "Times New Roman",
+    "Verdana",
+  ];
+
   return (
     <div className="bg-[#F6F6F6] px-4 py-4 absolute z-50 right-8 top-[68px] w-fit h-[89.3%] overflow-y-scroll">
-      <div className="flex items-center justify-between mb-4 pb-4 border-[#DDDDDD] border-b">
-        <h1>Customization Setting</h1>
-        <p className="cursor-pointer" onClick={handleCustomizationClick}>
-          X
+      <div className="flex flex-col mb-4 pb-4 border-[#DDDDDD] border-b">
+        <div className=" flex items-center justify-between">
+          <h1 className=" text-xl text-black">Customization Setting</h1>
+          <img
+            src={closeIcon}
+            alt=""
+            className="cursor-pointer"
+            onClick={handleCustomizationClick}
+          />
+        </div>
+        <p className=" text-[#333333] text-xs font-medium">
+          Customize and preview your dashboard in realtime
         </p>
       </div>
+
       <div className="flex flex-col gap-4">
         {/* Logo*/}
         <div className="bg-white p-4 rounded-[15px] flex items-center gap-4 ">
@@ -96,12 +138,12 @@ const CustomizationSetting: React.FC<CustomizationSettingProps> = ({
             />
           </div>
           <div className="flex flex-col gap-2 text-sm leading-[21.28px]">
-            <h1>Add a logo</h1>
+            <h1 className=" text-black">Add a logo</h1>
             <h1 className="text-[#646464]">Logo must not be more than 500kb</h1>
             <input
               type="file"
               accept="image/*"
-              className="hidden"
+              className=" absolute top-[78%] hidden z-50"
               id="upload-logo"
               onChange={handleFileUpload}
             />
@@ -114,27 +156,45 @@ const CustomizationSetting: React.FC<CustomizationSettingProps> = ({
         </div>
 
         {/* Font */}
-        <div className="bg-white p-4 rounded-[15px]">
+        <div className="bg-white p-4 rounded-[15px] ">
           <h1 className="text-[#101928] font-medium">Font</h1>
           <div className="relative">
             <input
               type="text"
+              ref={inputRef} // Attach the ref to the input element
+              id="font-input"
               value={font} // Bind to the selected font
               onChange={(e) => setFont(e.target.value)} // Handle font change
-              className="w-full mt-2 py-2 px-3 rounded-[6px] placeholder:text-[#98A2B3] h-[59px] outline-none border border-primary100"
+              className="w-full text-black mt-2 py-2 px-3 rounded-[6px] placeholder:text-[#98A2B3] h-[59px] outline-none border border-primary100"
               placeholder="Select Font"
+              onClick={handleClick} // Open dropdown on input click
             />
-            <label>
+            <label htmlFor="font-dropdown">
               <img
                 src={downArrow}
-                alt="Dropdown arrow"
-                className="absolute top-[50%] right-4 "
+                alt=""
+                className="absolute top-[50%] right-4 cursor-pointer"
+                onClick={handleClick}
               />
             </label>
           </div>
+          {isOpen && ( // Conditionally render dropdown options
+            <ul className=" w-[90%] mx-8 absolute top-[60%] z-50 left-0  bg-white shadow-md rounded-[6px] overflow-hidden text-black">
+              {popularFonts.map((fontOption) => (
+                <li
+                  key={fontOption}
+                  className="py-2 px-3 hover:bg-gray-200 cursor-pointer"
+                  onClick={() => handleFontChange(fontOption)}
+                >
+                  {fontOption}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
 
-          {/* Select font size */}
-          <div>
+        {/* Select font size */}
+        {/* <div>
             <h1 className="text-[#101928] font-medium mt-4">
               Select a Font Size
             </h1>
@@ -163,13 +223,13 @@ const CustomizationSetting: React.FC<CustomizationSettingProps> = ({
                 <span style={{ fontSize: "48px" }}>Aa</span>
               </div>
             </div>
-          </div>
-        </div>
+          </div> */}
+        {/* </div> */}
 
         {/* Select theme */}
         <div className="bg-white p-4 rounded-[15px]">
           <h1 className="text-[#101928] font-medium">Select color theme</h1>
-          <div className="grid grid-cols-3 gap-4 mt-4">
+          <div className="grid grid-cols-3 gap-4 mt-4 text-black">
             {colorThemes.map(({ name, color }, index) => (
               <div
                 onClick={() => {
@@ -177,7 +237,7 @@ const CustomizationSetting: React.FC<CustomizationSettingProps> = ({
                   setThemeColor(color); // Update the selected color
                 }}
                 key={index}
-                className={`bg-[#F6F6F6] flex gap-2 py-2 px-[14px] rounded-[6px] ${
+                className={`bg-[#F6F6F6] text-black placeholder:text-black flex gap-2 py-2 px-[14px] rounded-[6px] ${
                   selectedColor === name
                     ? "border border-[#9A9A9A] rounded-[6px]"
                     : ""
@@ -196,21 +256,25 @@ const CustomizationSetting: React.FC<CustomizationSettingProps> = ({
           <div className="relative mt-16">
             <input
               type="text"
-              value={hexCode} // Hex input value bound to hexCode state
-              onChange={handleHexChange} // Handle hex input change
+              value={hexCode}
+              onChange={handleHexChange}
               className="w-full mt-2 py-2 px-3 rounded-[6px] placeholder:text-[#98A2B3] h-[59px] outline-none border border-primary100"
               placeholder="Input Hex Code"
             />
-            <label>
-              <img
-                src={downArrow}
-                alt="Dropdown arrow"
-                className="absolute top-[50%] right-4 "
-              />
-            </label>
+            <div
+              className="absolute top-[45%] right-4 w-4 h-4"
+              style={{ backgroundColor: hexCode }}
+            ></div>
           </div>
         </div>
+        {/*  */}
+        <NotificationPreference />
+        <LanguageGeoLocation />
+        <PrivacySettings />
       </div>
+      <button className=" w-full bg-primary500 py-4 px-6 rounded-lg mt-8 text-white ">
+        Save & Continue
+      </button>
     </div>
   );
 };

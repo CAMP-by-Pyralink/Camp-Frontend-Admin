@@ -44,7 +44,9 @@ const AdminLayout = () => {
             }
             delay={1500}
           >
-            <Outlet />
+            <div className=" bgred">
+              <Outlet />
+            </div>
           </DelayedSuspense>
         </div>
         {/* Conditionally render CustomizationSetting */}

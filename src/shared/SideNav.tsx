@@ -20,7 +20,7 @@ const SideNav = () => {
   const [activeMenu, setActiveMenu] = useState("Overview");
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { themeColor, logo } = useCustomization();
-  // const { logo } = useCustomization();
+  // const { l } = useCustomization();
 
   const navMenus = [
     { name: "Overview", img: overviewIcon, path: "/" },
@@ -45,17 +45,39 @@ const SideNav = () => {
     { name: "Settings", img: settingsIcon, path: "/settings" },
     { name: "Alerts", img: alertIcon, path: "/alerts" },
   ];
+  // Function to convert hex code to RGB for easier manipulation
+  function hexToRgb(hex) {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? result.slice(1).map((x) => parseInt(x, 16)) : null;
+  }
+
+  // Function to create a fainter version of a hex color (simplified)
+  function getSlightlyFainterColor(hex, opacity = 0.8) {
+    const rgb = hexToRgb(hex);
+    if (rgb) {
+      return `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${opacity})`;
+    }
+    return hex; // Return original hex code if conversion fails
+    // console.log(hex);
+  }
+
+  console.log(themeColor);
+  // console.log(hex);
 
   return (
     <div
-      className={`h-screen px-4 py-6 bg-primary10 text-white flex flex-col gap-8 transition-width duration-300 ${
+      className={`h-full px-4 py-6 bg-primary10 text-white flex flex-col gap-4 transition-width duration-300 ${
         isCollapsed ? "w-[87px]" : "w-[294px]"
       }`}
       style={{ background: themeColor }}
     >
       {/* Logo */}
       <div className=" flex items-center justify-center">
-        <div className="flex relative items-center gap-8">
+        <div
+          className={`flex relative items-center ${
+            isCollapsed ? "gap-0" : "gap-8"
+          } `}
+        >
           <div
             className={`text-white flex flex-col transition-all duration-300 ${
               isCollapsed ? "" : ""
@@ -73,7 +95,7 @@ const SideNav = () => {
             ) : (
               <h1
                 className={`font-semibold leading-[49.2px] tracking-[-2%] ${
-                  isCollapsed ? "text-[41px] " : "text-[41px]"
+                  isCollapsed ? "text-[41px] ml-4 " : "text-[41px]"
                 }`}
               >
                 {isCollapsed ? "C" : "CAMP"}
@@ -86,7 +108,7 @@ const SideNav = () => {
             )}
           </div>
           <img
-            className="cursor-pointer"
+            className={`cursor-pointer ${isCollapsed ? " pt-1" : "block"}`}
             src={isCollapsed ? navCloseIcon : navIcon}
             alt="Navigation Icon"
             width={24}
@@ -103,7 +125,7 @@ const SideNav = () => {
               <div
                 className={`flex items-center gap-4 p-2 cursor-pointer ${
                   activeMenu === navMenu.name
-                    ? "bg-primary700 py-3 px-4"
+                    ? `bg-${getSlightlyFainterColor(themeColor)}  py-3 px-4`
                     : " py-3 px-4"
                 }`}
                 onClick={() => setActiveMenu(navMenu.name)}
@@ -132,7 +154,7 @@ const SideNav = () => {
 
       {/* Sign out section */}
       <div
-        className={`flex  justify-between items-center mt-auto ${
+        className={`flex justify-between items-center mt-auto ${
           isCollapsed ? "flex-col gap-4" : "flex-row"
         }`}
       >

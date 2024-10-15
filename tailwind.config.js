@@ -20,7 +20,10 @@ export default {
         secondary500: "#864DE0",
         secondary100: "#E7DBF9",
         neutrals200: "#CCCBCB",
+        neutrals500: "#898384",
+        neutrals600: "#726C6C",
         greyText: "#444444",
+        textColor: "#333333",
       },
       fontFamily: {
         poppins: ["Poppins", "sans-serif"],

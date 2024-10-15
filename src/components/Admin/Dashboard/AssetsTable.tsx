@@ -49,8 +49,11 @@ const AssetsTable: React.FC = () => {
     <div className="bg-white p-8 rounded-lg shadow-[5px_5px_40px_rgba(107,151,255,0.3)] w-full">
       <div className="flex justify-between items-center">
         <h2 className=" ">Assets</h2>
-        <a href="/view-all" className="text-primary500 hover:underline">
-          View all
+        <a
+          href="/view-all"
+          className=" text-xs text-primary500 hover:underline"
+        >
+          View all &gt;
         </a>
       </div>
       <div className="mt-4 ml-4 overflow-x-auto">

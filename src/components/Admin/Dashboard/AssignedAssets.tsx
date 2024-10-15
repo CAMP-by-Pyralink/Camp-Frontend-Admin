@@ -86,9 +86,9 @@ const AssignedAssets = () => {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            fontSize: 18,
+            fontSize: 40,
             fontWeight: "",
-            // color: "red",
+            color: "black",
           }}
         >
           {pieData.reduce((acc, current) => acc + current.value, 0)}
