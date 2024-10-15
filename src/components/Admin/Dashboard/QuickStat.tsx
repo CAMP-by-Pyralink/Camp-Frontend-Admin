@@ -4,7 +4,7 @@ import assetIcon from "../../../assets/svgs/Dasseets.svg";
 import scanIcon from "../../../assets/svgs/Dscan.svg";
 import infoIcon from "../../../assets/svgs/info.svg";
 // import { Tooltip } from "@mui/material";
-import UseTooltip from "../../../utils/useTooltip";
+import UseTooltip from "../../../utils/UseTooltip";
 
 const QuickStat = () => {
   const QuickStatCards = [
