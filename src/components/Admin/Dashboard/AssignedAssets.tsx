@@ -15,12 +15,17 @@ const AssignedAssets = () => {
     setIsOpen(false); // Close the dropdown after selection
   };
 
-  // Define the data for the chart
-  const pieData = [
-    { name: "Assigned", value: 1300 },
-    { name: "Unassigned", value: 1900 },
-    // { name: "Series C", value: 20 },
-  ];
+  // Define the data for the chart based on the selected content
+  const pieData =
+    selectedContent === "Assigned Assets"
+      ? [
+          { name: "Assigned", value: 1300 },
+          { name: "Unassigned", value: 1900 },
+        ]
+      : [
+          { name: "Software", value: 200 },
+          { name: "Hardware", value: 3000 },
+        ];
 
   // Define custom colors for the pie slices
   const COLORS = ["#B794EC", "#5F22C1"];
@@ -38,7 +43,7 @@ const AssignedAssets = () => {
           <img src={downArrow} alt="Dropdown arrow" />
         </div>
         {isOpen && (
-          <div className="absolute top-[25px] z-50 shadow-[5px_5px_40px_rgba(107,151,255,0.3)] border border-[#C7C7CC] rounded bg-white  mt-2">
+          <div className="absolute top-[25px] z-50 shadow-[5px_5px_40px_rgba(107,151,255,0.3)] border border-[#C7C7CC] rounded bg-white mt-2">
             <div
               className="py-2 px-4 hover:bg-gray-100 cursor-pointer"
               onClick={() => handleSelectContent("Assigned Assets")}
@@ -55,6 +60,7 @@ const AssignedAssets = () => {
           </div>
         )}
       </div>
+
       {/* Pie Chart */}
       <div className="flex flex-col items-center relative">
         <PieChart width={219} height={219}>
@@ -87,7 +93,6 @@ const AssignedAssets = () => {
             left: "50%",
             transform: "translate(-50%, -50%)",
             fontSize: 40,
-            fontWeight: "",
             color: "black",
           }}
         >
@@ -110,7 +115,7 @@ const AssignedAssets = () => {
             {/* Label and value */}
             <div>
               <p>
-                {item.name} {item.value}
+                {item.name} ({item.value})
               </p>
             </div>
           </div>

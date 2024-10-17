@@ -12,10 +12,12 @@ const AdminLayout = () => {
 
   const [openCustomizationSetting, setOpenCustomizationSetting] =
     useState(false);
+  const [searchVisible, setSearchVisible] = useState(true);
 
   const handleCustomizationClick = () => {
     setOpenCustomizationSetting((prev) => !prev);
   };
+  const [customizationOpen, setCustomizationOpen] = useState(false);
   return (
     <div
       className="flex h-screen"
@@ -47,11 +49,17 @@ const AdminLayout = () => {
             <div className=" bgred">
               <Outlet />
             </div>
+            {/* <div>
+              {searchVisible && (
+                <div className=" h-80 w-96 absolute top-0 bg-red-900"></div>
+              )}
+            </div> */}
           </DelayedSuspense>
         </div>
         {/* Conditionally render CustomizationSetting */}
         {openCustomizationSetting && (
           <CustomizationSetting
+            customizationOpen={customizationOpen}
             handleCustomizationClick={handleCustomizationClick}
           />
         )}

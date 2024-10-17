@@ -2,6 +2,12 @@ import { Route, Routes } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import AdminLayout from "./layout/AdminLayout";
 import { ClipLoader } from "react-spinners"; // Example spinner
+import AuthLayout from "./layout/AuthLayout";
+import SignUp from "./_Auth/Admin/SignUp";
+import ForgotPassword from "./_Auth/Admin/ForgotPassword";
+import OTPVerification from "./_Auth/Admin/OtpVerification";
+import SuccessModal from "./_Auth/Admin/SucessModal";
+import ResetPasswordLink from "./_Auth/Admin/ResetPasswordLink";
 
 // Lazy load all the components
 const Overview = lazy(() => import("./pages/Admin/Overview"));
@@ -27,6 +33,17 @@ function App() {
         }
       >
         <Routes>
+          {/* PUBLIC ROUTES */}
+          <Route element={<AuthLayout />}>
+            {/* <Route path="/signin" element={<SignIn />} /> */}
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/forgotPassword" element={<ForgotPassword />} />
+            <Route path="/verifyEmail" element={<ResetPasswordLink />} />
+          </Route>
+          <Route path="/successful" element={<SuccessModal />} />
+          <Route path="/otp" element={<OTPVerification />} />
+
+          {/* ADMIN */}
           <Route path="/" element={<AdminLayout />}>
             <Route index element={<Overview />} />
             <Route path="user-management" element={<UserManagement />} />

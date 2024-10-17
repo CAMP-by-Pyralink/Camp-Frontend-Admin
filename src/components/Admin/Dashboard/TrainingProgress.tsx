@@ -1,38 +1,48 @@
 import icon1 from "../../../assets/svgs/training1.svg";
 import icon2 from "../../../assets/svgs/training2.svg";
+import linkSquare from "../../../assets/svgs/link-square.svg";
+import bookSquare from "../../../assets/svgs/book-square.svg";
 import icon3 from "../../../assets/svgs/training3.svg";
 import rightArrow from "../../../assets/svgs/rightarr.svg";
 
 const TrainingProgress = () => {
   const trainings = [
     {
-      icon: icon1,
+      icon: bookSquare,
       header: "Training in progress",
       type: "Cybersecurity for Beginners",
       completionRate: "32%",
+      bg: "#F9F5FF",
     },
     {
-      icon: icon2,
+      icon: linkSquare,
       header: "Phishing simulation in progress",
       type: "Email Account Suspension Alert",
       completionRate: "48%",
+      bg: "#FFEDED",
     },
     {
-      icon: icon3,
+      icon: bookSquare,
       header: "Completed Trainings",
       type: "Awareness Trainings",
-      completionRate: "100%", // Adjusted completion rate for completed trainings
+      completionRate: "100%",
+      bg: "#F9F5FF",
     },
   ];
 
   return (
     <div className=" flex-1 flex flex-col gap-4">
-      {trainings.map(({ icon, header, type, completionRate }, index) => (
+      {trainings.map(({ icon, header, type, completionRate, bg }, index) => (
         <div
           key={index}
           className="py-4 px-6 flex items-center gap-4 border border-gray-200 rounded-lg shadow-[5px_5px_40px_rgba(107,151,255,0.3)]"
         >
-          <img src={icon} alt="" className="" />
+          <img
+            src={icon}
+            alt=""
+            className=" p-5 rounded-full"
+            style={{ background: bg }}
+          />
           <div className="flex-1">
             <div className="flex justify-between">
               <h1 className=" text-sm text-secondary500">{header}</h1>

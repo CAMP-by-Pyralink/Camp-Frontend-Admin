@@ -12,6 +12,36 @@ const CompletionChart = () => {
   // Define custom colors for the pie slices
   const COLORS = ["#5358FF", "#1790E7", "#7E81FF", "#5F22C1"];
 
+  // Custom label function to display the name inside the pie slice
+  const renderCustomLabel = ({
+    cx,
+    cy,
+    midAngle,
+    innerRadius,
+    outerRadius,
+    percent,
+    index,
+  }: any) => {
+    const RADIAN = Math.PI / 180;
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+    return (
+      <text
+        x={x}
+        y={y}
+        fill="white"
+        textAnchor="middle"
+        dominantBaseline="middle"
+        fontSize={8}
+        fontWeight="500"
+      >
+        {pieData[index].name}
+      </text>
+    );
+  };
+
   return (
     <div className="flex-1 p-4 shadow-[5px_5px_40px_rgba(107,151,255,0.3)]">
       <div className="flex gap-2">
@@ -31,7 +61,7 @@ const CompletionChart = () => {
               outerRadius={100}
               innerRadius={45} // for donut style
               fill="#8884d8"
-              label={true} // Disable default labels
+              label={renderCustomLabel} // Custom label rendering function
               labelLine={false}
             >
               {pieData.map((_, index) => (
@@ -61,9 +91,9 @@ const CompletionChart = () => {
                   }}
                 />
                 {/* Label and value */}
-                <div className="flex gap-1 items-center">
+                <div className="flex gap-[1px]  items-center">
                   <p
-                    className={`text-[9px]`}
+                    className={`text-[9px] font-medium`}
                     style={{
                       color: COLORS[index % COLORS.length],
                     }}
@@ -71,7 +101,7 @@ const CompletionChart = () => {
                     {item.name}
                   </p>
                   <span
-                    className="text-[9px]"
+                    className="text-[9px] text-white py-[1.88px] px-[3.29px] rounded-[3.17px]"
                     style={{
                       background: COLORS[index % COLORS.length],
                     }}
