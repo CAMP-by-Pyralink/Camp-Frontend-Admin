@@ -1,26 +1,21 @@
 import { Outlet } from "react-router-dom";
 import authBanner from "../assets/authimage.png";
 
-// interface AuthLayoutProps {
-//   children: React.ReactNode;
-// }
-
 const AuthLayout = () => {
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <div className="bg-white w-full max-w-4xl rounded-lg shadow-lg p-6 flex">
-        {/* Left side with illustration */}
-        <div className="w-1/2 hidden md:block">
-          <img
-            src={authBanner}
-            alt="Security Illustration"
-            className="rounded-lg"
-          />
-        </div>
-        {/* Right side - dynamic content */}
-        <div className="w-full md:w-1/2 p-6">
-          <Outlet />
-        </div>
+    <div className=" h-full bg-white w-full flex items-center gap-32 p-12 rounded-lg">
+      {/* Left side with illustration */}
+      <div className="basis-1/2 w-[50%] h-screen">
+        <img
+          src={authBanner}
+          alt="Security Illustration"
+          className="rounded-lg w-full h-[901px] object-cover"
+          style={{ maxHeight: "100vh" }}
+        />
+      </div>
+      {/* Right side - dynamic content */}
+      <div className="w-full basis-1/2">
+        <Outlet />
       </div>
     </div>
   );

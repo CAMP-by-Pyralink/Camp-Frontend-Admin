@@ -19,23 +19,31 @@ const SignUp = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
-        <h2 className="text-2xl font-bold text-center mb-6">Create Account</h2>
+    <div className=" flex items-center max-h-[621px] max-w-[454px] ">
+      <div className=" w-full h-full">
+        {/*  */}
+        <div>
+          <h2 className="text-3xl text-[#1B1818] font-bold">Create account</h2>
+          <p className=" mb-4 text-[#645D5D] text-sm">
+            Have an account ? <span className=" text-primary900">Sign in</span>
+          </p>
+        </div>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-gray-700">Company Name</label>
+            <label className="block text-[#101928] text-sm">Company Name</label>
             <input
               type="text"
               name="companyName"
               value={formData.companyName}
               onChange={handleChange}
-              className="w-full mt-2 p-3 border rounded-lg"
+              className="w-full mt-2 p-4 border rounded-lg"
               required
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700">Company Email</label>
+            <label className="block text-[#101928] text-sm">
+              Company Email Address
+            </label>
             <input
               type="email"
               name="companyEmail"
@@ -46,7 +54,18 @@ const SignUp = () => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700">Phone Number</label>
+            <label className="block text-[#101928] text-sm">Company size</label>
+            <input
+              type="email"
+              name="companyEmail"
+              value={formData.companyEmail}
+              onChange={handleChange}
+              className="w-full mt-2 p-3 border rounded-lg"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-[#101928] text-sm">Password</label>
             <input
               type="tel"
               name="phoneNumber"
@@ -57,7 +76,9 @@ const SignUp = () => {
             />
           </div>
           <div className="mb-6">
-            <label className="block text-gray-700">Password</label>
+            <label className="block text-[#101928] text-sm">
+              Confirm Password
+            </label>
             <input
               type="password"
               name="password"
@@ -69,11 +90,20 @@ const SignUp = () => {
           </div>
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-3 rounded-lg font-bold"
+            className="w-full bg-primary500 text-white py-3 rounded-lg font-bold"
           >
             Sign Up
           </button>
         </form>
+        <p className=" text-center my-4">or</p>
+        <div className=" flex gap-4">
+          <button className="w-full  border-[1.5px] border-[#D0D5DD] py-3 rounded-lg font-semibold text-[#344054] ">
+            Google
+          </button>
+          <button className="w-full  border-[1.5px] border-[#D0D5DD] py-3 rounded-lg font-semibold text-[#344054] ">
+            Google
+          </button>
+        </div>
       </div>
     </div>
   );

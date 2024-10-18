@@ -37,11 +37,11 @@ function App() {
           <Route element={<AuthLayout />}>
             {/* <Route path="/signin" element={<SignIn />} /> */}
             <Route path="/signup" element={<SignUp />} />
-            <Route path="/forgotPassword" element={<ForgotPassword />} />
-            <Route path="/verifyEmail" element={<ResetPasswordLink />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
           </Route>
           <Route path="/successful" element={<SuccessModal />} />
           <Route path="/otp" element={<OTPVerification />} />
+          <Route path="/reset-password" element={<ResetPasswordLink />} />
 
           {/* ADMIN */}
           <Route path="/" element={<AdminLayout />}>

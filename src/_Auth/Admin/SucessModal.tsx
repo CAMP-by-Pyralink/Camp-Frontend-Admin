@@ -1,31 +1,23 @@
-import React from "react";
+import successIcon from "../../assets/svgs/successIcon.svg";
+import closeIcon from "../../assets/svgs/closeicongrey.svg";
 
 const SuccessModal = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-lg text-center">
-        <div className="text-blue-500 mb-6">
-          {/* Use an icon or SVG for success illustration */}
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-12 w-12 mx-auto"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-              clipRule="evenodd"
-            />
-          </svg>
+    <div className="min-h-screen  flex items-center justify-center ">
+      <div className="bg-white shadow-[5px_5px_40px_rgba(107,151,255,0.3)] relative p-12 w-[532px] rounded-lg  text-center">
+        <img
+          src={closeIcon}
+          className=" absolute top-8 right-8 text-[#141B34]"
+          alt=""
+        />
+        <div className=" flex items-center justify-center mb-6">
+          <img src={successIcon} alt="" className="  w-[98px] h-[103px]" />
         </div>
-        <h2 className="text-2xl font-bold mb-4">Successful</h2>
-        <p className="text-gray-600 mb-6">
-          Your account has been created successfully
-        </p>
-        <button className="bg-blue-500 text-white py-2 px-6 rounded-lg">
+        <h2 className="text-3xl text-[#454545] font-medium mb-1">Successful</h2>
+        <p className="text-[#8E8E93] text-lg ">Account created successfully</p>
+        {/* <button className="bg-blue-500 text-white py-2 px-6 rounded-lg">
           Go to Dashboard
-        </button>
+        </button> */}
       </div>
     </div>
   );

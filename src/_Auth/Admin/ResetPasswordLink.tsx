@@ -1,20 +1,29 @@
-import React from 'react';
+import closeIcon from "../../assets/svgs/closeicongrey.svg";
 
 const ResetPasswordLink = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-lg text-center w-full max-w-sm">
-        <h2 className="text-2xl font-bold mb-4">Forgot Password</h2>
-        <p className="text-gray-600 mb-6">
-          No worries, a verification link has been sent to your email. Click on the link to reset your password.
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="bg-white  relative shadow-[5px_5px_40px_rgba(107,151,255,0.3)] p-16 rounded-lg text-center w-full max-w-[523px]">
+        <img
+          src={closeIcon}
+          className=" absolute top-8 right-8 text-[#141B34]"
+          alt=""
+        />
+        <h2 className="text-3xl text-[#454545] font-medium mb-4">
+          Forgot Password
+        </h2>
+        <p className="text-[#475569] text-lg leading-[27px] mb-6">
+          No worries, verification link has been to sent to your{" "}
+          <strong>ol**@gmail.com.</strong>
+          {""} Click on the link to reset your password
         </p>
-        <a
-          href="/reset-password"
-          className="text-blue-500 underline mb-6 block"
-        >
-          Resend link
-        </a>
-        <p className="text-gray-500">Reset code: 8500</p>
+        <p className=" text-[#475569]">
+          Didn’t Receive link?{" "}
+          <span className=" text-primary500 font-semibold underline">
+            Resend link
+          </span>
+        </p>
+        <p className="text-[#475569]">Resend code in 00:59</p>
       </div>
     </div>
   );
