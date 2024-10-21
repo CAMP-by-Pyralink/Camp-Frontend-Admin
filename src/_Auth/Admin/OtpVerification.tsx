@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import otpIcon from "../../assets/svgs/otpicon.svg";
+import { Link } from "react-router-dom";
 const OTPVerification = () => {
   const [otp, setOtp] = useState(Array(4).fill(""));
 
@@ -68,12 +69,15 @@ const OTPVerification = () => {
             >
               Cancel
             </button>
-            <button
-              type="submit"
-              className="flex-1 bg-primary500 text-white py-[10px] px-[18px] rounded-lg font-medium"
-            >
-              Verify
-            </button>
+            <Link to="/successful">
+              {" "}
+              <button
+                type="submit"
+                className="flex-1 bg-primary500 text-white py-[10px] px-[18px] rounded-lg font-medium"
+              >
+                Verify
+              </button>
+            </Link>
           </div>
         </form>
       </div>

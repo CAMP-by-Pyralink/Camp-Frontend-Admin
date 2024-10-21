@@ -8,6 +8,7 @@ import ForgotPassword from "./_Auth/Admin/ForgotPassword";
 import OTPVerification from "./_Auth/Admin/OtpVerification";
 import SuccessModal from "./_Auth/Admin/SucessModal";
 import ResetPasswordLink from "./_Auth/Admin/ResetPasswordLink";
+import SignIn from "./_Auth/Admin/SignIn";
 
 // Lazy load all the components
 const Overview = lazy(() => import("./pages/Admin/Overview"));
@@ -37,6 +38,7 @@ function App() {
           <Route element={<AuthLayout />}>
             {/* <Route path="/signin" element={<SignIn />} /> */}
             <Route path="/signup" element={<SignUp />} />
+            <Route path="/signin" element={<SignIn />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
           </Route>
           <Route path="/successful" element={<SuccessModal />} />

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import checkIcon from "../../assets/svgs/check.svg";
+import { Link } from "react-router-dom";
 
 const ForgotPassword = () => {
   const [formData, setFormData] = useState({
@@ -82,12 +83,14 @@ const ForgotPassword = () => {
               </li>
             </ul>
 
-            <button
-              type="submit"
-              className="w-full bg-primary500 text-white py-3 rounded-lg "
-            >
-              Reset Password
-            </button>
+            <Link to="/reset-password">
+              <button
+                type="submit"
+                className="w-full bg-primary500 text-white py-3 rounded-lg "
+              >
+                Reset Password
+              </button>
+            </Link>
           </form>
         </div>
       </div>

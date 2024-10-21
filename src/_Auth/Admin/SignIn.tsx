@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
-const SignUp = () => {
+const SignIn = () => {
   const [formData, setFormData] = useState({
     companyName: "",
     companyEmail: "",
@@ -24,17 +24,19 @@ const SignUp = () => {
       <div className=" w-full h-full">
         {/*  */}
         <div>
-          <h2 className="text-3xl text-[#1B1818] font-bold">Create account</h2>
+          <h2 className="text-3xl text-[#1B1818] font-bold">Welcome back</h2>
           <p className=" mb-4 text-[#645D5D] text-sm">
-            Have an account ?{" "}
-            <Link to="/signin">
-              <span className=" text-primary900">Sign in</span>
+            Don’t have an account?{" "}
+            <Link to="/signup">
+              <span className=" text-primary900">Sign up</span>
             </Link>
           </p>
         </div>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-[#101928] text-sm">Company Name</label>
+            <label className="block text-[#101928] text-sm">
+              Email Address
+            </label>
             <input
               type="text"
               name="companyName"
@@ -44,19 +46,7 @@ const SignUp = () => {
               required
             />
           </div>
-          <div className="mb-4">
-            <label className="block text-[#101928] text-sm">
-              Company Email Address
-            </label>
-            <input
-              type="email"
-              name="companyEmail"
-              value={formData.companyEmail}
-              onChange={handleChange}
-              className="w-full mt-2 p-1 border rounded-lg"
-              required
-            />
-          </div>
+
           {/* <div className="mb-4">
             <label className="block text-[#101928] text-sm">Company size</label>
             <input
@@ -79,19 +69,7 @@ const SignUp = () => {
               required
             />
           </div>
-          <div className="mb-6">
-            <label className="block text-[#101928] text-sm">
-              Confirm Password
-            </label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              className="w-full mt-2 p-1 border rounded-lg"
-              required
-            />
-          </div>
+
           <button
             type="submit"
             className="w-full bg-primary500 text-white py-3 rounded-lg font-bold"
@@ -113,4 +91,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default SignIn;
