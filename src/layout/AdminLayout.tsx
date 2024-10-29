@@ -21,10 +21,10 @@ const AdminLayout = () => {
   return (
     <div
       className="flex h-screen"
-      style={{ fontFamily: font, fontSize: `${fontSize}px`, color: themeColor }}
+      style={{ fontFamily: font, fontSize: `${fontSize}px` }}
     >
       {/* SideNav */}
-      <div className=" h-full bg-gray-100">
+      <div className=" h-fit bg-gray-100">
         <SideNav />
       </div>
 
@@ -47,6 +47,11 @@ const AdminLayout = () => {
             delay={1500}
           >
             <div className=" bgred">
+              {/* <div className="bg-white px-8 py-4">
+                <TopSection
+                  handleCustomizationClick={handleCustomizationClick}
+                />
+              </div> */}
               <Outlet />
             </div>
             {/* <div>
