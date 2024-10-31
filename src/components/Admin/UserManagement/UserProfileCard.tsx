@@ -1,8 +1,11 @@
+import { useState } from "react";
 import profilePic from "../../../assets/avatar.png";
 import assignedAssetIcon from "../../../assets/svgs/assignedAssets.svg";
 import assignedTraining from "../../../assets/svgs/assignedtraining.svg";
 import simulationScoreIcon from "../../../assets/svgs/simulationscore.svg";
+import EditUserForm from "./EditUserInfo";
 const UserProfileCard = () => {
+  const [editModalOpen, setEditModalOpen] = useState(true);
   const user = {
     name: "Olawale Martins",
     img: profilePic,
@@ -94,13 +97,22 @@ const UserProfileCard = () => {
       </div>
 
       <div className="mt-6 flex space-x-4">
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-md w-full">
+        <button
+          onClick={() => setEditModalOpen(true)}
+          className="bg-blue-600 text-white px-4 py-2 rounded-md w-full"
+        >
           Edit
         </button>
         <button className="text-red-500 border border-red-500 px-4 py-2 rounded-md w-full">
           Delete
         </button>
       </div>
+      {/*  */}
+      {editModalOpen && (
+        <div className=" absolute top-20 mx-auto">
+          <EditUserForm setEditModalOpen={() => setEditModalOpen(false)} />
+        </div>
+      )}
     </div>
   );
 };

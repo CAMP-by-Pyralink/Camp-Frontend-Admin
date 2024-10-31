@@ -45,3 +45,52 @@ body {
 .my-arrow {
   background-color: #f0f0f0;
 }
+/* Add these styles to your styles.css file or a <style> tag in your component */
+.custom-scrollbar {
+  /* Hide the scrollbar by default */
+  scrollbar-width: none; /* For Firefox */
+  -ms-overflow-style: none; /* For Internet Explorer and Edge */
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  display: none; /* For Chrome, Safari, and Opera */
+}
+
+.custom-scrollbar:hover,
+.custom-scrollbar:active,
+.custom-scrollbar:focus {
+  /* Show the scrollbar when the element is hovered, focused, or during active scrolling */
+  scrollbar-width: auto; /* For Firefox */
+  -ms-overflow-style: auto; /* For Internet Explorer and Edge */
+}
+
+/* Specifically targeting the horizontal scrollbar */
+.custom-scrollbar:hover::-webkit-scrollbar,
+.custom-scrollbar:active::-webkit-scrollbar,
+.custom-scrollbar:focus::-webkit-scrollbar {
+  display: block;
+  width: 5px;
+  height: 2px; /* Adjust the height for horizontal scrollbar */
+}
+
+.custom-scrollbar:hover::-webkit-scrollbar-track,
+.custom-scrollbar:active::-webkit-scrollbar-track,
+.custom-scrollbar:focus::-webkit-scrollbar-track {
+  /* background: transparent; */
+  width: 1px;
+}
+
+.custom-scrollbar:hover::-webkit-scrollbar-thumb,
+.custom-scrollbar:active::-webkit-scrollbar-thumb,
+.custom-scrollbar:focus::-webkit-scrollbar-thumb {
+  background-color: #151765;
+  border-radius: 6px;
+  border: 1px solid #0000000a;
+}
+/* .sidecustom-scrollbar:hover::-webkit-scrollbar-thumb,
+.sidecustom-scrollbar:active::-webkit-scrollbar-thumb,
+.sidecustom-scrollbar:focus::-webkit-scrollbar-thumb {
+  background-color: blue;
+  border-radius: 6px;
+  border: 1px solid #0000000a;
+} */

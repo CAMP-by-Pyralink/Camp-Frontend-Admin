@@ -280,30 +280,31 @@ const SideNav = () => {
     { name: "Alerts", img: alertIcon, path: "/alerts" },
   ];
 
-  function toggleSubMenu(menuName) {
+  function toggleSubMenu(menuName: String) {
     if (menuName === "User Management") {
       setIsUserManagementOpen(!isUserManagementOpen);
     } else if (menuName === "Phishing Stimulation") {
       setIsPhishingOpen(!isPhishingOpen);
     }
   }
-  //  Function to convert hex code to RGB for easier manipulation
-  function hexToRgb(hex) {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? result.slice(1).map((x) => parseInt(x, 16)) : null;
-  }
+  // //  Function to convert hex code to RGB for easier manipulation
+  // function hexToRgb(hex) {
+  //   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  //   return result ? result.slice(1).map((x) => parseInt(x, 16)) : null;
+  // }
 
-  //  Function to create a fainter version of a hex color (simplified)
-  function getSlightlyFainterColor(hex, opacity = 0.8) {
-    const rgb = hexToRgb(hex);
-    if (rgb) {
-      return `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${opacity})`;
-    }
-    return hex;
-    //  Return original hex code if conversion fails
-    console.log(hex);
-  }
-  function adjustColor(hex, amount) {
+  // //  Function to create a fainter version of a hex color (simplified)
+  // function getSlightlyFainterColor(hex, opacity = 0.8) {
+  //   const rgb = hexToRgb(hex);
+  //   if (rgb) {
+  //     return `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${opacity})`;
+  //   }
+  //   return hex;
+  //   //  Return original hex code if conversion fails
+  //   console.log(hex);
+  // }
+
+  function adjustColor(hex: any, amount: any) {
     let r = parseInt(hex.slice(1, 3), 16);
     let g = parseInt(hex.slice(3, 5), 16);
     let b = parseInt(hex.slice(5, 7), 16);
@@ -322,8 +323,8 @@ const SideNav = () => {
 
   return (
     <div
-      className={`h-full px-4 py-6 bg-primary10 text-white flex flex-col gap-4 transition-width duration-300 ${
-        isCollapsed ? "w-[87px]" : "w-[294px]"
+      className={`custom-scrollbar h-screen overflow-y-auto overflow-x-hidden px-4 py-6 bg-primary10 text-white flex flex-col gap-4 transition-width duration-300 ${
+        isCollapsed ? "w-[100px]" : "w-[294px]"
       }`}
       style={{ background: themeColor }}
     >
@@ -397,7 +398,8 @@ const SideNav = () => {
                 <img
                   src={navMenu.img}
                   alt={`${navMenu.name} Icon`}
-                  width={20}
+                  // width={20}
+                  className=" min-w-[18px]"
                 />
                 {!isCollapsed && (
                   <div className="flex items-center justify-between w-full">

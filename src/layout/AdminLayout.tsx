@@ -36,7 +36,7 @@ const AdminLayout = () => {
         </div>
 
         {/* Content with scroll */}
-        <div className="flex-1 overflow-y-auto px-8 py-4">
+        <div className="custom-scrollbar flex-1 overflow-y-auto px-8 py-4">
           {/* Use DelayedSuspense for a minimum loading duration */}
           <DelayedSuspense
             fallback={
