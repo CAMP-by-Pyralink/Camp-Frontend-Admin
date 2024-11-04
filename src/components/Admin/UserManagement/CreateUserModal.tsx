@@ -54,7 +54,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({ onClose }) => {
   };
 
   const handleCreateClick = () => {
-    setCreate(true); // Set to true to show the UploadSuccessful component
+    setCreate(true);
   };
 
   return (

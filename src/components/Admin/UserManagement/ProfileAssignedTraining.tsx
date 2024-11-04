@@ -33,7 +33,13 @@ const assignedColumns = [
     key: "status",
     header: "STATUS",
     render: (status: string) => (
-      <span className={`text-${status === "completed" ? "green" : "red"}-500`}>
+      <span
+        className={` py-[2px] px-3 rounded-xl text-[10px]${
+          status === "completed"
+            ? " bg-[#E7F6EC] text-[#036B26]"
+            : " bg-[#FFECE5] text-[#AD3307]"
+        }`}
+      >
         {status}
       </span>
     ),

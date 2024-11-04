@@ -12,7 +12,7 @@ const AdminLayout = () => {
 
   const [openCustomizationSetting, setOpenCustomizationSetting] =
     useState(false);
-  const [searchVisible, setSearchVisible] = useState(true);
+  // const [searchVisible, setSearchVisible] = useState(true);
 
   const handleCustomizationClick = () => {
     setOpenCustomizationSetting((prev) => !prev);

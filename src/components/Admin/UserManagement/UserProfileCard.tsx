@@ -5,7 +5,7 @@ import assignedTraining from "../../../assets/svgs/assignedtraining.svg";
 import simulationScoreIcon from "../../../assets/svgs/simulationscore.svg";
 import EditUserForm from "./EditUserInfo";
 const UserProfileCard = () => {
-  const [editModalOpen, setEditModalOpen] = useState(true);
+  const [editModalOpen, setEditModalOpen] = useState(false);
   const user = {
     name: "Olawale Martins",
     img: profilePic,
@@ -99,7 +99,7 @@ const UserProfileCard = () => {
       <div className="mt-6 flex space-x-4">
         <button
           onClick={() => setEditModalOpen(true)}
-          className="bg-blue-600 text-white px-4 py-2 rounded-md w-full"
+          className="bg-primary500 text-white px-4 py-2 rounded-md w-full"
         >
           Edit
         </button>
@@ -109,7 +109,7 @@ const UserProfileCard = () => {
       </div>
       {/*  */}
       {editModalOpen && (
-        <div className=" absolute top-20 mx-auto">
+        <div className=" ">
           <EditUserForm setEditModalOpen={() => setEditModalOpen(false)} />
         </div>
       )}

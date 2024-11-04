@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
-import { FiFilter } from "react-icons/fi";
+// import { FiFilter } from "react-icons/fi";
+import filterIcon from "../../assets/svgs/filtericon.svg";
 import { BsDownload } from "react-icons/bs";
 import CreateUserModal from "../../components/Admin/UserManagement/CreateUserModal";
 
@@ -7,10 +8,12 @@ import addUsersIcon from "../../assets/svgs/adduser.svg";
 import Button from "../../shared/Button";
 import UserList from "../../components/Admin/UserManagement/UserList";
 import { useState } from "react";
+import FilterModal from "../../components/Admin/UserManagement/FilterModal";
 
 const UserManagement = ({ label, omClick }) => {
-  const { type } = useParams<{ type: string }>(); // Fetch the dynamic type from the URL (e.g., "user" or "admin")
+  const { type } = useParams<{ type: string }>();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
 
   const [activeUser, setActiveUser] = useState(false);
   const handleAddUserClick = () => {
@@ -21,6 +24,11 @@ const UserManagement = ({ label, omClick }) => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
+  };
+  const handleFilterClick = () => {
+    setIsFilterModalOpen((prev) => !prev);
+    console.log("clicked");
+    console.log(isModalOpen);
   };
 
   return (
@@ -41,12 +49,12 @@ const UserManagement = ({ label, omClick }) => {
           <div className="mb-8 flex justify-between items-center">
             <div>
               <h1 className="text-greyText text-2xl font-medium">
-                {type === "admin" ? "Manage Admins" : "Manage Users"}
+                User Management
               </h1>
               <h3 className="text-greyText text-sm">
-                {type === "admin"
-                  ? "Create admins and assign roles"
-                  : "Create users and assign roles"}
+                {type === "Admin"
+                  ? "Add or view admin users"
+                  : "Add or view users"}
               </h3>
             </div>
             <div
@@ -58,7 +66,7 @@ const UserManagement = ({ label, omClick }) => {
           </div>
           {/*  */}
           <div className=" bg-blue50 p-8 rounded-md">
-            <div className="bg-white  rounded-md w-full mt-4 py-[10px] px-[20px]">
+            <div className="bg-white  rounded-md w-full  py-[10px] px-[20px]">
               <div className="flex items-center justify-between ">
                 <input
                   type="text"
@@ -66,11 +74,14 @@ const UserManagement = ({ label, omClick }) => {
                   className=" border-[0.5px] border-black rounded-lg px-4 py-2 w-full max-w-xs"
                 />
                 <div className="flex gap-2">
-                  <button className="flex items-center border border-primary500 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg shadow-sm hover:bg-gray-200">
-                    <FiFilter className="mr-2" />
+                  <div
+                    className="flex items-center border border-primary500  px-3 py-[2px] rounded shadow-sm "
+                    onClick={handleFilterClick}
+                  >
+                    <img src={filterIcon} className=" mr-2" alt="" />
                     Filter
-                  </button>
-                  <button className="flex items-center bg-primary500 text-white px-4 py-2 rounded-md shadow-sm hover:bg-blue-700">
+                  </div>
+                  <button className="flex items-center bg-primary500 text-white px-4 py-2 rounded-md shadow-sm ">
                     <BsDownload className="mr-2" />
                     Export CSV
                   </button>
@@ -83,8 +94,10 @@ const UserManagement = ({ label, omClick }) => {
             </div>
           </div>
 
-          {/* Render the CreateUserModal when the modal state is true */}
           {isModalOpen && <CreateUserModal onClose={handleCloseModal} />}
+          {isFilterModalOpen && (
+            <FilterModal handleFilterClick={handleFilterClick} />
+          )}
         </div>
       )}
     </div>

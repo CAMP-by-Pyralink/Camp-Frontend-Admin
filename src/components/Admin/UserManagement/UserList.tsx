@@ -66,7 +66,7 @@ const UserList: React.FC = () => {
             <th className="p-4 border-b border-gray-200">Name</th>
             <th className="p-4 border-b border-gray-200">Department</th>
             <th className="p-4 border-b border-gray-200">Date Added</th>
-            <th className="p-4 border-b border-gray-200">Actions</th>
+            <th className="p-4 border-b border-gray-200"></th>
           </tr>
         </thead>
         <tbody className="bg-white">
@@ -85,25 +85,27 @@ const UserList: React.FC = () => {
               </td>
               <td className="p-4 border-b border-gray-200">{user.dateAdded}</td>
               <td className="p-4 border-b border-gray-200 text-center relative">
-                <button
-                  className="text-gray-600 hover:text-gray-800"
+                <div
+                  className=" cursor-pointer flex items-center justify-center border border-[#E4E7EC] rounded-lg w-8 h-8"
                   onClick={() => handleButtonClick(user.id)}
                 >
                   ⋮
-                </button>
+                </div>
 
                 {selectedUserId === user.id && (
-                  <div className="absolute left-0 mt-2 w-28 bg-white border border-gray-300 rounded shadow-lg z-10">
+                  <div className="absolute left-0 mt-2 w-[89px]  bg-white border border-[#C7C7CC] rounded-md  shadow-[5px_5px_40px_rgba(107,151,255,0.3)] z-10">
                     <ul className="text-left">
                       <Link to="/profile">
-                        <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                        <li className="px-4 py-2 text-[#333333] hover:bg-blue50 cursor-pointer">
                           View
                         </li>
                       </Link>
-                      <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                      <hr />
+                      <li className="px-4 py-2 text-[#333333] hover:bg-blue50 cursor-pointer">
                         Edit
                       </li>
-                      <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                      <hr />
+                      <li className="px-4 py-2 text-[#FF0301] hover:bg-blue50 cursor-pointer">
                         Delete
                       </li>
                     </ul>
@@ -116,12 +118,12 @@ const UserList: React.FC = () => {
       </table>
 
       <div className="flex justify-between items-center mt-4">
-        <span className="text-sm text-gray-600">Page 1 of 7</span>
+        <span className="text-sm text-[#070707]">Page 1 of 7</span>
         <div className="flex gap-2">
-          <button className="px-3 py-1 text-sm text-gray-500 border rounded-lg bg-gray-100 hover:bg-gray-200">
+          <button className=" px-[14px] py-2 text-sm text-[#D0D5DD] border rounded-lg border-[#EAECF0] shadow-[0px_1px_2px_rgba(16,24,40,0.05)] bg-white">
             Prev
           </button>
-          <button className="px-3 py-1 text-sm border rounded-lg bg-gray-100 hover:bg-gray-200">
+          <button className=" px-[14px] py-2 text-sm border rounded-lg  border-[#EAECF0] shadow-[0px_1px_2px_rgba(16,24,40,0.05)] bg-white">
             Next
           </button>
         </div>

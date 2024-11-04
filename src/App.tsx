@@ -12,6 +12,9 @@ import SignIn from "./_Auth/Admin/SignIn";
 // import Admin from "./components/Admin/UserManagement/Admin";
 // import User from "./components/Admin/UserManagement/User";
 import EmployeeProfile from "./components/Admin/UserManagement/EmployeeProfile";
+import Templates from "./pages/Admin/Templates";
+import Campaigns from "./pages/Admin/Campaigns";
+import PhishingDetails from "./components/Admin/PhishingStimulation/Templates/PhishingDetails";
 
 // Lazy load all the components
 const Overview = lazy(() => import("./pages/Admin/Overview"));
@@ -67,11 +70,15 @@ function App() {
             {/* </Route> */}
 
             {/* PHISHING SIMULATION ROUTES */}
-            <Route path="phishing-simulation" element={<PhishingSimulation />}>
-              {/* <Route path="templates" element={<Templates />} /> */}
-              {/* <Route path="campaigns" element={<Campaigns />} /> */}
+            <Route path="phishing-simulation">
+              <Route
+                path="/phishing-simulation/templates"
+                element={<Templates />}
+              />
+              <Route path="campaigns" element={<Campaigns />} />
             </Route>
             <Route path="profile" element={<EmployeeProfile />} />
+            <Route path="phishing-details" element={<PhishingDetails />} />
 
             <Route path="awareness-training" element={<AwarenessTraining />} />
             <Route path="asset-management" element={<AssetManagement />} />

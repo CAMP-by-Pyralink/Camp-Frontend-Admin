@@ -12,7 +12,7 @@ interface CustomizationContextProps {
 }
 
 interface CustomizationProviderProps {
-  children: ReactNode; // Define the children prop type
+  children: ReactNode;
 }
 
 const CustomizationContext = createContext<
@@ -40,7 +40,7 @@ export const CustomizationProvider: React.FC<CustomizationProviderProps> = ({
         setThemeColor,
       }}
     >
-      {children} {/* Render children */}
+      {children}
     </CustomizationContext.Provider>
   );
 };

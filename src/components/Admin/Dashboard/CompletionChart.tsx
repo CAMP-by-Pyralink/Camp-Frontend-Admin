@@ -12,7 +12,6 @@ const CompletionChart = () => {
   // Define custom colors for the pie slices
   const COLORS = ["#5358FF", "#1790E7", "#7E81FF", "#5F22C1"];
 
-  // Custom label function to display the name inside the pie slice
   const renderCustomLabel = ({
     cx,
     cy,

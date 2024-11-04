@@ -1,35 +1,63 @@
-import React from 'react';
+import Table from "../../../shared/Table";
+
+interface PhishingSimulations {
+  id: string;
+  name: string;
+  status: string;
+  date: string;
+}
+
+const PhishingSimulationData: PhishingSimulations[] = [
+  {
+    id: "TR 229",
+    name: "Fake Invoice",
+    date: "23/04/2023  11:59PM",
+    status: "Passed",
+  },
+  {
+    id: "TR 230",
+    name: "Risk Assessment in Cybersecurity",
+    date: "23/04/2023  11:59PM",
+
+    status: "Phished",
+  },
+  {
+    id: "TR 244",
+    name: "Ethical Hacking & Penetration Testing",
+    date: "23/04/2023  11:59PM",
+    status: "Passed",
+  },
+];
+const phishingSimulationsColumns = [
+  { key: "name", header: "CAMPAIGN NAME" },
+  { key: "date", header: "DATE" },
+  // { key: "status", header: "STATUS" },
+  {
+    key: "status",
+    header: "STATUS",
+    render: (status: string) => (
+      <span
+        className={` py-[2px] px-3 rounded-xl text-[10px]${
+          status === "Passed"
+            ? " bg-[#E7F6EC] text-[#036B26]"
+            : " bg-[#FFECE5] text-[#AD3307]"
+        }`}
+      >
+        {status}
+      </span>
+    ),
+  },
+];
 
 const ProfilePhishingSimulations = () => {
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      <h3 className="text-lg font-semibold mb-4">Phishing Simulations</h3>
-      <table className="w-full table-auto">
-        <thead>
-          <tr>
-            <th className="text-left py-2">Campaign Name</th>
-            <th className="text-left py-2">Date</th>
-            <th className="text-left py-2">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td className="py-2">Fake Invoice</td>
-            <td className="py-2">23/04/2023 11:56PM</td>
-            <td className="py-2 text-green-500">Passed</td>
-          </tr>
-          <tr>
-            <td className="py-2">Password Expiration Notice</td>
-            <td className="py-2">23/04/2023 11:56PM</td>
-            <td className="py-2 text-green-500">Passed</td>
-          </tr>
-          <tr>
-            <td className="py-2">Email Account Suspension Alert</td>
-            <td className="py-2">23/04/2023 11:56PM</td>
-            <td className="py-2 text-red-500">Failed</td>
-          </tr>
-        </tbody>
-      </table>
+    <div>
+      <Table
+        sectionName="Phishing simulations"
+        data={PhishingSimulationData}
+        columns={phishingSimulationsColumns}
+        // headerBgColor="bg-blue-500"
+      />
     </div>
   );
 };

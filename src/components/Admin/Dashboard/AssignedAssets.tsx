@@ -12,10 +12,9 @@ const AssignedAssets = () => {
 
   const handleSelectContent = (content: string) => {
     setSelectedContent(content);
-    setIsOpen(false); // Close the dropdown after selection
+    setIsOpen(false);
   };
 
-  // Define the data for the chart based on the selected content
   const pieData =
     selectedContent === "Assigned Assets"
       ? [
@@ -64,7 +63,6 @@ const AssignedAssets = () => {
       {/* Pie Chart */}
       <div className="flex flex-col items-center relative">
         <PieChart width={219} height={219}>
-          {/* Define the pie and set the innerRadius to create a donut shape */}
           <Pie
             data={pieData}
             dataKey="value"
