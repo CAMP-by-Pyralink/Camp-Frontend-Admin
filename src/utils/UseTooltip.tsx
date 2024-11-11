@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const UseTooltip = ({ title, children }) => {
+const UseTooltip = ({ title, children }: any) => {
   const [showTooltip, setShowTooltip] = useState(false);
 
   const handleMouseEnter = () => {

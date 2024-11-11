@@ -15,16 +15,13 @@ import EmployeeProfile from "./components/Admin/UserManagement/EmployeeProfile";
 import Templates from "./pages/Admin/Templates";
 import Campaigns from "./pages/Admin/Campaigns";
 import PhishingDetails from "./components/Admin/PhishingStimulation/Templates/PhishingDetails";
-
-// Lazy load all the components
+import CampaignDetails from "./components/Admin/PhishingStimulation/Campaigns/CampaignDetails";
 const Overview = lazy(() => import("./pages/Admin/Overview"));
 const UserManagement = lazy(() => import("./pages/Admin/UserManagement"));
 // const User = lazy(() => import("./pages/Admin/UserManagement/User"));
 // const Admin = lazy(() => import("./pages/Admin/UserManagement/Admin"));
 const AwarenessTraining = lazy(() => import("./pages/Admin/AwarenessTraining"));
-const PhishingSimulation = lazy(
-  () => import("./pages/Admin/PhishingSimulation")
-);
+
 // const Templates = lazy(
 //   () => import("./pages/Admin/PhishingSimulation/Templates")
 // );
@@ -67,6 +64,8 @@ function App() {
             {/* <Route path="user" element={<User />} />
               <Route path="admin" element={<Admin />} /> */}
             <Route path="user-management/:type" element={<UserManagement />} />
+            <Route path="profile" element={<EmployeeProfile />} />
+
             {/* </Route> */}
 
             {/* PHISHING SIMULATION ROUTES */}
@@ -75,11 +74,16 @@ function App() {
                 path="/phishing-simulation/templates"
                 element={<Templates />}
               />
-              <Route path="campaigns" element={<Campaigns />} />
+              <Route
+                path="/phishing-simulation/campaigns"
+                element={<Campaigns />}
+              />
+              <Route
+                path="/phishing-simulation/campaign-details/:id"
+                element={<CampaignDetails />}
+              />
             </Route>
-            <Route path="profile" element={<EmployeeProfile />} />
             <Route path="phishing-details" element={<PhishingDetails />} />
-
             <Route path="awareness-training" element={<AwarenessTraining />} />
             <Route path="asset-management" element={<AssetManagement />} />
             <Route path="risk-assessment" element={<RiskAssessment />} />

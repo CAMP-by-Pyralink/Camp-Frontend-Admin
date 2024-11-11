@@ -28,7 +28,11 @@ export default {
         textColor: "#333333",
         success300: "#0B7B69",
         warning: "#CC7914",
-        blueColor700: "#147BC5",
+        branding01: "#00B598",
+        blue100: "#DEEFFC",
+        blue600: "#1790E7",
+        blue700: "#147BC5",
+        purple500: "#F9F5FF",
       },
       fontFamily: {
         poppins: ["Poppins", "sans-serif"],
