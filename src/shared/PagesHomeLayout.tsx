@@ -1,11 +1,13 @@
 import filterIcon from "../assets/svgs/filtericon.svg";
+import searchIcon from "../assets/svgs/search.svg";
+import downArricon from "../assets/svgs/downarrAnchor.svg";
 
 interface PagesHomeLayoutProps {
   onFilterClick?: () => void;
   onExportClick?: () => void;
   showFilter?: boolean;
   showExport?: boolean;
-  children?: React.ReactNode; // Rename Children to children
+  children?: React.ReactNode;
 }
 
 const PagesHomeLayout: React.FC<PagesHomeLayoutProps> = ({
@@ -13,17 +15,24 @@ const PagesHomeLayout: React.FC<PagesHomeLayoutProps> = ({
   onExportClick,
   showFilter = false,
   showExport = false,
-  children, // Rename Children to children
+  children,
 }) => {
   return (
     <div className="bg-blue50 p-8 rounded-md">
-      <div className="bg-white rounded-md w-full py-[10px] px-[20px]">
+      <div className="bg-white rounded-md w-full py-[10px] px-[20px] relative">
         <div className="flex items-center justify-between">
-          <input
-            type="text"
-            placeholder="Search"
-            className="border-[0.5px] border-black rounded-lg px-4 py-2 w-full max-w-xs"
-          />
+          <div className="relative w-full max-w-xs">
+            <input
+              type="text"
+              placeholder="Search"
+              className="border-[0.5px] border-black rounded-lg px-12 py-2 w-full"
+            />
+            <img
+              src={searchIcon}
+              alt=""
+              className="absolute left-4 top-1/2 transform -translate-y-1/2"
+            />
+          </div>
           <div className="flex gap-2">
             {showFilter && (
               <div
@@ -36,10 +45,11 @@ const PagesHomeLayout: React.FC<PagesHomeLayoutProps> = ({
             )}
             {showExport && (
               <button
-                className="flex items-center bg-primary500 text-white px-4 py-2 rounded-md shadow-sm "
+                className="flex items-center bg-primary500 text-white px-4 py-2 rounded-md shadow-sm"
                 onClick={onExportClick}
               >
                 {/* <BsDownload className="mr-2" /> */}
+                <img src={downArricon} className=" mr-2" alt="" />
                 Export CSV
               </button>
             )}

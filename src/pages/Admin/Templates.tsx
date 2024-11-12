@@ -17,10 +17,12 @@ const Templates = () => {
     <div>
       <div className=" flex justify-between mb-4">
         <div className=" text-greyText">
-          <h1 className="  font-medium tracking-[-2%] leading-[28.8px]">
+          <h1 className=" text-2xl  font-medium tracking-[-2%] leading-[28.8px]">
             Phishing Simulation
           </h1>
-          <p>Create phishing simulations to test your employees.</p>
+          <p className=" text-sm">
+            Create phishing simulations to test your employees.
+          </p>
         </div>
         <Button onClick={handleAdd} label="Add New" />
       </div>

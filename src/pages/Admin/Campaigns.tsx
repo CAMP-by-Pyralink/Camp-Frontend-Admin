@@ -14,10 +14,10 @@ const Campaigns = () => {
     <div>
       <div className=" flex justify-between mb-4">
         <div className=" text-greyText">
-          <h1 className="  font-medium tracking-[-2%] leading-[28.8px]">
+          <h1 className=" text-2xl  font-medium tracking-[-2%] leading-[28.8px]">
             Phishing Campaigns
           </h1>
-          <p>View phishing campaigns</p>
+          <p className=" text-sm">View phishing campaigns</p>
         </div>
         {/* <Button onClick={handleAdd} label="Add New" /> */}
       </div>

@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import Table from "../../../../shared/Table";
+// import Table from "../../../../shared/Table";
 
 interface AssignedTraining {
   id: number; // Ensure ID is included
@@ -16,7 +17,7 @@ const assignedData: AssignedTraining[] = [
     templateName: "Happy birthday",
     campaignName: "Work test",
     audience: ["IT", "Finance"],
-    status: "completed",
+    status: "Completed",
     recipient: 120,
   },
   {
@@ -24,7 +25,7 @@ const assignedData: AssignedTraining[] = [
     templateName: "Happy birthday",
     campaignName: "Work test",
     audience: ["IT"],
-    status: "in progress",
+    status: "In progress",
     recipient: 120,
   },
   {
@@ -32,7 +33,7 @@ const assignedData: AssignedTraining[] = [
     templateName: "Happy birthday",
     campaignName: "Work test",
     audience: ["Human Resources", "Admin"],
-    status: "in progress",
+    status: "In progress",
     recipient: 120,
   },
 ];
@@ -61,10 +62,10 @@ const assignedColumns = [
     header: "STATUS",
     render: (status: string) => (
       <span
-        className={`py-[2px] px-3 rounded-xl text-[10px] ${
-          status === "completed"
-            ? "bg-[#E7F6EC] text-[#036B26]"
-            : "bg-[#FFECE5] text-[#AD3307]"
+        className={`py-[2px] px-3 rounded-xl text-[14px] ${
+          status === "Completed"
+            ? "bg-[#DFFCDE] text-[#00B598]"
+            : "bg-[#FFF0DD] text-[#CC7914]"
         }`}
       >
         {status}

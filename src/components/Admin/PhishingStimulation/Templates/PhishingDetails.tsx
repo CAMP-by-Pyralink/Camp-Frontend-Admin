@@ -11,7 +11,7 @@ import PreviewModal from "./PreviewModal";
 // import CustomDatePicker from "./CustomDatePicker";
 
 const PhishingDetails: React.FC = () => {
-  const [continueClicked, setContinueClicked] = useState(true);
+  const [continueClicked, setContinueClicked] = useState(false);
   const { title } = useParams<{ title: string }>();
   const [isToggled, setIsToggled] = useState(false);
   const handleToggle = () => {
@@ -174,64 +174,18 @@ const PhishingDetails: React.FC = () => {
             </div>
           </div>
         </div>
-        <button className="w-full mt-12 bg-primary500 text-white py-3 rounded-lg font-semibold  transition-colors">
+        <button
+          className="w-full mt-12 bg-primary500 text-white py-3 rounded-lg font-semibold  transition-colors"
+          onClick={() => setContinueClicked((prev) => !prev)}
+        >
           Continue
         </button>
       </div>
-      {continueClicked && <PreviewModal />}
+      {continueClicked && (
+        <PreviewModal setContinueClicked={setContinueClicked} />
+      )}
     </>
   );
 };
 
 export default PhishingDetails;
-
-// import React from "react";
-// import { useParams } from "react-router-dom";
-
-// const PhishingDetails: React.FC = () => {
-//   const { title } = useParams<{ title: string }>();
-
-//   // You can define your card data here or fetch it from an API
-//   const simulationsCards = [
-//     {
-//       id: 1,
-//       title: "Happy Birthday!",
-//       description:
-//         "The phishing email mimics a notification from a bank, warning of suspicious activity on the recipient’s account.",
-//     },
-//     {
-//       id: 2,
-//       title: "Email Account Suspension Alert",
-//       description:
-//         "This phishing email pretends to be from a well-known email service provider (e.g., Gmail, Outlook) warning the recipient.",
-//     },
-//     {
-//       id: 3,
-//       title: "Fake Invoice",
-//       description:
-//         "This phishing template impersonates a vendor or service provider and notifies the recipient that an invoice is overdue.",
-//     },
-//     {
-//       id: 4,
-//       title: "Password Expiration Notice",
-//       description:
-//         "This phishing email poses as an internal IT department alert, warning employees that their work password will expire soon.",
-//     },
-//   ];
-
-//   // Find the selected card based on the title from the URL
-//   const selectedCard = simulationsCards.find((card) => card.title === title);
-
-//   if (!selectedCard) {
-//     return <div>Card not found</div>;
-//   }
-
-//   return (
-//     <div>
-//       <h1>{selectedCard.title}</h1>
-//       <p>{selectedCard.description}</p>
-//     </div>
-//   );
-// };
-
-// export default PhishingDetails;

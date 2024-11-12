@@ -2,7 +2,7 @@ import { Link, useLocation, useParams } from "react-router-dom";
 import closeIcon from "../../../../assets/svgs/closeicongrey.svg";
 
 import editIcon from "../../../../assets/svgs/edit-icon.svg";
-const PreviewModal = () => {
+const PreviewModal = ({ setContinueClicked }) => {
   // const { title } = useParams<{ title: string }>();
   const location = useLocation();
 
@@ -25,6 +25,7 @@ const PreviewModal = () => {
             alt=""
             className=" cursor-pointer"
             // onClick={handleFilterClick}
+            onClick={() => setContinueClicked((prev) => !prev)}
           />
         </div>
         {/*  */}
@@ -43,7 +44,7 @@ const PreviewModal = () => {
         </div>
         {/*  */}
         <div className=" py- px-4">
-          <div className=" mx-12">
+          <div className=" mx-12 mb-4">
             <div className=" flex items-center justify-between mb-4">
               <h1 className=" text-[#454545] text-xl font-semibold">
                 Delivery type: <span className=" font-normal">(recurring)</span>
