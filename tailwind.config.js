@@ -33,12 +33,18 @@ export default {
         blue600: "#1790E7",
         blue700: "#147BC5",
         purple500: "#F9F5FF",
+        yellowCell: "#FFD400",
+        redCell: "#FF0000",
+        greenCell: "#51AF50",
       },
       fontFamily: {
         poppins: ["Poppins", "sans-serif"],
         roboto: ["Roboto", "sans-serif"],
         openSans: ["Open Sans", "sans-serif"],
       },
+    },
+    boxShadow: {
+      "custom-shadow": "5px 5px 40px rgba(107, 151, 255, 0.3)",
     },
   },
   plugins: [require("tailwindcss-filters")],

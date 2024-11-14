@@ -1,6 +1,6 @@
 import { useState } from "react";
-import Table from "../../../shared/Table";
-import { Link } from "react-router-dom";
+// import Table from "../../../shared/Table";
+import { Link, useNavigate } from "react-router-dom";
 
 interface Risks {
   id: number;
@@ -75,9 +75,14 @@ const risks: Risks[] = [
 
 const RiskList = () => {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
-  const handleButtonClick = (id: string) => {
-    setSelectedUserId((prevUserId) => (prevUserId === id ? null : id));
+  const navigate = useNavigate();
+
+  const handleViewClick = (risk: Risks) => {
+    navigate(`/risk-detail/${risk.id}`, { state: { selectedRisk: risk } });
   };
+  // const handleButtonClick = (id: string) => {
+  //   setSelectedUserId((prevUserId) => (prevUserId === id ? null : id));
+  // };
 
   return (
     <div>
@@ -192,7 +197,8 @@ const RiskList = () => {
                 <td className="p-2 border-b border-gray-200 text-center relative">
                   <div
                     className=" cursor-pointer flex items-center justify-center border border-[#E4E7EC] rounded-lg w-8 h-8"
-                    onClick={() => handleButtonClick(risk.riskId)}
+                    // onClick={() => handleButtonClick(risk.riskId)}
+                    onClick={() => handleViewClick(risk)}
                   >
                     ⋮
                   </div>

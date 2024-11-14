@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 
 interface RiskDetail {
   id: number;
@@ -18,22 +18,6 @@ interface MatrixCell {
   level: "Low" | "Medium" | "High";
 }
 
-// Sample risk data array (replace with your actual data source or state)
-const risks: RiskDetail[] = [
-  {
-    id: 1,
-    riskName: "Software Development Risk",
-    description: "Description here...",
-    category: "Development Risk",
-    strategy: "Regular backup, securing workstations and testing",
-    level: "Medium",
-    date: "2024-03-15",
-    riskStatus: "Active",
-    riskProbability: "High",
-  },
-  // Add other risks here
-];
-
 const matrixData: MatrixCell[] = [
   { probability: "High", impact: "Low", level: "Medium" },
   { probability: "High", impact: "Medium", level: "High" },
@@ -49,111 +33,185 @@ const matrixData: MatrixCell[] = [
 const getLevelColor = (level: string) => {
   switch (level) {
     case "Low":
-      return "bg-green-500";
+      return "bg-greenCell";
     case "Medium":
-      return "bg-yellow-400";
+      return "bg-yellowCell";
     case "High":
-      return "bg-red-500";
+      return "bg-redCell";
     default:
       return "bg-gray-200";
   }
 };
 
 const RiskDetails = () => {
-  const { id } = useParams<{ id: number }>();
+  const { id } = useParams<{ id: string }>();
+  const location = useLocation();
+  const selectedRisk = location.state?.selectedRisk as Risks;
+  console.log(selectedRisk);
 
-  // Find the selected risk based on the ID from the URL
-  const selectedRisk = risks.find((risk) => risk.id === id);
-
-  if (!selectedRisk) {
+  if (!selectedRisk || selectedRisk.id !== Number(id)) {
     return <div>Risk not found</div>;
   }
-
   return (
-    <div className=" mx-auto p-4">
+    <div className="mx-auto p-4">
       <h1 className="text-2xl font-medium text-greyText mb-4">View Risk</h1>
       <p className="text-sm text-greyText mb-6">View and edit risk</p>
 
       {/* Risk Details Section */}
-      <div className="border rounded-lg p-6 mb-8">
-        <h2 className="text-lg font-semibold mb-4">Risk Details</h2>
+      <div className=" rounded-md p-6 mb-8 shadow-custom-shadow">
+        <h2 className="text-[20px] text-greyText font-semibold mb-1">
+          Risk Details
+        </h2>
         <hr />
-        <div className="space-y-4">
+        <div className="space-y-4 mt-4">
           <div className="grid grid-cols-1 gap-4">
-            <div>
-              <p className="text-sm text-gray-600">Risk ID</p>
-              <p className="font-medium">{selectedRisk.id}</p>
+            <div className=" flex items-center gap-8">
+              <p className="text-sm text-greyText font-semibold basis-[20%]">
+                Risk ID:
+              </p>
+              <p className=" text-greyText text-sm">{selectedRisk.id}</p>
             </div>
-            <div>
-              <p className="text-sm text-gray-600">Risk Name</p>
-              <p className="font-medium">{selectedRisk.riskName}</p>
+            <div className=" flex items-center gap-8">
+              <p className="text-sm text-greyText font-semibold basis-[20%]">
+                Risk Name
+              </p>
+              <p className=" text-greyText text-sm">{selectedRisk.name}</p>
             </div>
           </div>
 
-          <div>
-            <p className="text-sm text-gray-600">Description</p>
-            <p className="text-sm mt-1">{selectedRisk.description}</p>
+          <div className=" flex items-center gap-8">
+            <p className="text-sm text-greyText font-semibold basis-[20%]">
+              Description
+            </p>
+            <p className=" text-greyText text-sm">{selectedRisk.description}</p>
           </div>
 
           <div className="grid grid-cols-1 gap-4">
-            <div>
-              <p className="text-sm text-gray-600">Category</p>
-              <p className="font-medium">{selectedRisk.category}</p>
+            <div className=" flex items-center gap-8">
+              <p className="text-sm text-greyText font-semibold basis-[20%]">
+                Category:
+              </p>
+              <p className=" text-greyText text-sm">{selectedRisk.category}</p>
             </div>
-            <div>
-              <p className="text-sm text-gray-600">Mitigation Strategy</p>
-              <p className="font-medium">{selectedRisk.strategy}</p>
+            <div className=" flex items-center gap-8">
+              <p className="text-sm text-greyText font-semibold basis-[20%]">
+                Mitigation Strategy
+              </p>
+              <p className=" text-greyText text-sm">
+                {selectedRisk.mitigrationStrategy}
+              </p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 gap-4">
-            <div>
-              <p className="text-sm text-gray-600">Level</p>
-              <p className="font-medium">{selectedRisk.level}</p>
+            <div className=" flex items-center gap-8">
+              <p className="text-sm text-greyText font-semibold basis-[20%]">
+                Note:
+              </p>
+              <p className=" text-greyText text-sm">{selectedRisk.note}</p>
             </div>
-            <div>
-              <p className="text-sm text-gray-600">Risk Status</p>
-              <p className="font-medium">{selectedRisk.riskStatus}</p>
+            <div className=" flex items-center gap-8">
+              <p className="text-sm text-greyText font-semibold basis-[20%]">
+                Status:
+              </p>
+              <p
+                className={`w-fit py-[2px] px-3 rounded-full ${
+                  selectedRisk.status === "Mitigated"
+                    ? "bg-[#E4FCDE] text-[#0B7B69]"
+                    : "bg-[#FCDEDE] text-[#B30100]"
+                }`}
+              >
+                {selectedRisk.status}
+              </p>
             </div>
-            <div>
-              <p className="text-sm text-gray-600">Due Date</p>
-              <p className="font-medium">{selectedRisk.date}</p>
+            <div className=" flex items-center gap-8">
+              <p className="text-sm text-greyText font-semibold basis-[20%]">
+                Risk Owner:
+              </p>
+              <p className=" w-fit bg-blue-100 text-blue600 py-[2px] px-3 rounded-xl">
+                {selectedRisk.owner}
+              </p>
+            </div>
+            <div className=" flex items-center gap-8">
+              <p className="text-sm text-greyText font-semibold basis-[20%]">
+                Risk Impact:
+              </p>
+              <p
+                className={` w-fit py-[2px] px-3 rounded-xl ${
+                  selectedRisk.probability === "Low"
+                    ? "bg-[#E4FCDE] text-[#0B7B69]"
+                    : selectedRisk.probability === "Medium"
+                    ? "bg-[#FFF3CD] text-[#856404]"
+                    : selectedRisk.probability === "High"
+                    ? "bg-[#FCDEDE] text-[#B30100]"
+                    : ""
+                }`}
+              >
+                {selectedRisk.impact}
+              </p>
+            </div>{" "}
+            <div className=" flex items-center gap-8">
+              <p className="text-sm text-greyText font-semibold basis-[20%]">
+                Risk Probabilty:
+              </p>
+              <p
+                className={`w-fit py-[2px] px-3 rounded-xl ${
+                  selectedRisk.probability === "Low"
+                    ? "bg-[#E4FCDE] text-[#0B7B69]"
+                    : selectedRisk.probability === "Medium"
+                    ? "bg-[#FFF3CD] text-[#856404]"
+                    : selectedRisk.probability === "High"
+                    ? "bg-[#F8D7DA] text-[#721C24]"
+                    : ""
+                }`}
+              >
+                {selectedRisk.probability}
+              </p>
             </div>
           </div>
         </div>
+
+        {/* Action Buttons */}
         <div className="flex gap-4 mt-6">
-          <button className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+          <button className="w-[180px] px-6 py-2 bg-primary500 text-white rounded-lg">
             Edit
           </button>
-          <button className="px-6 py-2 bg-white border border-red-500 text-red-500 rounded hover:bg-red-50">
+          <button className="px-6 py-2 bg-white border border-[#FF0301] text-[#B30100] rounded-lg">
             Delete
           </button>
         </div>
       </div>
 
       {/* Risk Matrix Section */}
-      <div className="border rounded-lg p-6">
-        <h2 className="text-lg font-semibold mb-4">3 x 3 Matrix</h2>
+      <div className=" rounded-lg p-6">
+        <h2 className="text-2xl text-greyText font-semibold mb-4">
+          3 x 3 Matrix
+        </h2>
         <div className="relative">
-          <div className="absolute -left-20 top-1/2 -rotate-90 transform -translate-y-1/2">
-            <span className="text-sm font-medium">PROBABILITY</span>
+          {/* Probability Label */}
+          <div className=" bg-blue50 py-[7px] px-[26.64px] absolute -left-28 top-1/2 -rotate-90 transform -translate-y-1/2">
+            <span className=" text-greyText font-medium text-sm ">
+              PROBABILITY
+            </span>
           </div>
 
-          <div className="grid grid-cols-3 gap-1 w-72">
+          {/* Matrix Cells */}
+          <div className="grid grid-cols-3 gap-1 w-[504.58px]">
             {matrixData.map((cell, index) => (
               <div
                 key={index}
                 className={`${getLevelColor(
                   cell.level
-                )} h-24 flex items-center justify-center text-white font-medium rounded`}
+                )} h-[101.66px] text-[25.24px]  flex items-center justify-center text-white font-medium rounded`}
               >
                 {cell.level}
               </div>
             ))}
           </div>
 
-          <div className="text-center mt-4">
-            <span className="text-sm font-medium">IMPACT</span>
+          {/* Impact Label */}
+          <div className="bg-blue50 py-[7px] px-[26.64px] ml-[30%] w-fit mt-4">
+            <span className="text-sm font-medium text-greyText ">IMPACT</span>
           </div>
         </div>
       </div>
@@ -162,3 +220,8 @@ const RiskDetails = () => {
 };
 
 export default RiskDetails;
+
+// Route definition for RiskDetails component
+{
+  /* <Route path="/risk-detail/:id" element={<RiskDetails />} />; */
+}
