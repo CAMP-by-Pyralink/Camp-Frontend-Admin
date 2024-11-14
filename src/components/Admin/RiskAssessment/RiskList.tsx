@@ -21,7 +21,7 @@ interface Risks {
 const risks: Risks[] = [
   {
     id: 1,
-    riskId: "RA 112",
+    riskId: "RA 111",
     name: "Data Loss",
     category: "Operational",
     impact: "High",
@@ -33,39 +33,39 @@ const risks: Risks[] = [
     note: "Focus on training new employees",
   },
   {
-    id: 1,
+    id: 2,
     riskId: "RA 112",
     name: "Data Loss",
     category: "Operational",
     impact: "High",
     probability: "High",
-    mitigrationStrategy: "Conduct regular phishing simulations and training",
+    mitigrationStrategy: "Cybersecurity",
     owner: "Management",
     status: "Active",
     reviewDate: "22/09/2024",
     note: "Focus on training new employees",
   },
   {
-    id: 1,
-    riskId: "RA 112",
+    id: 3,
+    riskId: "RA 113",
     name: "Data Loss",
     category: "Operational",
     impact: "Medium",
     probability: "Medium",
-    mitigrationStrategy: "Conduct regular phishing simulations and training",
+    mitigrationStrategy: "Cybersecurity",
     owner: "IT",
     status: "Mitigated",
     reviewDate: "22/09/2024",
     note: "Focus on training new employees",
   },
   {
-    id: 1,
-    riskId: "RA 112",
+    id: 4,
+    riskId: "RA 114",
     name: "Data Loss",
     category: "Operational",
     impact: "Low",
     probability: "Low",
-    mitigrationStrategy: "Conduct regular phishing simulations and training",
+    mitigrationStrategy: "Operational",
     owner: "IT",
     status: "Mitigated",
     reviewDate: "22/09/2024",
@@ -73,38 +73,10 @@ const risks: Risks[] = [
   },
 ];
 
-// const assignedColumns = [
-//   { key: "riskId", header: "RISK ID" },
-//   { key: "riskName", header: "RISK NAME" },
-//   { key: "category", header: "CATEGORY" },
-//   { key: "riskImpact", header: "RISK IMPACT" },
-//   { key: "riskProbability", header: "RISK PROBABILITY" },
-//   { key: "mitigrationStrategy", header: "MITIGRATION STRATEGY" },
-//   { key: "riskOwner", header: "RISK OWNER" },
-//   { key: "campaignName", header: "CAMPAIGN NAME" },
-//   {
-//     key: "status",
-//     header: "STATUS",
-//     render: (status: string) => (
-//       <span
-//         className={`py-[2px] px-3 rounded-xl text-[14px] ${
-//           status === "Completed"
-//             ? "bg-[#DFFCDE] text-[#00B598]"
-//             : "bg-[#FFF0DD] text-[#CC7914]"
-//         }`}
-//       >
-//         {status}
-//       </span>
-//     ),
-//   },
-//   { key: "reviewDate", header: "REVIEW DATE" },
-//   { key: "note", header: "NOTE" },
-// ];
-
 const RiskList = () => {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
-  const handleButtonClick = (userId: string) => {
-    setSelectedUserId((prevUserId) => (prevUserId === userId ? null : userId));
+  const handleButtonClick = (id: string) => {
+    setSelectedUserId((prevUserId) => (prevUserId === id ? null : id));
   };
 
   return (
@@ -193,7 +165,7 @@ const RiskList = () => {
                     {risk.probability}
                   </span>
                 </td>
-                <td className="p-2 border-b border-gray-200">
+                <td className="p-2 border-b max-w-[20px] border-gray-200">
                   {risk.mitigrationStrategy}
                 </td>
                 <td className="p-2 border-b border-gray-200">
@@ -228,7 +200,7 @@ const RiskList = () => {
                   {selectedUserId === risk.riskId && (
                     <div className="absolute left-0 mt-2 w-[89px]  bg-white border border-[#C7C7CC] rounded-md  shadow-[5px_5px_40px_rgba(107,151,255,0.3)] z-10">
                       <ul className="text-left">
-                        <Link to="/profile">
+                        <Link to={`/risk-detail/${risk.id}`}>
                           <li className="px-4 py-2 text-[#333333] hover:bg-blue50 cursor-pointer">
                             View
                           </li>
