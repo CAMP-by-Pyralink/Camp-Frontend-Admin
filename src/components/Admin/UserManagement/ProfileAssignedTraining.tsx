@@ -34,7 +34,7 @@ const assignedColumns = [
     header: "STATUS",
     render: (status: string) => (
       <span
-        className={` py-[2px] px-3 rounded-xl text-[10px]${
+        className={` py-[2px] font-medium px-3 rounded-xl text-[10px]${
           status === "completed"
             ? " bg-[#E7F6EC] text-[#036B26]"
             : " bg-[#FFECE5] text-[#AD3307]"
@@ -63,6 +63,7 @@ const ProfileAssignedTraining = () => {
       {/* <h3 className="text-lg font-semibold mb-4">Assigned Training</h3> */}
 
       <Table
+        headerBgColor="bg-[#F0F2F5]"
         sectionName="Assigned Trainings"
         data={assignedData}
         columns={assignedColumns}

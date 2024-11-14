@@ -11,6 +11,8 @@ import downArrowIcon from "../../assets/svgs/downArrWhiteSolid.svg";
 import CreateUserManual from "../../components/Admin/UserManagement/CreateUserManual";
 import UploadCsvModal from "../../shared/UploadCsvModal";
 import ScanNetwork from "../../shared/ScanNetwork";
+import UserFlow from "../../components/Admin/UserManagement/UserFlow";
+import NetworkScanFlow from "../../components/Admin/UserManagement/NetworkScanFlow";
 
 const UserManagement = ({ label, omClick }) => {
   const { type } = useParams<{ type: string }>();
@@ -151,7 +153,8 @@ const UserManagement = ({ label, omClick }) => {
           {/* Modals */}
           {isModalOpen && <CreateUserManual onClose={handleCloseModal} />}
           {uploadCsv && <UploadCsvModal onClose={handleCloseModal} />}
-          {scanNetwork && <ScanNetwork onClose={handleCloseModal} />}
+          {/* {scanNetwork && <ScanNetwork onClose={handleCloseModal} />} */}
+          {scanNetwork && <NetworkScanFlow onClose={handleCloseModal} />}
           {isFilterModalOpen && (
             <FilterModal handleFilterClick={handleFilterClick} />
           )}

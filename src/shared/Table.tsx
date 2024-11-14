@@ -17,13 +17,15 @@ interface TableProps<T> {
 const Table = <T,>({
   data,
   columns,
-  headerBgColor = "bg-[#F0F2F5]",
+  headerBgColor = "bg-[#00000]",
   sectionName,
   onRowClick, // Destructure the click handler
 }: TableProps<T>) => {
   return (
     <div className="overflow-x-auto bg-white shadow-[5px_5px_40px_rgba(107,151,255,0.3)] rounded-lg mb-6">
-      <h3 className="text-lg font-semibold mb-4">{sectionName}</h3>
+      <h3 className="text-greyText mt-4 font-medium mb-4 ml-4">
+        {sectionName}
+      </h3>
       <table className="text-greyText w-full text-left border-separate border-spacing-0">
         <thead>
           <tr
@@ -44,7 +46,7 @@ const Table = <T,>({
               onClick={() => onRowClick && onRowClick(row)}
             >
               {columns.map((column) => (
-                <td key={String(column.key)} className="px-4 py-2 border-b">
+                <td key={String(column.key)} className="px-4 py-6 border-b">
                   {column.render
                     ? column.render(row[column.key])
                     : (row[column.key] as React.ReactNode)}{" "}

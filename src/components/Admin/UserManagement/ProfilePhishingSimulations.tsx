@@ -37,7 +37,7 @@ const phishingSimulationsColumns = [
     header: "STATUS",
     render: (status: string) => (
       <span
-        className={` py-[2px] px-3 rounded-xl text-[10px]${
+        className={` py-[2px] font-medium px-3 rounded-xl text-[10px]${
           status === "Passed"
             ? " bg-[#E7F6EC] text-[#036B26]"
             : " bg-[#FFECE5] text-[#AD3307]"
@@ -53,6 +53,7 @@ const ProfilePhishingSimulations = () => {
   return (
     <div>
       <Table
+        headerBgColor="bg-[#F0F2F5]"
         sectionName="Phishing simulations"
         data={PhishingSimulationData}
         columns={phishingSimulationsColumns}

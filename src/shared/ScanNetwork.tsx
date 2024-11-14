@@ -5,12 +5,13 @@ interface ScanNetworkProps {
   type: string;
   onCreate: () => void;
   onClose: () => void;
+  startScan: () => void; // Changed from scanNetwork to startScan
 }
 
 const ScanNetwork: React.FC<ScanNetworkProps> = ({
-  //   type,
   onCreate,
   onClose,
+  startScan, // Updated here
 }) => {
   return (
     <div
@@ -35,7 +36,9 @@ const ScanNetwork: React.FC<ScanNetworkProps> = ({
           </p>
 
           <button
-            onClick={onCreate}
+            onClick={() => {
+              startScan(); // Updated here to use startScan
+            }}
             className="w-full bg-primary500 text-white py-2 rounded-lg font-semibold hover:bg-blue-600"
           >
             Scan

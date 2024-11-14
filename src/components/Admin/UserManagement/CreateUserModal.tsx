@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import fileUploadIcon from "../../../assets/svgs/file-upload.svg";
 import UploadSuccessful from "./UploadSuccessful";
+import NewUserAdded from "./NewUserAdded";
 
 interface Permission {
   id: string;
@@ -222,7 +223,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({ onClose }) => {
             )}
           </>
         ) : (
-          <UploadSuccessful />
+          <NewUserAdded />
         )}
 
         <button

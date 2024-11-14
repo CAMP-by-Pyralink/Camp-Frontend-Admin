@@ -304,22 +304,40 @@ const SideNav = () => {
   //   console.log(hex);
   // }
 
-  function adjustColor(hex: any, amount: any) {
+  // function adjustColor(hex: any, amount: any) {
+  //   let r = parseInt(hex.slice(1, 3), 16);
+  //   let g = parseInt(hex.slice(3, 5), 16);
+  //   let b = parseInt(hex.slice(5, 7), 16);
+
+  //   r = Math.min(255, Math.max(0, r + amount));
+  //   g = Math.min(255, Math.max(0, g + amount));
+  //   b = Math.min(255, Math.max(0, b + amount));
+
+  //   return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+  // }
+
+  // const darkerThemeColor = adjustColor(themeColor, 21);
+  // console.log(themeColor);
+  // console.log(darkerThemeColor);
+  // console.log(hex);
+  function adjustColor(hex: string, amount: number) {
     let r = parseInt(hex.slice(1, 3), 16);
     let g = parseInt(hex.slice(3, 5), 16);
     let b = parseInt(hex.slice(5, 7), 16);
 
-    r = Math.min(255, Math.max(0, r + amount));
-    g = Math.min(255, Math.max(0, g + amount));
-    b = Math.min(255, Math.max(0, b + amount));
+    // Adjust the color by moving towards 255 to make it lighter
+    r = Math.min(250, r + amount);
+    g = Math.min(220, g + amount);
+    b = Math.min(155, b + amount);
 
     return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
   }
 
-  const darkerThemeColor = adjustColor(themeColor, 21);
-  console.log(themeColor);
-  console.log(darkerThemeColor);
-  // console.log(hex);
+  // Usage example
+  // const themeColor = "#3498db"; // Original color
+  const darkerThemeColor = adjustColor(themeColor, 21); // Amount to make it lighter
+  console.log(themeColor); // Original color
+  // console.log(lighterThemeColor); // Lighter color
 
   return (
     <div
@@ -329,7 +347,7 @@ const SideNav = () => {
       style={{ background: themeColor }}
     >
       {/* Logo */}
-      <div className=" flex items-center justify-center">
+      <div className=" flex items-center justify-center mb-8">
         <div
           className={`flex relative items-center ${
             isCollapsed ? "gap-0" : "gap-8"
@@ -414,6 +432,7 @@ const SideNav = () => {
                     </h1>
                     {navMenu.subMenu && (
                       <img
+                        className=" mr-6"
                         src={
                           navMenu.name === "User Management"
                             ? isUserManagementOpen
@@ -424,7 +443,7 @@ const SideNav = () => {
                             : downArrowIcon
                         }
                         alt="Arrow Icon"
-                        width={12}
+                        width={20}
                       />
                     )}
                   </div>
