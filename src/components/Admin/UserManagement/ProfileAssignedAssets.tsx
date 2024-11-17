@@ -1,6 +1,5 @@
 import Table from "../../../shared/Table";
 
-// Define the structure of each row in the data (optional, helps with TypeScript)
 interface Asset {
   id: string;
   name: string;
@@ -9,7 +8,6 @@ interface Asset {
   antivirusStatus: string;
 }
 
-// Sample data for assets
 const assetData: Asset[] = [
   {
     id: "PY-MF-2031",
@@ -41,7 +39,6 @@ const assetData: Asset[] = [
   },
 ];
 
-// Define the columns with keys and headers, optionally with custom rendering
 const assetColumns = [
   { key: "id", header: "Asset ID" },
   { key: "name", header: "Asset Name" },
@@ -90,27 +87,6 @@ const ProfileAssignedAssets = () => {
         columns={assetColumns}
         // headerBgColor="bg-blue-500"
       />
-
-      {/* <table className="w-full table-auto">
-        <thead>
-          <tr>
-            <th className="text-left py-2">Asset ID</th>
-            <th className="text-left py-2">Asset Name</th>
-            <th className="text-left py-2">Category</th>
-            <th className="text-left py-2">Status</th>
-            <th className="text-left py-2">Antivirus Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td className="py-2">PY-MF-2031</td>
-            <td className="py-2">Laptop</td>
-            <td className="py-2">Hardware</td>
-            <td className="py-2 text-green-500">Active</td>
-            <td className="py-2 text-green-500">Up-to-date</td>
-          </tr>
-        </tbody>
-      </table> */}
     </>
   );
 };

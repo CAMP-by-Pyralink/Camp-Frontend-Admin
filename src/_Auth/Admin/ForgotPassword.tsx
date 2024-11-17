@@ -18,7 +18,6 @@ const ForgotPassword = () => {
       alert("Passwords do not match");
       return;
     }
-    // Submit new password logic
     console.log("New password:", formData.newPassword);
   };
 
@@ -34,7 +33,7 @@ const ForgotPassword = () => {
           />
         </div> */}
 
-        {/* Right side with form */}
+        {/* Right side */}
         <div className="w-full pl-6">
           <h2 className="text-3xl text-[#1E293B] font-medium  mb-4">
             Reset Password

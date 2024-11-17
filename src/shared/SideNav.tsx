@@ -219,6 +219,7 @@
 // };
 
 // export default SideNav;
+
 import { useState } from "react";
 import navIcon from "../assets/svgs/navicon.svg";
 import navCloseIcon from "../assets/svgs/navclose.svg";
@@ -234,10 +235,9 @@ import userIcon from "../assets/svgs/usericon.svg";
 import signoutIcon from "../assets/svgs/signout.svg";
 import onlineStatus from "../assets/svgs/onlinestatus.svg";
 import profilePic from "../assets/profilepic.png";
-import upArrowIcon from "../assets/svgs/downarrgrey.svg";
-import downArrowIcon from "../assets/svgs/downarrgrey.svg";
 import { Link } from "react-router-dom";
 import { useCustomization } from "../contexts/CustomizationContext";
+import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 
 const SideNav = () => {
   const [activeMenu, setActiveMenu] = useState("Overview");
@@ -431,20 +431,19 @@ const SideNav = () => {
                       {navMenu.name}
                     </h1>
                     {navMenu.subMenu && (
-                      <img
-                        className=" mr-6"
-                        src={
-                          navMenu.name === "User Management"
-                            ? isUserManagementOpen
-                              ? upArrowIcon
-                              : downArrowIcon
-                            : isPhishingOpen
-                            ? upArrowIcon
-                            : downArrowIcon
-                        }
-                        alt="Arrow Icon"
-                        width={20}
-                      />
+                      <div className="mr-6">
+                        {navMenu.name === "User Management" ? (
+                          isUserManagementOpen ? (
+                            <FaChevronUp />
+                          ) : (
+                            <FaChevronDown />
+                          )
+                        ) : isPhishingOpen ? (
+                          <FaChevronUp />
+                        ) : (
+                          <FaChevronDown />
+                        )}
+                      </div>
                     )}
                   </div>
                 )}

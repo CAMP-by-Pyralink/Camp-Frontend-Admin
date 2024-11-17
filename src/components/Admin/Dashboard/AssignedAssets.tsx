@@ -26,7 +26,7 @@ const AssignedAssets = () => {
           { name: "Hardware", value: 3000 },
         ];
 
-  // Define custom colors for the pie slices
+  // colors for the pie slices
   const COLORS = ["#B794EC", "#5F22C1"];
 
   return (
@@ -98,7 +98,6 @@ const AssignedAssets = () => {
         </div>
       </div>
 
-      {/* Render the details manually below the Pie Chart with color indicators */}
       <div style={{ marginTop: "20px", display: "flex", gap: "1rem" }}>
         {pieData.map((item, index) => (
           <div key={index} className="flex items-center gap-2">

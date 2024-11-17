@@ -3,7 +3,7 @@ import React from "react";
 interface ColumnConfig<T> {
   key: keyof T;
   header: string;
-  render?: (value: T[keyof T]) => React.ReactNode; // Specify value type based on the data
+  render?: (value: T[keyof T]) => React.ReactNode;
 }
 
 interface TableProps<T> {
@@ -11,7 +11,7 @@ interface TableProps<T> {
   columns: ColumnConfig<T>[];
   headerBgColor?: string;
   sectionName: string;
-  onRowClick?: (row: T) => void; // Add optional row click handler
+  onRowClick?: (row: T) => void;
 }
 
 const Table = <T,>({
@@ -19,7 +19,7 @@ const Table = <T,>({
   columns,
   headerBgColor = "bg-[#00000]",
   sectionName,
-  onRowClick, // Destructure the click handler
+  onRowClick,
 }: TableProps<T>) => {
   return (
     <div className="overflow-x-auto bg-white shadow-[5px_5px_40px_rgba(107,151,255,0.3)] rounded-lg mb-6">

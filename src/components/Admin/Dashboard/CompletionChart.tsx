@@ -9,7 +9,6 @@ const CompletionChart = () => {
     { name: "MANAGT.", value: 48.8 },
   ];
 
-  // Define custom colors for the pie slices
   const COLORS = ["#5358FF", "#1790E7", "#7E81FF", "#5F22C1"];
 
   const renderCustomLabel = ({
@@ -58,9 +57,9 @@ const CompletionChart = () => {
               cx="50%" // Center X
               cy="50%" // Center Y
               outerRadius={100}
-              innerRadius={45} // for donut style
+              innerRadius={45}
               fill="#8884d8"
-              label={renderCustomLabel} // Custom label rendering function
+              label={renderCustomLabel}
               labelLine={false}
             >
               {pieData.map((_, index) => (

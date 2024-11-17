@@ -76,10 +76,10 @@ const assignedColumns = [
 ];
 
 const CampaignsTable = () => {
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   const handleRowClick = (row: AssignedTraining) => {
-    console.log(`Row clicked with id: ${row.id}`); // Debugging log
+    console.log(`Row clicked with id: ${row.id}`);
     console.log("Navigating with state:", {
       templateName: row.templateName,
       campaignName: row.campaignName,

@@ -75,7 +75,11 @@ const risks: Risks[] = [
 
 const RiskList = () => {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+
   const navigate = useNavigate();
+  const handleButtonClick = (userId: string) => {
+    setSelectedUserId((prevUserId) => (prevUserId === userId ? null : userId));
+  };
 
   const handleViewClick = (risk: Risks) => {
     navigate(`/risk-detail/${risk.id}`, { state: { selectedRisk: risk } });
@@ -128,10 +132,7 @@ const RiskList = () => {
           </thead>
           <tbody className="bg-white">
             {risks.map((risk) => (
-              <tr
-                key={risk.id}
-                className="text-[#101928] text-xs hover:bg-gray-50 relative"
-              >
+              <tr key={risk.id} className="text-[#101928] text-xs relative">
                 <td className="p-2 border-b border-gray-200">
                   <input type="checkbox" />
                 </td>
@@ -192,13 +193,15 @@ const RiskList = () => {
                 <td className="p-2 border-b border-gray-200">
                   {risk.reviewDate}
                 </td>
-                <td className="p-2 border-b border-gray-200">{risk.note}</td>
+                <td className="p-2 border-b max-w-[120px] border-gray-200">
+                  {risk.note}
+                </td>
 
                 <td className="p-2 border-b border-gray-200 text-center relative">
                   <div
                     className=" cursor-pointer flex items-center justify-center border border-[#E4E7EC] rounded-lg w-8 h-8"
-                    // onClick={() => handleButtonClick(risk.riskId)}
-                    onClick={() => handleViewClick(risk)}
+                    onClick={() => handleButtonClick(risk.riskId)}
+                    // onClick={() => handleViewClick(risk)}
                   >
                     ⋮
                   </div>
@@ -206,11 +209,14 @@ const RiskList = () => {
                   {selectedUserId === risk.riskId && (
                     <div className="absolute left-0 mt-2 w-[89px]  bg-white border border-[#C7C7CC] rounded-md  shadow-[5px_5px_40px_rgba(107,151,255,0.3)] z-10">
                       <ul className="text-left">
-                        <Link to={`/risk-detail/${risk.id}`}>
-                          <li className="px-4 py-2 text-[#333333] hover:bg-blue50 cursor-pointer">
-                            View
-                          </li>
-                        </Link>
+                        {/* <Link to={`/risk-detail/${risk.id}`}> */}
+                        <li
+                          className="px-4 py-2 text-[#333333] hover:bg-blue50 cursor-pointer"
+                          onClick={() => handleViewClick(risk)}
+                        >
+                          View
+                        </li>
+                        {/* </Link> */}
                         <hr />
                         <li className="px-4 py-2 text-[#333333] hover:bg-blue50 cursor-pointer">
                           Edit
