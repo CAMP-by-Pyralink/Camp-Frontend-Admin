@@ -87,10 +87,10 @@ body {
   border-radius: 6px;
   border: 1px solid #0000000a;
 }
-/* .sidecustom-scrollbar:hover::-webkit-scrollbar-thumb,
+.sidecustom-scrollbar:hover::-webkit-scrollbar-thumb,
 .sidecustom-scrollbar:active::-webkit-scrollbar-thumb,
 .sidecustom-scrollbar:focus::-webkit-scrollbar-thumb {
   background-color: blue;
   border-radius: 6px;
   border: 1px solid #0000000a;
-} */
+}

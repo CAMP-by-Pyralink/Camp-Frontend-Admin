@@ -1,7 +1,13 @@
 import successIcon from "../../../assets/svgs/successIcon.svg";
 // import closeIcon from "../../../assets/svgs/close.svg";
-
-const UploadSuccessful = ({ handleCloseModal, onClose }) => {
+interface UploadSuccessfulProps {
+  handleCloseModal: () => void;
+  onClose: () => void;
+}
+const UploadSuccessful: React.FC<UploadSuccessfulProps> = ({
+  // handleCloseModal,
+  onClose,
+}) => {
   return (
     <div className="   ">
       <div className=" relative p-6 w-[532px] rounded-lg  text-center">

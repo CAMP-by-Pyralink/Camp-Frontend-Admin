@@ -20,7 +20,7 @@ const CustomizationSetting: React.FC<CustomizationSettingProps> = ({
   const [value, setValue] = useState<number>(30);
   const [selectedColor, setSelectedColor] = useState("Default");
   const [isOpen, setIsOpen] = useState(false); // State for dropdown visibility
-  const inputRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   const {
     logo,
@@ -59,7 +59,7 @@ const CustomizationSetting: React.FC<CustomizationSettingProps> = ({
     setThemeColor(newHex); // Set the new theme color
   };
 
-  const handleFontChange = (selectedFont) => {
+  const handleFontChange = (selectedFont: string) => {
     setFont(selectedFont);
     setIsOpen(false); // Close dropdown after selection
     // Update placeholder text to selected font name

@@ -7,7 +7,7 @@ const NotificationPreference = () => {
     sms: false,
   });
 
-  const handleToggle = (type) => {
+  const handleToggle = (type: keyof typeof preferences) => {
     setPreferences((prev) => ({
       ...prev,
       [type]: !prev[type],
@@ -21,14 +21,16 @@ const NotificationPreference = () => {
           <div key={type} className="flex justify-between items-center">
             <h1 className="text-[#747171] capitalize">{type}</h1>
             <div
-              onClick={() => handleToggle(type)}
+              onClick={() => handleToggle(type as keyof typeof preferences)}
               className={`relative inline-flex items-center h-6 rounded-full w-12 cursor-pointer ${
-                preferences[type] ? "bg-primary900" : "bg-[#E4E8F1]"
+                preferences[type as keyof typeof preferences]
+                  ? "bg-primary900"
+                  : "bg-[#E4E8F1]"
               }`}
             >
               <span
                 className={`absolute left-1 w-4 h-4 rounded-full transition-transform duration-200 ease-in-out ${
-                  preferences[type]
+                  preferences[type as keyof typeof preferences]
                     ? "transform translate-x-6 bg-white"
                     : "bg-white"
                 }`}

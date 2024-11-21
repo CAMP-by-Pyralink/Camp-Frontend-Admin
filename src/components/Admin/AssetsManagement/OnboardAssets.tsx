@@ -2,11 +2,11 @@ import React, { Dispatch, SetStateAction, useState } from "react";
 import { ChevronDown, X } from "lucide-react";
 import lockIcon from "../../../assets/svgs/lock-icon.svg";
 
-interface RiskRegisterFormProps {
+interface OnboardAssetsProps {
   onClose?: () => void;
   onSubmit?: (formData: FormData) => void;
-  //   setRiskRegisterModal: () => void;
-  setRiskRegisterModal: Dispatch<SetStateAction<boolean>>;
+  onClick: () => void;
+  //   setRiskRegisterModal: Dispatch<SetStateAction<boolean>>;
 }
 
 interface FormData {
@@ -23,15 +23,16 @@ interface FormData {
   note: string;
 }
 
-const RiskRegisterForm: React.FC<RiskRegisterFormProps> = ({
+const OnboardAssets: React.FC<OnboardAssetsProps> = ({
   //   onClose,
   onSubmit,
-  setRiskRegisterModal,
+  //   setRiskRegisterModal,
+  onClick,
 }) => {
   const [active, setActive] = useState("manual");
 
   const [formData, setFormData] = useState<FormData>({
-    riskId: "PY 32345",
+    riskId: "AS 32345",
     riskName: "",
     category: "",
     status: "Active",
@@ -54,7 +55,8 @@ const RiskRegisterForm: React.FC<RiskRegisterFormProps> = ({
       <div className="flex justify-between items-center mb-4 py-4 px-12 bg-[#DEEFFC]">
         <h2 className="text-2xl  text-textColor">Risk register</h2>
         <button
-          onClick={() => setRiskRegisterModal(false)}
+          //   onClick={() => setRiskRegisterModal(false)}
+          onClick={onClick}
           className="text-gray-500 hover:text-textColor"
         >
           <X size={20} />
@@ -66,7 +68,7 @@ const RiskRegisterForm: React.FC<RiskRegisterFormProps> = ({
           {/* Risk ID */}
           <div className="relative">
             <label className="block text-sm font-medium text-textColor ">
-              Risk ID
+              Asset ID
             </label>
             <div className="relative">
               <input
@@ -83,36 +85,10 @@ const RiskRegisterForm: React.FC<RiskRegisterFormProps> = ({
             </div>
           </div>
 
-          {/* Mitigation Strategy */}
-
-          {/* slider */}
-          <div className="flex items-center justify-between bg-blue50 p-1 rounded-md w-full">
-            <button
-              className={`px-6 py-3 rounded-md w-[50%] ${
-                active === "manual"
-                  ? "bg-primary500 text-white shadow-lg"
-                  : "bg-transparent text-black"
-              } transition duration-300`}
-              onClick={() => setActive("manual")}
-            >
-              Manual
-            </button>
-            <button
-              className={`px-6 py-3 rounded-md w-[50%] ${
-                active === "ai"
-                  ? "bg-primary500 text-white shadow-lg"
-                  : "bg-transparent text-black"
-              } transition duration-300`}
-              onClick={() => setActive("ai")}
-            >
-              Generate with AI
-            </button>
-          </div>
-
           {/* Risk Name */}
           <div>
             <label className="block text-sm font-medium text-textColor ">
-              Risk name
+              Purchase date
             </label>
             <input
               type="text"
@@ -123,18 +99,26 @@ const RiskRegisterForm: React.FC<RiskRegisterFormProps> = ({
               className=" w-[444px] p-2 border rounded-md"
             />
           </div>
-          {/* AI box */}
-          <input
-            type="text"
-            className={` w-[444px] p-2 border rounded-md ${
-              active === "manual" ? "bg-transparent" : "bg-[#F0F2F5]"
-            }`}
-          />
+
+          {/* Risk Description */}
+          <div>
+            <label className="block text-sm font-medium text-textColor ">
+              Asset name
+            </label>
+            <input
+              type="text"
+              value={formData.description}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
+              className=" w-[444px] p-2 border rounded-md"
+            />
+          </div>
 
           {/* Category */}
           <div>
             <label className="block text-sm font-medium text-textColor ">
-              Select category
+              Select Department (optional)
             </label>
             <div className="relative">
               <select
@@ -154,25 +138,10 @@ const RiskRegisterForm: React.FC<RiskRegisterFormProps> = ({
             </div>
           </div>
 
-          {/* Risk Description */}
-          <div>
-            <label className="block text-sm font-medium text-textColor ">
-              Risk description
-            </label>
-            <input
-              type="text"
-              value={formData.description}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
-              className=" w-[444px] p-2 border rounded-md"
-            />
-          </div>
-
           {/* Risk Status */}
           <div>
             <label className="block text-sm font-medium text-textColor ">
-              Risk status
+              Select category
             </label>
             <div className="relative">
               <select
@@ -196,7 +165,7 @@ const RiskRegisterForm: React.FC<RiskRegisterFormProps> = ({
           {/* Department */}
           <div>
             <label className="block text-sm font-medium text-textColor ">
-              Department
+              Assign asset (optional)
             </label>
             <div className="relative">
               <select
@@ -221,7 +190,7 @@ const RiskRegisterForm: React.FC<RiskRegisterFormProps> = ({
           {/* Risk Probability */}
           <div>
             <label className="block text-sm font-medium text-textColor ">
-              Risk probability
+              Status
             </label>
             <div className="relative">
               <select
@@ -245,7 +214,7 @@ const RiskRegisterForm: React.FC<RiskRegisterFormProps> = ({
           {/* Risk Owner */}
           <div>
             <label className="block text-sm font-medium text-textColor ">
-              Risk owner
+              Antivirus Status
             </label>
             <div className="relative">
               <input
@@ -266,7 +235,7 @@ const RiskRegisterForm: React.FC<RiskRegisterFormProps> = ({
           {/* Risk Impact */}
           <div>
             <label className="block text-sm font-medium text-textColor ">
-              Risk impact
+              Subscription renewal
             </label>
             <div className="relative">
               <select
@@ -286,21 +255,6 @@ const RiskRegisterForm: React.FC<RiskRegisterFormProps> = ({
               />
             </div>
           </div>
-
-          {/* Note */}
-          <div>
-            <label className="block text-sm font-medium text-textColor ">
-              Note
-            </label>
-            <input
-              type="text"
-              value={formData.note}
-              onChange={(e) =>
-                setFormData({ ...formData, note: e.target.value })
-              }
-              className=" w-[444px] p-2 border rounded-md"
-            />
-          </div>
         </div>
       </form>
 
@@ -309,7 +263,7 @@ const RiskRegisterForm: React.FC<RiskRegisterFormProps> = ({
         <button
           type="submit"
           className=" w-[302px] bg-primary500 text-white py-2 px-4 rounded-md hover:bg-blue-700"
-          onClick={() => setRiskRegisterModal(false)}
+          onClick={onClick}
         >
           Save
         </button>
@@ -318,4 +272,4 @@ const RiskRegisterForm: React.FC<RiskRegisterFormProps> = ({
   );
 };
 
-export default RiskRegisterForm;
+export default OnboardAssets;

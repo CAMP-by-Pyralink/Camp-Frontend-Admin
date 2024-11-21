@@ -476,7 +476,11 @@ const SideNav = () => {
                 <div className="ml-6">
                   {navMenu.subMenu.map((sub, subIndex) => (
                     <Link to={sub.path} key={subIndex}>
-                      <div className="py-2 pl-4 text-sm text-[#C6DDF7]">
+                      <div
+                        className={`py-2 ${
+                          isCollapsed ? "pl-[-10rem]" : "pl-4"
+                        } text-sm text-[#C6DDF7]`}
+                      >
                         {sub.name}
                       </div>
                     </Link>

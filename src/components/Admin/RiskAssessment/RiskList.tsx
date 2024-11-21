@@ -1,6 +1,8 @@
 import { useState } from "react";
 // import Table from "../../../shared/Table";
 import { Link, useNavigate } from "react-router-dom";
+import ModalLayout from "../../../shared/ModalLayout";
+import DeleteModal from "../../../shared/DeleteModal";
 
 interface Risks {
   id: number;
@@ -75,6 +77,7 @@ const risks: Risks[] = [
 
 const RiskList = () => {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [deleteModal, setDeleteModal] = useState(false);
 
   const navigate = useNavigate();
   const handleButtonClick = (userId: string) => {
@@ -87,6 +90,13 @@ const RiskList = () => {
   // const handleButtonClick = (id: string) => {
   //   setSelectedUserId((prevUserId) => (prevUserId === id ? null : id));
   // };
+  const handleBackClick = () => {
+    setDeleteModal(false);
+  };
+  const handleDeleteClick = () => {
+    console.log("clicked");
+    setDeleteModal(false);
+  };
 
   return (
     <div>
@@ -222,7 +232,10 @@ const RiskList = () => {
                           Edit
                         </li>
                         <hr />
-                        <li className="px-4 py-2 text-[#FF0301] hover:bg-blue50 cursor-pointer">
+                        <li
+                          className="px-4 py-2 text-[#FF0301] hover:bg-blue50 cursor-pointer"
+                          onClick={() => setDeleteModal((prev) => !prev)}
+                        >
                           Delete
                         </li>
                       </ul>
@@ -245,6 +258,14 @@ const RiskList = () => {
           </button>
         </div>
       </div>
+      {deleteModal && (
+        <ModalLayout>
+          <DeleteModal
+            backClick={handleBackClick}
+            onDelete={handleDeleteClick}
+          />
+        </ModalLayout>
+      )}
     </div>
   );
 };

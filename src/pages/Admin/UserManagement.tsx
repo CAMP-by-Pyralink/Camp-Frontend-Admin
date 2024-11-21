@@ -14,7 +14,7 @@ import ScanNetwork from "../../shared/ScanNetwork";
 import UserFlow from "../../components/Admin/UserManagement/UserFlow";
 import NetworkScanFlow from "../../components/Admin/UserManagement/NetworkScanFlow";
 
-const UserManagement = ({ label, omClick }) => {
+const UserManagement = ({ label, onClick }) => {
   const { type } = useParams<{ type: string }>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);

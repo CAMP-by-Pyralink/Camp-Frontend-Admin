@@ -1,6 +1,6 @@
 import { useState } from "react";
 import RiskList from "../../components/Admin/RiskAssessment/RiskList";
-import Button from "../../shared/Button";
+import downArr from "../../assets/svgs/import-arr.svg";
 import PagesHomeLayout from "../../shared/PagesHomeLayout";
 import RiskRegisterForm from "../../components/Admin/RiskAssessment/RiskRegisterForm";
 import ModalLayout from "../../shared/ModalLayout";
@@ -9,6 +9,7 @@ import UploadCsvModal from "../../shared/UploadCsvModal";
 const RiskAssessment = () => {
   const [riskRegisterModal, setRiskRegisterModal] = useState<boolean>(false);
   const [importCsv, setImportCsv] = useState(false);
+  const [exportCsv, setExportCsv] = useState(false);
   const handleAdd = () => {
     // console.log("first");
     setRiskRegisterModal(true);
@@ -18,7 +19,8 @@ const RiskAssessment = () => {
   };
 
   const handleExportClick = () => {
-    setImportCsv(true);
+    setImportCsv((prev) => !prev);
+    setExportCsv((prev) => !prev);
   };
   return (
     <div>
@@ -30,7 +32,8 @@ const RiskAssessment = () => {
           <p className=" text-sm">Register and assign risk</p>
         </div>
         <div className=" flex items-center gap-4 ">
-          <button className=" border border-black rounded  py-2 px-4">
+          <button className=" border border-black text-textColor font-medium py-2 px-4 flex items-center gap-1 rounded-lg">
+            <img src={downArr} alt="" />
             Import csv
           </button>
           <button
@@ -47,7 +50,7 @@ const RiskAssessment = () => {
         onFilterClick={handleFilterClick}
         onExportClick={handleExportClick}
         showFilter={true}
-        showExport={false}
+        showExport={true}
       >
         <RiskList />
 
@@ -62,7 +65,12 @@ const RiskAssessment = () => {
       {/*  */}
       {importCsv && (
         <ModalLayout>
-          <UploadCsvModal />
+          <UploadCsvModal onClose={handleExportClick} />
+        </ModalLayout>
+      )}
+      {exportCsv && (
+        <ModalLayout>
+          <UploadCsvModal onClose={handleExportClick} />
         </ModalLayout>
       )}
     </div>
