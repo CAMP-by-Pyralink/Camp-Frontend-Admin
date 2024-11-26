@@ -154,6 +154,7 @@ const TableRow: React.FC<TableRowProps> = ({
         <DropdownMenu
           onView={() => onViewClick(asset)}
           onDelete={onDeleteClick}
+          onClose={() => onMenuClick("")} // Close the dropdown when item is clicked
         />
       )}
     </td>
@@ -163,35 +164,52 @@ const TableRow: React.FC<TableRowProps> = ({
 interface DropdownMenuProps {
   onView: () => void;
   onDelete: () => void;
+  onClose: () => void; // Function to close the dropdown
 }
 
-const DropdownMenu: React.FC<DropdownMenuProps> = ({ onView, onDelete }) => (
+const DropdownMenu: React.FC<DropdownMenuProps> = ({
+  onView,
+  onDelete,
+  onClose,
+}) => (
   <div className="absolute left-0 mt-2 w-[120px] bg-white border border-[#C7C7CC] rounded-md shadow-lg z-10">
     <ul className="text-left">
       <li
         className="px-4 py-2 text-[#333333] hover:bg-blue50 cursor-pointer"
-        onClick={onView}
+        onClick={() => {
+          onView();
+          onClose(); // Close dropdown
+        }}
       >
         View
       </li>
       <hr />
       <li
         className="px-4 py-2 text-[#333333] hover:bg-blue50 cursor-pointer"
-        onClick={onView}
+        onClick={() => {
+          onView();
+          onClose(); // Close dropdown
+        }}
       >
         Print barcode
       </li>
-      <hr />{" "}
+      <hr />
       <li
         className="px-4 py-2 text-[#333333] hover:bg-blue50 cursor-pointer"
-        onClick={onView}
+        onClick={() => {
+          onView();
+          onClose(); // Close dropdown
+        }}
       >
         Edit
       </li>
       <hr />
       <li
         className="px-4 py-2 text-[#FF0301] hover:bg-blue50 cursor-pointer"
-        onClick={onDelete}
+        onClick={() => {
+          onDelete();
+          onClose(); // Close dropdown
+        }}
       >
         Delete
       </li>

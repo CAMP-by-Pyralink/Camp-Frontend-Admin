@@ -4,7 +4,7 @@ import UploadSuccessful from "./UploadSuccessful";
 import Loader from "../../../shared/Loader";
 import SuccessModal from "../../../_Auth/Admin/SucessModal";
 
-const UserFlow = ({ onClose }) => {
+const UserFlow = () => {
   const [flowStage, setFlowStage] = useState("scanNetwork"); // Controls the flow stage
 
   const startScan = () => {

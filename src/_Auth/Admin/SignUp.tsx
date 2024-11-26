@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import googleIcon from "../../assets/svgs/google-icon.svg";
+import miscrosoftIcon from "../../assets/svgs/microsoft-icon.svg";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -101,11 +103,13 @@ const SignUp = () => {
         </form>
         <p className=" text-center my-4">or</p>
         <div className=" flex gap-4">
-          <button className="w-full  border-[1.5px] border-[#D0D5DD] py-3 rounded-lg font-semibold text-[#344054] ">
+          <button className="w-full  border-[1.5px] border-[#D0D5DD] py-2 rounded-lg font-semibold text-[#344054] flex items-center justify-center px-4 ">
+            <img src={googleIcon} alt="" />
             Google
           </button>
-          <button className="w-full  border-[1.5px] border-[#D0D5DD] py-3 rounded-lg font-semibold text-[#344054] ">
-            Google
+          <button className="w-full  border-[1.5px] border-[#D0D5DD] py-2 rounded-lg font-semibold text-[#344054]  flex items-center justify-center px-4 ">
+            <img src={miscrosoftIcon} alt="" />
+            Microsoft
           </button>
         </div>
       </div>

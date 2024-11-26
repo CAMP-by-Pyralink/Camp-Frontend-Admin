@@ -94,3 +94,19 @@ body {
   border-radius: 6px;
   border: 1px solid #0000000a;
 }
+/* Base line for all tabs (parent div uses this by default) */
+.line-active::after,
+.text-gray-500::after {
+  content: "";
+  position: absolute;
+  bottom: 0; /* Aligns with the parent line */
+  left: 0;
+  width: 100%; /* Fills the button width */
+  height: 4px;
+  background-color: gray; /* Default line color */
+}
+
+/* Active tab styling */
+.line-active::after {
+  background-color: #282eff; /* Blue for active tab */
+}

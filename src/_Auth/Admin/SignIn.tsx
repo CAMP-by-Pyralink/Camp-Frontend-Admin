@@ -73,18 +73,9 @@ const SignIn = () => {
             type="submit"
             className="w-full bg-primary500 text-white py-3 rounded-lg font-bold"
           >
-            Sign Up
+            Sign In
           </button>
         </form>
-        <p className=" text-center my-4">or</p>
-        <div className=" flex gap-4">
-          <button className="w-full  border-[1.5px] border-[#D0D5DD] py-3 rounded-lg font-semibold text-[#344054] ">
-            Google
-          </button>
-          <button className="w-full  border-[1.5px] border-[#D0D5DD] py-3 rounded-lg font-semibold text-[#344054] ">
-            Google
-          </button>
-        </div>
       </div>
     </div>
   );

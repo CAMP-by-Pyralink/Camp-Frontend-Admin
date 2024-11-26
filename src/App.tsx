@@ -18,6 +18,8 @@ import PhishingDetails from "./components/Admin/PhishingStimulation/Templates/Ph
 import CampaignDetails from "./components/Admin/PhishingStimulation/Campaigns/CampaignDetails";
 import RiskDetails from "./components/Admin/RiskAssessment/RiskDetails";
 import AssetsDetails from "./components/Admin/AssetsManagement/AssetsDetails";
+import ScanDetails from "./components/Deep-Web-Moniroting/ScanDetails";
+import ScanResult from "./components/Deep-Web-Moniroting/ScanResult";
 const Overview = lazy(() => import("./pages/Admin/Overview"));
 const UserManagement = lazy(() => import("./pages/Admin/UserManagement"));
 // const User = lazy(() => import("./pages/Admin/UserManagement/User"));
@@ -92,6 +94,8 @@ function App() {
             <Route path="risk-assessment" element={<RiskAssessment />} />
             <Route path="/risk-detail/:id" element={<RiskDetails />} />
             <Route path="deep-web-monitoring" element={<DeepWebMonitoring />} />
+            {/* <Route path="/scan-details" element={<ScanDetails />} /> */}
+            <Route path="/scan-details" element={<ScanResult />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/alerts" element={<Alerts />} />
           </Route>

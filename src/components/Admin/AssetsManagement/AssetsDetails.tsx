@@ -20,7 +20,10 @@ const AssetsDetails = () => {
           Dashboard
         </Link>
         <p className=" text-[#98A2B3] font-medium h-5">/</p>
-        <Link to={"/assets"} className="text-sm font-medium text-[#282EFF]">
+        <Link
+          to={"/asset-management"}
+          className="text-sm font-medium text-[#282EFF]"
+        >
           Assets
         </Link>
         <p className=" text-[#98A2B3] font-medium h-5">/</p>
