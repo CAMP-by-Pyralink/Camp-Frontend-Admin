@@ -84,29 +84,33 @@ const RiskRegisterForm: React.FC<RiskRegisterFormProps> = ({
           </div>
 
           {/* Mitigation Strategy */}
-
-          {/* slider */}
-          <div className="flex items-center justify-between bg-blue50 p-1 rounded-md w-full">
-            <button
-              className={`px-6 py-3 rounded-md w-[50%] ${
-                active === "manual"
-                  ? "bg-primary500 text-white shadow-lg"
-                  : "bg-transparent text-black"
-              } transition duration-300`}
-              onClick={() => setActive("manual")}
-            >
-              Manual
-            </button>
-            <button
-              className={`px-6 py-3 rounded-md w-[50%] ${
-                active === "ai"
-                  ? "bg-primary500 text-white shadow-lg"
-                  : "bg-transparent text-black"
-              } transition duration-300`}
-              onClick={() => setActive("ai")}
-            >
-              Generate with AI
-            </button>
+          <div>
+            <label className="block text-sm font-medium text-textColor ">
+              Mitigation Strategy
+            </label>
+            {/* slider */}
+            <div className="flex items-center justify-between bg-blue50 p-1 rounded-md w-full">
+              <button
+                className={`px-6 py-3 rounded-md w-[50%] ${
+                  active === "manual"
+                    ? "bg-primary500 text-white shadow-lg"
+                    : "bg-transparent text-black"
+                } transition duration-300`}
+                onClick={() => setActive("manual")}
+              >
+                Manual
+              </button>
+              <button
+                className={`px-6 py-3 rounded-md w-[50%] ${
+                  active === "ai"
+                    ? "bg-primary500 text-white shadow-lg"
+                    : "bg-transparent text-black"
+                } transition duration-300`}
+                onClick={() => setActive("ai")}
+              >
+                Generate with AI
+              </button>
+            </div>
           </div>
 
           {/* Risk Name */}
@@ -126,6 +130,7 @@ const RiskRegisterForm: React.FC<RiskRegisterFormProps> = ({
           {/* AI box */}
           <input
             type="text"
+            disabled={active !== "manual"}
             className={` w-[444px] p-2 border rounded-md ${
               active === "manual" ? "bg-transparent" : "bg-[#F0F2F5]"
             }`}

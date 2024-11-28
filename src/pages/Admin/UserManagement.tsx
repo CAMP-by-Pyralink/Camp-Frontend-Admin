@@ -43,7 +43,7 @@ const UserManagement = ({ label, onClick }) => {
   return (
     <div>
       {activeUser ? (
-        <div className=" bg-red-500 flex justify-center items-center h-screen">
+        <div className="flex justify-center items-center h-screen">
           <div className="flex flex-col items-center gap-4">
             <img
               src={addUsersIcon}

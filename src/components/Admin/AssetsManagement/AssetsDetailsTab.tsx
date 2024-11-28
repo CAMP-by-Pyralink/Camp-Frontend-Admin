@@ -75,77 +75,75 @@ const AssetsDetailsTab = () => {
           {activeTab === "4" && <Logs />}
         </div>
       </div>
+      {/* tech spec */}
+      <div id="specification" className="mt-10">
+        <div className="bg-[#DEEFFC33] p-[10px]">
+          <h1 className="text-sm font-medium text-[#333333]">
+            Tech Specifications
+          </h1>
+        </div>
+        <div className="border">
+          {/* processor */}
+          <div className="flex flex border-b">
+            <div className="w-[235px] py-[16px] px-[10px]">
+              <p className="text-[#333333] font-medium">Processor</p>
+            </div>
+            <div className="w-full border-l py-[16px] px-[10px]">
+              <p className="text-[#5a5555] text-sm">
+                Intel® Core™ Ultra 7 155H (24 MB cache, 16 cores, up to 4.80 GHz
+                Turbo)
+              </p>
+            </div>
+          </div>
+
+          {/* graphics */}
+          <div className="flex border-b">
+            <div className="w-[235px] py-[16px] px-[10px]">
+              <p className="text-[#333333] font-medium">Graphics</p>
+            </div>
+            <div className="w-full border-l py-[16px] px-[10px]">
+              <p className="text-[#5a5555] text-sm">Intel® Arc™ Graphics</p>
+            </div>
+          </div>
+          {/* display */}
+          <div className="flex flex border-b">
+            <div className="w-[235px] py-[16px] px-[10px]">
+              <p className="text-[#333333] font-medium">Display</p>
+            </div>
+            <div className="w-full border-l py-[16px] px-[10px]">
+              <p className="text-[#5a5555] text-sm">
+                13.4", Non-Touch, FHD+ 1920x1200, 30-120Hz, Anti-Glare, 500 nit,
+                InfinityEdge, Eyesafe®
+              </p>
+            </div>
+          </div>
+          {/* memory */}
+          <div className="flex flex border-b">
+            <div className="w-[235px] py-[16px] px-[10px]">
+              <p className="text-[#333333] font-medium">Memory</p>
+            </div>
+            <div className="w-full border-l py-[16px] px-[10px]">
+              <p className="text-[#5a5555] text-sm">
+                8GB, LPDDR5, 6400MT/s, integrated, dual channel
+              </p>
+            </div>
+          </div>
+
+          {/* storage */}
+          <div className="flex flex border-b">
+            <div className="w-[235px] py-[16px] px-[10px]">
+              <p className="text-[#333333] font-medium">Storage</p>
+            </div>
+            <div className="w-full border-l py-[16px] px-[10px]">
+              <p className="text-[#5a5555] text-sm">
+                8GB, LPDDR5, 6400MT/s, integrated, dual channel
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
 
 export default AssetsDetailsTab;
-//    {
-//      /* tech spec */
-//    }
-//    <div id="specification" className="mt-10">
-//      <div className="bg-[#DEEFFC33] p-[10px]">
-//        <h1 className="text-sm font-medium text-[#333333]">
-//          Tech Specifications
-//        </h1>
-//      </div>
-//      <div className="border">
-//        {/* processor */}
-//        <div className="flex">
-//          <div className="w-[235px] py-[16px] px-[10px]">
-//            <p className="text-[#333333] font-medium">Processor</p>
-//          </div>
-//          <div className="w-full border-l py-[16px] px-[10px]">
-//            <p className="text-[#5a5555] text-sm">
-//              Intel® Core™ Ultra 7 155H (24 MB cache, 16 cores, up to 4.80 GHz
-//              Turbo)
-//            </p>
-//          </div>
-//        </div>
-
-//        {/* graphics */}
-//        <div className="flex">
-//          <div className="w-[235px] py-[16px] px-[10px]">
-//            <p className="text-[#333333] font-medium">Graphics</p>
-//          </div>
-//          <div className="w-full border-l py-[16px] px-[10px]">
-//            <p className="text-[#5a5555] text-sm">Intel® Arc™ Graphics</p>
-//          </div>
-//        </div>
-//        {/* display */}
-//        <div className="flex">
-//          <div className="w-[235px] py-[16px] px-[10px]">
-//            <p className="text-[#333333] font-medium">Display</p>
-//          </div>
-//          <div className="w-full border-l py-[16px] px-[10px]">
-//            <p className="text-[#5a5555] text-sm">
-//              13.4", Non-Touch, FHD+ 1920x1200, 30-120Hz, Anti-Glare, 500 nit,
-//              InfinityEdge, Eyesafe®
-//            </p>
-//          </div>
-//        </div>
-//        {/* memory */}
-//        <div className="flex">
-//          <div className="w-[235px] py-[16px] px-[10px]">
-//            <p className="text-[#333333] font-medium">Memory</p>
-//          </div>
-//          <div className="w-full border-l py-[16px] px-[10px]">
-//            <p className="text-[#5a5555] text-sm">
-//              8GB, LPDDR5, 6400MT/s, integrated, dual channel
-//            </p>
-//          </div>
-//        </div>
-
-//        {/* storage */}
-//        <div className="flex">
-//          <div className="w-[235px] py-[16px] px-[10px]">
-//            <p className="text-[#333333] font-medium">Storage</p>
-//          </div>
-//          <div className="w-full border-l py-[16px] px-[10px]">
-//            <p className="text-[#5a5555] text-sm">
-//              8GB, LPDDR5, 6400MT/s, integrated, dual channel
-//            </p>
-//          </div>
-//        </div>
-//      </div>
-//    </div>;

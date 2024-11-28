@@ -18,14 +18,14 @@ const PagesHomeLayout: React.FC<PagesHomeLayoutProps> = ({
   children,
 }) => {
   return (
-    <div className="bg-blue50 p-8 rounded-md">
+    <div className="bg-blue50 p-8 rounded-md min-h-[80vh]">
       <div className="bg-white rounded-md w-full py-[10px] px-[20px] relative">
         <div className="flex items-center justify-between">
           <div className="relative w-full max-w-xs">
             <input
               type="text"
               placeholder="Search"
-              className="border-b-[0.5px] border-black rounded-lg px-12 py-2 w-full"
+              className="border-b-[0.5px] border-black outline-none px-12 py-2 w-full"
             />
             <img
               src={searchIcon}

@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import closeIcon from "../../../../assets/svgs/closeicongrey.svg";
 import { useParams } from "react-router-dom";
 // import { DateRange } from "react-date-range";
+import { DayPicker } from "react-day-picker";
+import "react-day-picker/style.css";
 import "react-date-range/dist/styles.css"; // Main style file
 import "react-date-range/dist/theme/default.css"; // Theme CSS file
 import departmentIcon from "../../../../assets/svgs/department.svg";
@@ -99,6 +101,13 @@ const PhishingDetails: React.FC = () => {
               </div>
 
               {/* Simulation Duration with Date Picker */}
+              <div className=" mt-8">
+                <DayPicker
+                  mode="range"
+                  numberOfMonths={3} // Display three months
+                  pagedNavigation // Ensures months are displayed in sequence
+                />
+              </div>
               {/* <div className="mt-4">
                 <label className="block text-gray-600 text-sm font-medium mb-1">
                   Select simulation duration

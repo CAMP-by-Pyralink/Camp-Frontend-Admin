@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import addIcon from "../../assets/svgs/add-halfcircle-icon.svg";
+import addIcon from "../../../assets/svgs/add-halfcircle-icon.svg";
 
 const CompanyProfileTab: React.FC = () => {
   const [companyName, setCompanyName] = useState("Camp by Pyralink");

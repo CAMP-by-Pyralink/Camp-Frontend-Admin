@@ -110,3 +110,121 @@ body {
 .line-active::after {
   background-color: #282eff; /* Blue for active tab */
 }
+/* Toolbar container styling */
+/*
+.ql-toolbar {
+  background-color: #f9f9f9; 
+  border: 1px solid #ddd; 
+  border-radius: 8px; 
+  padding: 10px; 
+  margin-bottom: 10px;
+}
+*/
+
+/* Toolbar buttons */
+/* .ql-toolbar .ql-header, */
+/* .ql-toolbar .ql-bold,
+.ql-toolbar .ql-italic,
+.ql-toolbar .ql-underline,
+.ql-toolbar .ql-strike,
+.ql-toolbar .ql-blockquote,
+.ql-toolbar .ql-list,
+.ql-toolbar .ql-link, */
+/* .ql-toolbar .ql-image, */
+/* .ql-toolbar .ql-clean {
+  background-color: #e6f7ff;
+  color: #007acc;
+  border: 2px solid gray;
+  border-radius: 5px;
+  padding: 5px 10px;
+  margin: 0 2px;
+  cursor: pointer;
+} */
+
+/* Toolbar buttons hover effect */
+/* .ql-toolbar .ql-header:hover,
+.ql-toolbar .ql-bold:hover,
+.ql-toolbar .ql-italic:hover,
+.ql-toolbar .ql-underline:hover,
+.ql-toolbar .ql-strike:hover,
+.ql-toolbar .ql-blockquote:hover,
+.ql-toolbar .ql-list:hover,
+.ql-toolbar .ql-link:hover,
+.ql-toolbar .ql-image:hover,
+.ql-toolbar .ql-clean:hover {
+  border: 1px solid gray;
+  padding: 4px;
+  border-radius: 10px;
+} */
+
+/* Dropdown styling */
+/* .ql-toolbar .ql-picker {
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  color: #333;
+  padding: 5px;
+} */
+
+/* .ql-toolbar .ql-picker-item:hover {
+  background-color: #007acc;
+  color: white;
+} */
+
+/* Active buttons */
+/* .ql-toolbar .ql-active {
+  background-color: #007acc !important; 
+  color: white !important;
+} */
+.editor-container {
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
+  min-height: 200px; /* Ensure the editor has some visible height */
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+.editor-input {
+  outline: none;
+  min-height: 150px; /* Content editable area should have a height */
+  flex-grow: 1;
+}
+
+.editor-placeholder {
+  color: #aaa;
+  position: absolute;
+  pointer-events: none;
+  user-select: none;
+}
+.toolbar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+  background-color: #f1f1f1;
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+.toolbar button {
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  cursor: pointer;
+  border-radius: 3px;
+  font-size: 14px;
+}
+
+.toolbar button:hover {
+  background-color: #eaeaea;
+}
+
+.toolbar button:active {
+  background-color: #ddd;
+}
+.rdp-months {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Three columns for three months */
+  gap: 1rem;
+}

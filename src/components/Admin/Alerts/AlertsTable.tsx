@@ -234,9 +234,8 @@ const AlertsTable: React.FC = () => {
                   <div className="absolute left-0 mt-2 w-[89px]  bg-white border border-[#C7C7CC] rounded-md p-2  shadow-[5px_5px_40px_rgba(107,151,255,0.3)] z-10">
                     <h1
                       onClick={() => {
-                        {
-                          setDeleteModal((prev) => !prev);
-                        }
+                        setDeleteModal(true); // Open the delete modal when clicked
+                        setSelectedUserId(null); // Hide the delete option
                       }}
                     >
                       Delete

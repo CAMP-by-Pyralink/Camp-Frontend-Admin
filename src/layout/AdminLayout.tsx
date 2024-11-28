@@ -44,9 +44,9 @@ const AdminLayout = () => {
                 <ClipLoader size={50} color="#123abc" />
               </div>
             }
-            delay={1500}
+            delay={100}
           >
-            <div className=" bgred">
+            <div className=" ">
               {/* <div className="bg-white px-8 py-4">
                 <TopSection
                   handleCustomizationClick={handleCustomizationClick}

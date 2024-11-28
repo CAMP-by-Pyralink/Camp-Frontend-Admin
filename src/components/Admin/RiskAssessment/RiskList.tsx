@@ -234,7 +234,10 @@ const RiskList = () => {
                         <hr />
                         <li
                           className="px-4 py-2 text-[#FF0301] hover:bg-blue50 cursor-pointer"
-                          onClick={() => setDeleteModal((prev) => !prev)}
+                          onClick={() => {
+                            setDeleteModal((prev) => !prev);
+                            setSelectedUserId(null);
+                          }}
                         >
                           Delete
                         </li>

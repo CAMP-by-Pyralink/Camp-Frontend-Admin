@@ -262,7 +262,7 @@ const SideNav = () => {
       path: "/awareness-training",
     },
     {
-      name: "Phishing Stimulation",
+      name: "Phishing Simulation",
       img: pshishingIcon,
       subMenu: [
         { name: "Templates", path: "/phishing-simulation/templates" },
@@ -283,7 +283,7 @@ const SideNav = () => {
   function toggleSubMenu(menuName: String) {
     if (menuName === "User Management") {
       setIsUserManagementOpen(!isUserManagementOpen);
-    } else if (menuName === "Phishing Stimulation") {
+    } else if (menuName === "Phishing Simulation") {
       setIsPhishingOpen(!isPhishingOpen);
     }
   }
@@ -471,7 +471,7 @@ const SideNav = () => {
 
             {/* Submenu for Phishing Stimulation */}
             {navMenu.subMenu &&
-              navMenu.name === "Phishing Stimulation" &&
+              navMenu.name === "Phishing Simulation" &&
               isPhishingOpen && (
                 <div className="ml-6">
                   {navMenu.subMenu.map((sub, subIndex) => (

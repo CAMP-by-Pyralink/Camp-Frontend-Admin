@@ -3,11 +3,15 @@ import closeIcon from "../../assets/svgs/closeicongrey.svg";
 import { useEffect, useState } from "react";
 import Loader from "../../shared/Loader";
 import { useNavigate } from "react-router-dom";
-// const StartScanModal = () => {
-// const [scanStarted, setScanStarted] = useState(false);
-const StartScanModal: React.FC = () => {
-  const [scanStarted, setScanStarted] = useState<boolean>(false); // Explicitly typed
-  const navigate = useNavigate(); // React Router's navigation hook
+
+// Define the props interface
+interface StartScanModalProps {
+  onClose: () => void;
+}
+
+const StartScanModal: React.FC<StartScanModalProps> = ({ onClose }) => {
+  const [scanStarted, setScanStarted] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     let timer: number | undefined;
@@ -15,7 +19,7 @@ const StartScanModal: React.FC = () => {
     if (scanStarted) {
       // Navigate after 5 seconds
       timer = setTimeout(() => {
-        navigate("/scan-details"); // Replace "/next-page" with your desired route
+        navigate("/scan-details");
       }, 5000);
     }
 
@@ -25,11 +29,17 @@ const StartScanModal: React.FC = () => {
       }
     };
   }, [scanStarted, navigate]);
+
   return (
     <div className="relative bg-white min-w-[476px] min-h-[372px] flex items-center justify-center  rounded-md p-8 ">
       {!scanStarted ? (
         <div className=" flex flex-col items-center gap-4">
-          <img src={closeIcon} alt="" className=" absolute right-4 top-4" />
+          <img
+            src={closeIcon}
+            alt=""
+            className=" absolute right-4 top-4"
+            onClick={onClose}
+          />
           <div className=" bg-blue50 w-[92px] h-[92px] rounded-full flex items-center justify-center">
             <img src={scanIcon} alt="" width={40} />
           </div>

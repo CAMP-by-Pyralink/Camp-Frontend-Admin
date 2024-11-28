@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState, useRef } from "react";
 import { AlertCircle, Database, HardDrive, Shield } from "lucide-react";
 import Speedometer from "react-d3-speedometer";
 import ModalLayout from "../../shared/ModalLayout";
@@ -34,6 +34,7 @@ const ScanResult: React.FC = () => {
   const [viewDetailedClicked, setViewDetailedClicked] = useState(false);
   const [newScanClicked, setNewScanClicked] = useState(false);
   const [showPremiumModal, setShowPremiumModal] = useState(false);
+  const tableRef = useRef(null);
 
   const sampleData: ScanResultData = {
     keyword: "pyntrix.com",
@@ -123,6 +124,10 @@ const ScanResult: React.FC = () => {
       setShowPremiumModal(true);
     } else {
       setActiveMetricIndex(index);
+    }
+    // Scroll to the table using useRef
+    if (tableRef.current) {
+      tableRef.current.scrollIntoView({ behavior: "smooth" });
     }
   };
 
@@ -231,7 +236,7 @@ const ScanResult: React.FC = () => {
 
       {/* Compromised Devices Table */}
       {!sampleData.metrics[activeMetricIndex].isPremium && (
-        <div className=" mt-24">
+        <div className=" mt-24" ref={tableRef}>
           <h3 className="text-xl mb-4">
             {sampleData.metrics[activeMetricIndex].label}
           </h3>

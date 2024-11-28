@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 // import profilePic from "../../assets/profilepic.png";
-import CompanyProfileTab from "../../components/Settings/CompanyProfileTab";
-import AdminProfileTab from "../../components/Settings/AdminProfileTab";
+import CompanyProfileTab from "../../components/Admin/Settings/CompanyProfileTab";
+import AdminProfileTab from "../../components/Admin/Settings/AdminProfileTab";
 import profilePic from "../../assets/avatar.png";
 
 interface CompanyData {

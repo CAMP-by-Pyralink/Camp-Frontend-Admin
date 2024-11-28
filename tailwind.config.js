@@ -12,6 +12,7 @@ export default {
         primary600: "#0007FC",
         primary500: "#282EFF",
         primary400: "#5358FF",
+        primary200: "#A9ABFF",
         primary100: "#D4D5FF",
         secondary1000: "#270E4F",
         secondary900: "#35136B",
