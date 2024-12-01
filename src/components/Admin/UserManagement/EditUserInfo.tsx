@@ -7,7 +7,7 @@ interface EditUserFormProps {
 const EditUserForm: React.FC<EditUserFormProps> = ({ setEditModalOpen }) => {
   return (
     <div
-      className="fixed inset-0 bg-[#344054B2] bg-opacity-40 flex justify-center items-center max-h-[764px]"
+      className="fixed inset-0 bg-[#344054B2] bg-opacity-40 flex justify-center items-center "
       style={{ backdropFilter: "blur(7.06999969482422px)" }}
     >
       <div className=" w-[60rem] bg-white shadow-lg rounded-lg overflow-hidden">

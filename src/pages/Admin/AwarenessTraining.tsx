@@ -4,13 +4,14 @@ import downArricon from "../../assets/svgs/downarrAnchor.svg";
 import TrainningsList from "../../components/Admin/AwarenessTrainning/TrainningsList";
 import { useState } from "react";
 import CreateTrainningModal from "../../components/Admin/AwarenessTrainning/CreateTrainningModal";
+import HeaderTitle from "../../shared/HeaderTitle";
 const AwarenessTraining = () => {
   const [createTraining, setCreateTraining] = useState<boolean>(false);
 
   return (
     <div>
-      <div className=" flex justify-between items-center mb-8">
-        <div>
+      <div className=" flex justify-between items-center mb-">
+        {/* <div>
           <h1 className="text-greyText text-2xl font-medium">
             Awareness Training
           </h1>
@@ -18,7 +19,12 @@ const AwarenessTraining = () => {
             Browse over 1000+ trainings on cybersecurity best practices curated
             to empower your organisation
           </h3>
-        </div>
+        </div> */}
+        <HeaderTitle
+          title="Awareness Training"
+          subTitle=" Browse over 1000+ trainings on cybersecurity best practices curated
+            to empower your organisation"
+        ></HeaderTitle>
         <button
           className=" bg-primary500 rounded-lg text-white py-2 px-8"
           onClick={() => setCreateTraining(true)}

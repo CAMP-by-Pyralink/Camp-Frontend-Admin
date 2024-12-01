@@ -22,7 +22,7 @@ const Table = <T,>({
   onRowClick,
 }: TableProps<T>) => {
   return (
-    <div className="overflow-x-auto bg-white shadow-[5px_5px_40px_rgba(107,151,255,0.3)] rounded-lg mb-6">
+    <div className="overflow-x-aut bg-white shadow-[5px_5px_40px_rgba(107,151,255,0.3)] rounded-lg mb-6">
       <h3 className="text-greyText mt-4 font-medium mb-4 ml-4">
         {sectionName}
       </h3>

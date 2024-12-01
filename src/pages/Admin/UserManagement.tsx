@@ -13,6 +13,8 @@ import UploadCsvModal from "../../shared/UploadCsvModal";
 import ScanNetwork from "../../shared/ScanNetwork";
 import UserFlow from "../../components/Admin/UserManagement/UserFlow";
 import NetworkScanFlow from "../../components/Admin/UserManagement/NetworkScanFlow";
+import HeaderTitle from "../../shared/HeaderTitle";
+import searchIcon from "../../assets/svgs/search.svg";
 
 const UserManagement = ({ label, onClick }) => {
   const { type } = useParams<{ type: string }>();
@@ -59,17 +61,15 @@ const UserManagement = ({ label, onClick }) => {
         </div>
       ) : (
         <div>
-          <div className="relative mb-8 flex justify-between items-center">
-            <div>
-              <h1 className="text-greyText text-2xl font-medium">
-                User Management
-              </h1>
-              <h3 className="text-greyText text-sm">
-                {type === "Admin"
+          <div className="relative mb- flex justify-between items-center">
+            <HeaderTitle
+              title="User Management"
+              subTitle={
+                type === "Admin"
                   ? "Add or view admin users"
-                  : "Add or view users"}
-              </h3>
-            </div>
+                  : "Add or view users"
+              }
+            ></HeaderTitle>
 
             {/* Dropdown Button Wrapper */}
             <div className="relative">
@@ -120,11 +120,18 @@ const UserManagement = ({ label, onClick }) => {
           <div className="bg-blue50 p-8 rounded-md">
             <div className="bg-white rounded-md w-full py-[10px] px-[20px]">
               <div className="flex items-center justify-between">
-                <input
-                  type="text"
-                  placeholder="Search"
-                  className="border-[0.5px] border-black rounded-lg px-4 py-2 w-full max-w-xs"
-                />
+                <div className="relative w-full max-w-xs">
+                  <input
+                    type="text"
+                    placeholder="Search"
+                    className="border-b-[0.5px] outline-none border-black focus:outline-none px-12 py-2 w-full max-w-xs"
+                  />
+                  <img
+                    src={searchIcon}
+                    alt=""
+                    className="absolute left-4 top-1/2 transform -translate-y-1/2"
+                  />
+                </div>
                 <div className="flex gap-2">
                   {/* Filter Button */}
                   <div

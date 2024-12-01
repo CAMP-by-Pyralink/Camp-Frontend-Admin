@@ -5,6 +5,7 @@ import PagesHomeLayout from "../../shared/PagesHomeLayout";
 import RiskRegisterForm from "../../components/Admin/RiskAssessment/RiskRegisterForm";
 import ModalLayout from "../../shared/ModalLayout";
 import UploadCsvModal from "../../shared/UploadCsvModal";
+import HeaderTitle from "../../shared/HeaderTitle";
 
 const RiskAssessment = () => {
   const [riskRegisterModal, setRiskRegisterModal] = useState<boolean>(false);
@@ -24,13 +25,17 @@ const RiskAssessment = () => {
   };
   return (
     <div>
-      <div className=" flex justify-between mb-4">
-        <div className=" text-greyText">
+      <div className=" flex justify-between mb-">
+        {/* <div className=" text-greyText">
           <h1 className=" text-2xl  font-medium tracking-[-2%] leading-[28.8px]">
             Risk Assessment
           </h1>
           <p className=" text-sm">Register and assign risk</p>
-        </div>
+        </div> */}
+        <HeaderTitle
+          title="Risk Assessment"
+          subTitle="Register and assign risk"
+        ></HeaderTitle>
         <div className=" flex items-center gap-4 ">
           <button className=" border border-black text-textColor font-medium py-2 px-4 flex items-center gap-1 rounded-lg">
             <img src={downArr} alt="" />

@@ -5,15 +5,16 @@ import QuickStat from "../../components/Admin/Dashboard/QuickStat";
 import RiskRahting from "../../components/Admin/Dashboard/RiskRahting";
 import TrainingProgress from "../../components/Admin/Dashboard/TrainingProgress";
 import VulnerabilityChart from "../../components/Admin/Dashboard/VulnerabilityChart";
+import HeaderTitle from "../../shared/HeaderTitle";
 // import CustomizationSetting from "../../shared/CustomizationSetting";
 
 const Overview = () => {
   return (
     <div>
-      <div className=" mb-8">
-        <h1 className=" text-greyText text-2xl font-medium">Dashboard</h1>
-        <h3 className=" text-greyText text-sm">Hi Flutter, welcome back</h3>
-      </div>
+      <HeaderTitle
+        title="Dashboard"
+        subTitle="Hi Flutter, welcome back"
+      ></HeaderTitle>
       <div>
         {/* Customization Setting
         {openCustomizationSetting && <CustomizationSetting />} */}

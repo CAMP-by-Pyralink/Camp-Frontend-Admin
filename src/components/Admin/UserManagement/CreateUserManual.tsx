@@ -64,7 +64,7 @@ const CreateUserManual: React.FC<CreateUserManualProps> = ({
 
   return (
     <div
-      className="fixed inset-0 bg-[#344054B2] bg-opacity-40 flex justify-center items-center max-h-[764px]"
+      className="fixed inset-0 bg-[#344054B2] bg-opacity-40 flex justify-center items-center "
       style={{ backdropFilter: "blur(7px)" }}
     >
       <div className="bg-[#F7F9FC] w-fit px-8 py-4 rounded-lg shadow-lg relative">
@@ -99,7 +99,7 @@ const CreateUserManual: React.FC<CreateUserManualProps> = ({
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-2 border text-[#E4E7EC] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border  rounded-lg outline-none focus:outline-none  "
                 />
               </div>
 

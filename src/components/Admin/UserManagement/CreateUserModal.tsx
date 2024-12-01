@@ -60,7 +60,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({ onClose }) => {
 
   return (
     <div
-      className="fixed inset-0 bg-[#344054B2] bg-opacity-40 flex justify-center items-center max-h-[764px]"
+      className="fixed inset-0 bg-[#344054B2] bg-opacity-40 flex justify-center items-center "
       style={{ backdropFilter: "blur(7.06999969482422px)" }}
     >
       <div className="bg-[#F7F9FC] w-fit px-8 py-6 rounded-lg shadow-lg relative">

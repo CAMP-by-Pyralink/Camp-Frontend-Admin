@@ -4,7 +4,8 @@ import uploadDocumentIcon from "../../../assets/svgs/upload-document-icon.svg";
 import uploadLinkicon from "../../../assets/svgs/link-icon.svg";
 import uploadTexticon from "../../../assets/svgs/upload-text-img-icon.svg";
 import TextEditor from "./TextEditor";
-import LexicalEditor from "./LexicalEditor";
+import LexicalEditor from "./Editor";
+import Editor from "./Editor";
 
 const CreateTrainningStep2 = () => {
   const uploadtabs = [
@@ -93,7 +94,7 @@ const CreateTrainningStep2 = () => {
           </div>
         )}{" "}
         {/* Upload Video */}
-        {activeTab === 3 && <LexicalEditor />}
+        {activeTab === 3 && <Editor />}
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 // import Button from "../../shared/Button";
 import CampaignsTable from "../../components/Admin/PhishingStimulation/Campaigns/CampaignsTable";
+import HeaderTitle from "../../shared/HeaderTitle";
 import PagesHomeLayout from "../../shared/PagesHomeLayout";
 
 const Campaigns = () => {
@@ -12,15 +13,19 @@ const Campaigns = () => {
   };
   return (
     <div>
-      <div className=" flex justify-between mb-4">
-        <div className=" text-greyText">
+      <div className=" flex justify-between mb-">
+        {/* <div className=" text-greyText">
           <h1 className=" text-2xl  font-medium tracking-[-2%] leading-[28.8px]">
             Phishing Campaigns
           </h1>
           <p className=" text-sm">View phishing campaigns</p>
-        </div>
+        </div> */}
         {/* <Button onClick={handleAdd} label="Add New" /> */}
       </div>
+      <HeaderTitle
+        title="Phishing Campaigns"
+        subTitle="View phishing campaigns"
+      ></HeaderTitle>
       {/*  */}
       <PagesHomeLayout
         onFilterClick={handleFilterClick}

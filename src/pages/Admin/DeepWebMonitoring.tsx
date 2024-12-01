@@ -1,14 +1,19 @@
 import ScanSearch from "../../components/Deep-Web-Moniroting/ScanSearch";
+import HeaderTitle from "../../shared/HeaderTitle";
 const DeepWebMonitoring = () => {
   return (
-    <div className=" h-[80vh]">
-      <h1 className="text-greyText text-2xl font-medium">
+    <div className=" h-full ">
+      {/* <h1 className="text-greyText text-2xl font-medium">
         Deep web monitoring
       </h1>
       <p className=" text-sm text-greyText">
         Scan the dark web for any potential data leaks
-      </p>
-      <div className=" flex items-center justify-center h-full">
+      </p> */}
+      <HeaderTitle
+        title="Deep web monitoring"
+        subTitle="Scan the dark web for any potential data leaks"
+      ></HeaderTitle>
+      <div className=" flex items-center justify-center h-full mt-8">
         <ScanSearch />
       </div>
     </div>

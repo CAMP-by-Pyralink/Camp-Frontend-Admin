@@ -56,7 +56,7 @@ const AssetsTable: React.FC = () => {
           View all &gt;
         </a>
       </div>
-      <div className="mt-4 ml-4 overflow-x-auto">
+      <div className="mt-4 ml-4 overflow-x-aut">
         <table className="min-w-[80%] table-auto border-collapse">
           <thead>
             <tr className=" text-left text-sm text-[#454545] font-bold">

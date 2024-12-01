@@ -84,7 +84,7 @@ const AssetsDetailsTab = () => {
         </div>
         <div className="border">
           {/* processor */}
-          <div className="flex flex border-b">
+          <div className="flex  border-b">
             <div className="w-[235px] py-[16px] px-[10px]">
               <p className="text-[#333333] font-medium">Processor</p>
             </div>
@@ -106,7 +106,7 @@ const AssetsDetailsTab = () => {
             </div>
           </div>
           {/* display */}
-          <div className="flex flex border-b">
+          <div className="flex  border-b">
             <div className="w-[235px] py-[16px] px-[10px]">
               <p className="text-[#333333] font-medium">Display</p>
             </div>
@@ -118,7 +118,7 @@ const AssetsDetailsTab = () => {
             </div>
           </div>
           {/* memory */}
-          <div className="flex flex border-b">
+          <div className="flex  border-b">
             <div className="w-[235px] py-[16px] px-[10px]">
               <p className="text-[#333333] font-medium">Memory</p>
             </div>
@@ -130,7 +130,7 @@ const AssetsDetailsTab = () => {
           </div>
 
           {/* storage */}
-          <div className="flex flex border-b">
+          <div className="flex border-b">
             <div className="w-[235px] py-[16px] px-[10px]">
               <p className="text-[#333333] font-medium">Storage</p>
             </div>

@@ -25,7 +25,7 @@ const PagesHomeLayout: React.FC<PagesHomeLayoutProps> = ({
             <input
               type="text"
               placeholder="Search"
-              className="border-b-[0.5px] border-black outline-none px-12 py-2 w-full"
+              className="border-b-[0.5px] border-black outline-none px-12 py-2 w-full focus:outline-none"
             />
             <img
               src={searchIcon}

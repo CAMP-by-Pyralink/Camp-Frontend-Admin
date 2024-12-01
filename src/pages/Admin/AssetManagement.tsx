@@ -9,6 +9,7 @@ import AssestList from "../../components/Admin/AssetsManagement/AssetsList";
 import downArrowIcon from "../../assets/svgs/downArrWhiteSolid.svg";
 import QrCodeScan from "../../components/Admin/AssetsManagement/QrCodeScan";
 import OnboardAssets from "../../components/Admin/AssetsManagement/OnboardAssets";
+import HeaderTitle from "../../shared/HeaderTitle";
 
 const AssetManagement = () => {
   const [riskRegisterModal, setRiskRegisterModal] = useState<boolean>(false);
@@ -37,15 +38,19 @@ const AssetManagement = () => {
   };
   return (
     <div>
-      <div className=" flex justify-between mb-4">
-        <div className=" text-greyText">
+      <div className=" flex justify-between mb-">
+        {/* <div className=" text-greyText">
           <h1 className=" text-2xl  font-medium tracking-[-2%] leading-[28.8px]">
             Assets Management
           </h1>
           <p className=" text-sm">
             Create assets and assign to department/employee
           </p>
-        </div>
+        </div> */}
+        <HeaderTitle
+          title="Assets Management"
+          subTitle="Create assets and assign to department/employee"
+        ></HeaderTitle>
         <div className=" flex items-center gap-4 ">
           <button className=" border border-black text-textColor font-medium py-2 px-4 flex items-center gap-1 rounded-lg">
             <img src={downArr} alt="" />

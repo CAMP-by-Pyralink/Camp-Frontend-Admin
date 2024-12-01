@@ -175,29 +175,8 @@ body {
   background-color: #007acc !important; 
   color: white !important;
 } */
-.editor-container {
-  border: 1px solid #ccc;
-  padding: 10px;
-  border-radius: 5px;
-  min-height: 200px; /* Ensure the editor has some visible height */
-  background-color: #fff;
-  display: flex;
-  flex-direction: column;
-}
 
-.editor-input {
-  outline: none;
-  min-height: 150px; /* Content editable area should have a height */
-  flex-grow: 1;
-}
-
-.editor-placeholder {
-  color: #aaa;
-  position: absolute;
-  pointer-events: none;
-  user-select: none;
-}
-.toolbar {
+/* .toolbar {
   display: flex;
   gap: 8px;
   margin-bottom: 10px;
@@ -222,7 +201,7 @@ body {
 
 .toolbar button:active {
   background-color: #ddd;
-}
+} */
 .rdp-months {
   display: grid;
   grid-template-columns: repeat(3, 1fr); /* Three columns for three months */

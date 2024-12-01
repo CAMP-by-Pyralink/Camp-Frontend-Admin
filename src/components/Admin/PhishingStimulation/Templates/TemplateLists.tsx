@@ -88,7 +88,7 @@ const TemplateLists: React.FC = () => {
       </div>
       {isModalOpen && selectedCard && (
         <div
-          className="fixed inset-0 bg-[#344054B2] bg-opacity-40 flex justify-center items-center max-h-[764px]"
+          className="fixed inset-0 bg-[#344054B2] bg-opacity-40 flex justify-center items-center "
           style={{ backdropFilter: "blur(7.06999969482422px)" }}
         >
           <div className="bg-white min-w-[494px] p-8 flex flex-col gap-8 rounded-md">
