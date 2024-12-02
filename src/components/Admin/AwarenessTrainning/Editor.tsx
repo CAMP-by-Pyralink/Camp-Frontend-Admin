@@ -74,7 +74,7 @@ export default function Editor() {
   };
 
   return (
-    <div className=" w-full bg-white shadow-md h-[400px] border  ">
+    <div className=" w-full bg-white shadow-md h-[200px] border  ">
       <LexicalComposer initialConfig={initialConfig}>
         <Toolbars />
         <RichTextPlugin

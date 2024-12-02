@@ -71,17 +71,17 @@ const CreateTrainingStep3: React.FC = () => {
               choices: [{ id: `c1`, text: "", isChecked: false }],
             })
           }
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+          className="mt-4 px-4 py-2 border border-primary500 text-black rounded"
         >
           Add Question
         </button>
 
-        <button
+        {/* <button
           type="submit"
           className="mt-4 px-4 py-2 bg-green-500 text-white rounded"
         >
           Submit
-        </button>
+        </button> */}
       </form>
     </div>
   );
