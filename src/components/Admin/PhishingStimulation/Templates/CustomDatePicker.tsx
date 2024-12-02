@@ -23,7 +23,7 @@ const CustomDatePicker = () => {
   const handlePrevMonth = () => setCurrentDate(subMonths(currentDate, 1));
   const handleNextMonth = () => setCurrentDate(addMonths(currentDate, 1));
 
-  const handleDateClick = (day) => {
+  const handleDateClick = (day: any) => {
     if (
       !selectedRange.startDate ||
       (selectedRange.startDate && selectedRange.endDate)
@@ -39,7 +39,7 @@ const CustomDatePicker = () => {
     }
   };
 
-  const renderCalendar = (monthOffset) => {
+  const renderCalendar = (monthOffset: any) => {
     const monthStart = startOfMonth(addMonths(currentDate, monthOffset));
     const monthEnd = endOfMonth(monthStart);
     const startDate = startOfWeek(monthStart);

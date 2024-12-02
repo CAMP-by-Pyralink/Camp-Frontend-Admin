@@ -11,6 +11,7 @@ import employeeicon from "../../../../assets/svgs/employee-icon.svg";
 import organizationicon from "../../../../assets/svgs/organization.svg";
 import PreviewModal from "./PreviewModal";
 // import CustomDatePicker from "./CustomDatePicker";
+import { startOfMonth } from "date-fns";
 
 const PhishingDetails: React.FC = () => {
   const [continueClicked, setContinueClicked] = useState(false);
@@ -19,6 +20,7 @@ const PhishingDetails: React.FC = () => {
   const handleToggle = () => {
     setIsToggled(!isToggled);
   };
+  const currentMonth = startOfMonth(new Date()); // First day of the current month
 
   // const [dateRange, setDateRange] = useState([
   //   {
@@ -49,13 +51,34 @@ const PhishingDetails: React.FC = () => {
         Phishing <span className=" text-neutrals500">/ Select target</span>
       </h1>
       <div className="bg-blue50 px-4 rounded-md py-8 h-full">
+        <div className=" flex items-center justify-end mb-8">
+          <button
+            className="w-fit  bg-primary500 text-white py-2 px-12 rounded-lg font-semibold  transition-colors"
+            onClick={() => setContinueClicked((prev) => !prev)}
+          >
+            Continue
+          </button>
+        </div>
         <div className="bg-white shadow-lg rounded-lg w-full">
           <div className="flex justify-between gap-8 py-4 px-8 h-full">
             {/* Left Panel */}
+
             <div className="basis-[60%]">
+              {/* paignation */}
+
+              <div className=" flex items-center gap-1 mb-4">
+                <span className="bg-primary500 w-4 h-4 p-3 flex items-center justify-center text-white rounded-full">
+                  1
+                </span>
+                <p className=" text-sm text-greyText">
+                  Select a department or specific employees to receive this
+                  phishing simulation exercise
+                </p>
+              </div>
               <h1 className="text-[#454545] pb-2">Work Test</h1>
+
               <h2 className="text-2xl font-bold text-[#454545] pb-2">
-                {title}
+                Happy Birthday!
               </h2>
               <p className="text-greyText text-xs mb-8">
                 Select a department or specific employees to receive this
@@ -102,33 +125,35 @@ const PhishingDetails: React.FC = () => {
 
               {/* Simulation Duration with Date Picker */}
               <div className=" mt-8">
+                {/* paignation */}
+
+                <div className=" flex items-center gap-1 mb-4">
+                  <span className="bg-primary500 w-4 h-4 p-3 flex items-center justify-center text-white rounded-full">
+                    2
+                  </span>
+                  <p className=" text-sm text-greyText">
+                    Select simulation duration
+                  </p>
+                </div>
                 <DayPicker
                   mode="range"
-                  numberOfMonths={3} // Display three months
-                  pagedNavigation // Ensures months are displayed in sequence
+                  numberOfMonths={3}
+                  pagedNavigation
+                  defaultMonth={startOfMonth(new Date())} // Start with the current month
+                  // selected={range} // Bind the selected range
+                  // onSelect={setRange} // Update range on selection
+                  classNames={{
+                    root: "rdp",
+                    months: "rdp-months",
+                    caption: "rdp-caption",
+                    week: "rdp-week",
+                    day: "rdp-day",
+                    today: "border-blue-500",
+                    selected: "bg-blue-600 text-white",
+                    chevron: "fill-blue-600",
+                  }}
                 />
               </div>
-              {/* <div className="mt-4">
-                <label className="block text-gray-600 text-sm font-medium mb-1">
-                  Select simulation duration
-                </label>
-                <div className="border border-gray-300 rounded-lg p-4">
-                  <DateRange
-                    editableDateInputs={true}
-                    onChange={(item) => setDateRange([item.selection])}
-                    moveRangeOnFirstSelection={false}
-                    ranges={dateRange}
-                    months={3}
-                    direction="horizontal"
-                  />
-                </div>
-              </div> */}
-              {/* <div className="mt-4">
-                <label className="block text-gray-600 text-sm font-medium mb-1">
-                  Select simulation duration
-                </label>
-                <CustomDatePicker />
-              </div> */}
             </div>
 
             {/* Divider */}
@@ -137,9 +162,14 @@ const PhishingDetails: React.FC = () => {
             {/* Right Panel */}
             <div className=" space-y-4">
               <div className=" flex gap-8">
-                <h3 className="text-lg font-semibold text-black">
-                  Recurring delivery
-                </h3>
+                <div className=" flex items-center gap-1 mb-4">
+                  <span className="bg-primary500 w-4 h-4 p-3 flex items-center justify-center text-white rounded-full">
+                    3
+                  </span>
+                  <h3 className="text-lg font-semibold text-black">
+                    Recurring delivery
+                  </h3>
+                </div>
 
                 <button
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none ${
@@ -183,12 +213,6 @@ const PhishingDetails: React.FC = () => {
             </div>
           </div>
         </div>
-        <button
-          className="w-full mt-12 bg-primary500 text-white py-3 rounded-lg font-semibold  transition-colors"
-          onClick={() => setContinueClicked((prev) => !prev)}
-        >
-          Continue
-        </button>
       </div>
       {continueClicked && (
         <PreviewModal setContinueClicked={setContinueClicked} />

@@ -21,6 +21,7 @@ import AssetsDetails from "./components/Admin/AssetsManagement/AssetsDetails";
 import ScanDetails from "./components/Deep-Web-Moniroting/ScanDetails";
 import ScanResult from "./components/Deep-Web-Moniroting/ScanResult";
 import TrainingDetails from "./components/Admin/AwarenessTrainning/TrainingDetails";
+import PhishingPreview from "./components/Admin/PhishingStimulation/Campaigns/PhishingPreview";
 const Overview = lazy(() => import("./pages/Admin/Overview"));
 const UserManagement = lazy(() => import("./pages/Admin/UserManagement"));
 // const User = lazy(() => import("./pages/Admin/UserManagement/User"));
@@ -86,6 +87,10 @@ function App() {
               <Route
                 path="/phishing-simulation/campaign-details/:id"
                 element={<CampaignDetails />}
+              />
+              <Route
+                path="/phishing-simulation/preview"
+                element={<PhishingPreview />}
               />
             </Route>
             <Route path="phishing-details" element={<PhishingDetails />} />

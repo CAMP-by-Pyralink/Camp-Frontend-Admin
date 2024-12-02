@@ -10,6 +10,20 @@ import downArrowIcon from "../../assets/svgs/downArrWhiteSolid.svg";
 import QrCodeScan from "../../components/Admin/AssetsManagement/QrCodeScan";
 import OnboardAssets from "../../components/Admin/AssetsManagement/OnboardAssets";
 import HeaderTitle from "../../shared/HeaderTitle";
+import FilterModal from "../../components/Admin/UserManagement/FilterModal";
+
+// Define FilterConfig interface
+interface FilterConfig {
+  key: string;
+  label: string;
+  type: "select" | "date" | "text"; // Only allow these types
+  options?: { label: string; value: string }[]; // Only for "select" type
+}
+
+interface SelectedFilters {
+  department: string;
+  status: string;
+}
 
 const AssetManagement = () => {
   const [riskRegisterModal, setRiskRegisterModal] = useState<boolean>(false);
@@ -19,13 +33,29 @@ const AssetManagement = () => {
   const [manualAdd, setManualAdd] = useState(false);
   const [scanQr, setScanQr] = useState(false);
   const toggleDropdown = () => setIsOpen(!isOpen);
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+
+  // State to hold the selected filter values
+  const [selectedFilters, setSelectedFilters] = useState({
+    department: "",
+    status: "",
+  });
 
   const handleAdd = () => {
     // console.log("first");
     setRiskRegisterModal(true);
   };
   const handleFilterClick = () => {
-    // Filter logic based on id
+    setIsFilterModalOpen((prev) => !prev);
+    console.log("Filter button clicked");
+  };
+
+  const handleFilterChange = (key: string, value: string) => {
+    // Update selected filter value based on key (filter)
+    setSelectedFilters((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
   };
   const handleClose = () => {
     setScanQr(false);
@@ -36,6 +66,44 @@ const AssetManagement = () => {
     setImportCsv((prev) => !prev);
     setExportCsv((prev) => !prev);
   };
+
+  const filters: FilterConfig[] = [
+    {
+      key: "department",
+      label: "Department",
+      type: "select", // Correct type here
+      options: [
+        { label: "IT", value: "it" },
+        { label: "Management", value: "management" },
+        // { label: "Marketing", value: "marketing" },
+      ],
+    },
+    {
+      key: "status",
+      label: "Status",
+      type: "select",
+      options: [
+        { label: "Active", value: "active" },
+        { label: "Mitigated", value: "mitigated" },
+        // { label: "Not Started", value: "not_started" },
+      ],
+    },
+    {
+      key: "category",
+      label: "Category",
+      type: "select",
+      options: [
+        { label: "Operational", value: "operational" },
+        { label: "Cybersecurity", value: "cybersecurity" },
+        // { label: "Not Started", value: "not_started" },
+      ],
+    },
+    // {
+    //   key: "dateAdded",
+    //   label: "Date Added",
+    //   type: "date",
+    // },
+  ];
   return (
     <div>
       <div className=" flex justify-between mb-">
@@ -118,6 +186,16 @@ const AssetManagement = () => {
         <ModalLayout>
           <QrCodeScan onClose={handleClose} />
         </ModalLayout>
+      )}
+      {/*  */}
+      {isFilterModalOpen && (
+        <FilterModal
+          filters={filters}
+          handleFilterClick={() => setIsFilterModalOpen(false)} // Close filter modal
+          onApplyFilters={(filters) => console.log(filters)} // Log selected filters
+          selectedFilters={selectedFilters} // Pass selected filters
+          handleFilterChange={handleFilterChange} // Handle filter value changes
+        />
       )}
     </div>
   );

@@ -1,10 +1,12 @@
+import React, { useState } from "react";
 import filterIcon from "../assets/svgs/filtericon.svg";
 import searchIcon from "../assets/svgs/search.svg";
-import downArricon from "../assets/svgs/downarrAnchor.svg";
+// import downArricon from "../assets/svgs/downarrAnchor.svg";
+import exportArr from "../assets/svgs/export-arr.svg";
 
 interface PagesHomeLayoutProps {
   onFilterClick?: () => void;
-  onExportClick?: () => void;
+  onExportClick?: (format: "pdf" | "csv" | "xls") => void; // Callback with the selected format
   showFilter?: boolean;
   showExport?: boolean;
   children?: React.ReactNode;
@@ -17,10 +19,20 @@ const PagesHomeLayout: React.FC<PagesHomeLayoutProps> = ({
   showExport = false,
   children,
 }) => {
+  const [isExportDropdownOpen, setIsExportDropdownOpen] = useState(false);
+
+  const handleExport = (format: "pdf" | "csv" | "xls") => {
+    setIsExportDropdownOpen(false); // Close the dropdown
+    if (onExportClick) {
+      onExportClick(format); // Pass the selected format to the parent
+    }
+  };
+
   return (
     <div className="bg-blue50 p-8 rounded-md min-h-[80vh]">
       <div className="bg-white rounded-md w-full py-[10px] px-[20px] relative">
         <div className="flex items-center justify-between">
+          {/* Search Input */}
           <div className="relative w-full max-w-xs">
             <input
               type="text"
@@ -33,10 +45,12 @@ const PagesHomeLayout: React.FC<PagesHomeLayoutProps> = ({
               className="absolute left-4 top-1/2 transform -translate-y-1/2"
             />
           </div>
+
+          {/* Filter and Export Buttons */}
           <div className="flex gap-2">
             {showFilter && (
               <div
-                className="flex items-center border border-primary500 px-3 py-[2px] rounded shadow-sm"
+                className="flex items-center border border-primary500 px-3 py-[2px] rounded shadow-sm cursor-pointer"
                 onClick={onFilterClick}
               >
                 <img src={filterIcon} className="mr-2" alt="" />
@@ -44,14 +58,42 @@ const PagesHomeLayout: React.FC<PagesHomeLayoutProps> = ({
               </div>
             )}
             {showExport && (
-              <button
-                className="flex items-center bg-primary500 text-white px-4 py-2 rounded-md shadow-sm"
-                onClick={onExportClick}
-              >
-                {/* <BsDownload className="mr-2" /> */}
-                <img src={downArricon} className=" mr-2" alt="" />
-                Export CSV
-              </button>
+              <div className="relative">
+                <button
+                  className="flex items-center bg-primary500 text-white px-4 py-2 rounded-md shadow-sm"
+                  onClick={() => setIsExportDropdownOpen(!isExportDropdownOpen)}
+                >
+                  <img src={exportArr} className="mr-2" alt="" />
+                  Export CSV
+                </button>
+                {/* Export Dropdown */}
+                {isExportDropdownOpen && (
+                  <div className="absolute z-50 right-0  text-textColor text-[10px] font-medium bg-white border rounded-md shadow-lg w-full">
+                    <ul>
+                      <li
+                        className="px-4 py-2 hover:bg-blue50 cursor-pointer"
+                        onClick={() => handleExport("pdf")}
+                      >
+                        .PDF
+                      </li>
+                      <hr />
+                      <li
+                        className="px-4 py-2 hover:bg-blue50 cursor-pointer"
+                        onClick={() => handleExport("csv")}
+                      >
+                        .CSV
+                      </li>
+                      <hr />
+                      <li
+                        className="px-4 py-2 hover:bg-blue50 cursor-pointer"
+                        onClick={() => handleExport("xls")}
+                      >
+                        .XLS
+                      </li>
+                    </ul>
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </div>

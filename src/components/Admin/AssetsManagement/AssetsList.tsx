@@ -76,7 +76,7 @@ const TableHeader = () => (
   <thead>
     <tr className="text-[8.4px] bg-[#F0F2F5] text-left text-greyText">
       {[
-        "",
+        "", // This will be a checkbox
         "ASSET ID",
         "ASSET NAME",
         "CATEGORY",
@@ -87,13 +87,20 @@ const TableHeader = () => (
         "ANTIVIRUS STATUS",
         "WARRANTY EXPIRATION",
         "SUBSCRIPTION RENEWAL",
-        "",
-      ].map((header) => (
-        <th
-          key={header}
-          className="p-2 border-b font-extrabold border-gray-200"
-        >
-          {header}
+        "", // This will be empty
+      ].map((header, index) => (
+        <th key={index} className="p-2 border-b font-extrabold border-gray-200">
+          {index === 0 ? (
+            <input
+              type="checkbox"
+              className="w-4 h-4"
+              aria-label="Select all"
+            />
+          ) : header === "" ? (
+            ""
+          ) : (
+            header
+          )}
         </th>
       ))}
     </tr>

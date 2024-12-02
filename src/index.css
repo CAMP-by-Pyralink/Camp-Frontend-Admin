@@ -202,8 +202,52 @@ body {
 .toolbar button:active {
   background-color: #ddd;
 } */
+
+/* DayPicker container */
+.my-daypicker {
+  margin: 0 auto; /* Centered */
+  background-color: #f9fafb; /* Light background color */
+  border-radius: 8px; /* Rounded corners */
+  padding: 20px;
+  border: 1px solid #d1d5db; /* Light gray border */
+}
+
+.rdp-day {
+  margin: 5px; /* Adds space between the days */
+  padding: 8px; /* Adjusts inner spacing of the day buttons */
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+  font-size: 8px;
+}
+
+.rdp-day:hover {
+  background-color: #e0f7ff; /* Light blue hover effect */
+  cursor: pointer;
+}
+
+.rdp {
+  padding: 10px; /* Reduce overall padding */
+  margin: 0 auto; /* Center the calendar */
+  max-width: 900px; /* Restrict width */
+}
+
 .rdp-months {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* Three columns for three months */
-  gap: 1rem;
+  grid-template-columns: repeat(3, 1fr); /* Three months in a row */
+  gap: 20px; /* Space between months */
+}
+
+.rdp-caption select {
+  appearance: none; /* Removes browser's default select styling */
+  background-color: #f9fafb; /* Light background for dropdown */
+  border: 1px solid #e5e7eb; /* Border for dropdown */
+  border-radius: 4px; /* Slight rounding */
+  padding: 4px 8px; /* Space inside the dropdown */
+  font-size: 12px; /* Smaller font size */
+  color: #374151; /* Text color */
+  cursor: pointer;
+}
+
+.rdp-caption select:hover {
+  border-color: #2563eb; /* Change border color on hover */
 }

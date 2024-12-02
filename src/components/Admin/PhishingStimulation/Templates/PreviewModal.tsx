@@ -123,7 +123,9 @@ const PreviewModal = ({ setContinueClicked }) => {
               <button className=" font-medium py-4 px-6 text-primary500 border border-primary500 rounded-lg ">
                 Send test email
               </button>
-              <h1 className=" underline text-primary500 ml-8">Preview</h1>
+              <Link to="/phishing-simulation/preview">
+                <h1 className=" underline text-primary500 ml-8">Preview</h1>
+              </Link>
             </div>
           </div>
         </div>

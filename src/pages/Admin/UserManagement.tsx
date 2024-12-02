@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import filterIcon from "../../assets/svgs/filtericon.svg";
 import { BsDownload } from "react-icons/bs";
@@ -5,7 +6,6 @@ import CreateUserModal from "../../components/Admin/UserManagement/CreateUserMod
 import addUsersIcon from "../../assets/svgs/adduser.svg";
 import Button from "../../shared/Button";
 import UserList from "../../components/Admin/UserManagement/UserList";
-import { useState } from "react";
 import FilterModal from "../../components/Admin/UserManagement/FilterModal";
 import downArrowIcon from "../../assets/svgs/downArrWhiteSolid.svg";
 import CreateUserManual from "../../components/Admin/UserManagement/CreateUserManual";
@@ -15,6 +15,21 @@ import UserFlow from "../../components/Admin/UserManagement/UserFlow";
 import NetworkScanFlow from "../../components/Admin/UserManagement/NetworkScanFlow";
 import HeaderTitle from "../../shared/HeaderTitle";
 import searchIcon from "../../assets/svgs/search.svg";
+import PagesHomeLayout from "../../shared/PagesHomeLayout";
+
+// Define FilterConfig interface
+interface FilterConfig {
+  key: string;
+  label: string;
+  type: "select" | "date" | "text"; // Only allow these types
+  options?: { label: string; value: string }[]; // Only for "select" type
+}
+
+interface SelectedFilters {
+  simulationScore: string;
+  department: string;
+  status: string;
+}
 
 const UserManagement = ({ label, onClick }) => {
   const { type } = useParams<{ type: string }>();
@@ -24,6 +39,14 @@ const UserManagement = ({ label, onClick }) => {
   const [activeUser, setActiveUser] = useState(false);
   const [uploadCsv, setUploadCsv] = useState(false);
   const [scanNetwork, setScanNetwork] = useState(false);
+
+  // State to hold the selected filter values
+  const [selectedFilters, setSelectedFilters] = useState({
+    simulationScore: "",
+    department: "",
+    status: "",
+  });
+
   const toggleDropdown = () => setIsOpen(!isOpen);
 
   const handleManual = () => {
@@ -37,10 +60,69 @@ const UserManagement = ({ label, onClick }) => {
     setScanNetwork(false);
   };
 
+  const handleExportClick = () => {
+    setImportCsv((prev) => !prev);
+    setExportCsv((prev) => !prev);
+  };
+
   const handleFilterClick = () => {
     setIsFilterModalOpen((prev) => !prev);
     console.log("Filter button clicked");
   };
+
+  const handleFilterChange = (key: string, value: string) => {
+    // Update selected filter value based on key (filter)
+    setSelectedFilters((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+
+  // Define your filters array
+  const filters: FilterConfig[] = [
+    {
+      key: "department",
+      label: "Department",
+      type: "select", // Correct type here
+      options: [
+        { label: "HR", value: "hr" },
+        { label: "Engineering", value: "engineering" },
+        { label: "Marketing", value: "marketing" },
+      ],
+    },
+    {
+      key: "status",
+      label: "Training Status",
+      type: "select",
+      options: [
+        { label: "Completed", value: "completed" },
+        { label: "Pending", value: "pending" },
+        { label: "Not Started", value: "not_started" },
+      ],
+    },
+    {
+      key: "category",
+      label: "Assigned Asset category",
+      type: "select",
+      options: [
+        { label: "Hardware", value: "hardware" },
+        { label: "Software", value: "software" },
+        // { label: "Not Started", value: "not_started" },
+      ],
+    },
+    {
+      key: "simulationScore",
+      label: "Simulation Score",
+      type: "select",
+      options: [
+        { label: "5%-20%", value: "5%-20%" },
+        { label: "20% - 40%", value: "20%-40%" },
+        { label: "40% - 60%", value: "40%-60%" },
+        { label: "60% - 80%", value: "60%-80%" },
+        { label: "80% - 100%", value: "80%-100%" },
+      ],
+    },
+  ];
 
   return (
     <div>
@@ -85,7 +167,7 @@ const UserManagement = ({ label, onClick }) => {
               {isOpen && (
                 <div className="absolute top-[82%] right-0 mt-2 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-10">
                   <button
-                    className="w-full text-left px-4 py-2 border-b text-gray-700 hover:bg-gray-100"
+                    className="w-full text-left px-4 py-2 border-b text-textColor hover:bg-blue50"
                     onClick={() => {
                       setIsOpen(false);
                       handleManual();
@@ -94,7 +176,7 @@ const UserManagement = ({ label, onClick }) => {
                     Manual
                   </button>
                   <button
-                    className="w-full text-left px-4 py-2 border-b text-gray-700 hover:bg-gray-100"
+                    className="w-full text-left px-4 py-2 border-b text-textColor hover:bg-blue50"
                     onClick={() => {
                       setIsOpen(false);
                       setUploadCsv(true);
@@ -103,11 +185,10 @@ const UserManagement = ({ label, onClick }) => {
                     Upload CSV
                   </button>
                   <button
-                    className="w-full text-left px-4 py-2 border-b text-gray-700 hover:bg-gray-100"
+                    className="w-full text-left px-4 py-2 border-b text-textColor hover:bg-blue50"
                     onClick={() => {
                       setIsOpen(false);
                       setScanNetwork(true);
-                      // Add logic to handle "Scan network" option
                     }}
                   >
                     Scan network
@@ -117,53 +198,29 @@ const UserManagement = ({ label, onClick }) => {
             </div>
           </div>
 
-          <div className="bg-blue50 p-8 rounded-md">
-            <div className="bg-white rounded-md w-full py-[10px] px-[20px]">
-              <div className="flex items-center justify-between">
-                <div className="relative w-full max-w-xs">
-                  <input
-                    type="text"
-                    placeholder="Search"
-                    className="border-b-[0.5px] outline-none border-black focus:outline-none px-12 py-2 w-full max-w-xs"
-                  />
-                  <img
-                    src={searchIcon}
-                    alt=""
-                    className="absolute left-4 top-1/2 transform -translate-y-1/2"
-                  />
-                </div>
-                <div className="flex gap-2">
-                  {/* Filter Button */}
-                  <div
-                    className="flex items-center border border-primary500 px-3 py-[2px] rounded shadow-sm cursor-pointer"
-                    onClick={handleFilterClick}
-                  >
-                    <img src={filterIcon} className="mr-2" alt="Filter Icon" />
-                    Filter
-                  </div>
+          <PagesHomeLayout
+            onFilterClick={handleFilterClick}
+            onExportClick={handleExportClick}
+            showFilter={true}
+            showExport={true}
+          >
+            <UserList />
 
-                  {/* Export Button */}
-                  <button className="flex items-center bg-primary500 text-white px-4 py-2 rounded-md shadow-sm">
-                    <BsDownload className="mr-2" />
-                    Export CSV
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* User List */}
-            <div className="mt-8">
-              <UserList />
-            </div>
-          </div>
+            {/* Your content */}
+          </PagesHomeLayout>
 
           {/* Modals */}
           {isModalOpen && <CreateUserManual onClose={handleCloseModal} />}
           {uploadCsv && <UploadCsvModal onClose={handleCloseModal} />}
-          {/* {scanNetwork && <ScanNetwork onClose={handleCloseModal} />} */}
           {scanNetwork && <NetworkScanFlow onClose={handleCloseModal} />}
           {isFilterModalOpen && (
-            <FilterModal handleFilterClick={handleFilterClick} />
+            <FilterModal
+              filters={filters}
+              handleFilterClick={() => setIsFilterModalOpen(false)} // Close filter modal
+              onApplyFilters={(filters) => console.log(filters)} // Log selected filters
+              selectedFilters={selectedFilters} // Pass selected filters
+              handleFilterChange={handleFilterChange} // Handle filter value changes
+            />
           )}
         </div>
       )}
