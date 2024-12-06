@@ -49,22 +49,13 @@ const AwarenessTraining = () => {
               />
             </div>
             <div className="flex gap-2">
-              <div
+              {/* <div
                 className="flex items-center border border-primary500 px-3 py-[2px] rounded shadow-sm"
                 // onClick={onFilterClick}
               >
                 <img src={filterIcon} className="mr-2" alt="" />
                 Filter
-              </div>
-
-              <button
-                className="flex items-center bg-primary500 text-white px-4 py-2 rounded-md shadow-sm"
-                // onClick={onExportClick}
-              >
-                {/* <BsDownload className="mr-2" /> */}
-                <img src={downArricon} className=" mr-2" alt="" />
-                Export CSV
-              </button>
+              </div> */}
             </div>
           </div>
         </div>

@@ -122,6 +122,8 @@ import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import downArrow from "../../../assets/svgs/downarrfilled.svg";
 import upArrow from "../../../assets/svgs/up-arrow-filled.svg";
+import ModalLayout from "../../../shared/ModalLayout";
+import AssignTrainingModal from "./AssignTrainingModal";
 
 interface Module {
   id: number;
@@ -148,6 +150,7 @@ interface TrainingDetailsProps {
 }
 
 const TrainingDetails: React.FC = () => {
+  const [isAssigned, setIsAssigned] = useState(false);
   const location = useLocation();
   const data = location.state as TrainingDetailsProps;
   const [expandedModule, setExpandedModule] = useState<number | null>(null);
@@ -191,7 +194,10 @@ const TrainingDetails: React.FC = () => {
           </p>
           <p>{data.duration}</p>
           {!data.isViewMode && (
-            <button className="mt-4 px-6 py-2 bg-primary500 text-white rounded-lg">
+            <button
+              className="mt-4 px-6 py-2 bg-primary500 text-white rounded-lg"
+              onClick={() => setIsAssigned(true)}
+            >
               Assign Training
             </button>
           )}
@@ -292,6 +298,12 @@ const TrainingDetails: React.FC = () => {
             </ul>
           </div>
         </div>
+      )}
+      {/* assign training modal */}
+      {isAssigned && (
+        <ModalLayout>
+          <AssignTrainingModal />
+        </ModalLayout>
       )}
     </div>
   );

@@ -34,9 +34,9 @@ export default {
         blue600: "#1790E7",
         blue700: "#147BC5",
         purple500: "#F9F5FF",
-        yellowCell: "#FFD400",
+        yellowCell: "#FFD40033",
         redCell: "#FF0000",
-        greenCell: "#51AF50",
+        greenCell: "#51AF5033",
       },
       fontFamily: {
         poppins: ["Poppins", "sans-serif"],

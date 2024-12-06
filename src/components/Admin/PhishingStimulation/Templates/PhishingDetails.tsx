@@ -51,14 +51,6 @@ const PhishingDetails: React.FC = () => {
         Phishing <span className=" text-neutrals500">/ Select target</span>
       </h1>
       <div className="bg-blue50 px-4 rounded-md py-8 h-full">
-        <div className=" flex items-center justify-end mb-8">
-          <button
-            className="w-fit  bg-primary500 text-white py-2 px-12 rounded-lg font-semibold  transition-colors"
-            onClick={() => setContinueClicked((prev) => !prev)}
-          >
-            Continue
-          </button>
-        </div>
         <div className="bg-white shadow-lg rounded-lg w-full">
           <div className="flex justify-between gap-8 py-4 px-8 h-full">
             {/* Left Panel */}
@@ -203,12 +195,21 @@ const PhishingDetails: React.FC = () => {
                 />
               </div>
 
-              <div className="flex items-center gap-[16px]">
+              <div className="flex items-center gap-[16px] mb-8">
                 <label className="text-xs ">Timezone</label>
                 <select className="border-[0.8px] w-[90px] border-[#D0D5DD] rounded-[4.79px] p-[12.78px] text-[#454545] text-xs">
                   <option>GMT</option>
                   {/* Add timezone options here */}
                 </select>
+              </div>
+              {/*  */}
+              <div className=" flex items-center mt-8  mb-8">
+                <button
+                  className="w-fit  bg-primary500 text-white py-2 px-12 rounded-lg font-semibold  transition-colors"
+                  onClick={() => setContinueClicked((prev) => !prev)}
+                >
+                  Continue
+                </button>
               </div>
             </div>
           </div>

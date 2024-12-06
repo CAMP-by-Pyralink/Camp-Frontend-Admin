@@ -1,4 +1,8 @@
 import { useLocation, useParams } from "react-router-dom";
+import { useState } from "react";
+import ModalLayout from "../../../shared/ModalLayout";
+import DeleteModal from "../../../shared/DeleteModal";
+import RiskRegisterForm from "./RiskRegisterForm";
 
 interface RiskDetail {
   id: number;
@@ -19,8 +23,8 @@ interface MatrixCell {
 }
 
 const matrixData: MatrixCell[] = [
-  { probability: "High", impact: "Low", level: "Medium" },
-  { probability: "High", impact: "Medium", level: "High" },
+  { probability: "High", impact: "Low", level: "Low" },
+  { probability: "High", impact: "Medium", level: "Medium" },
   { probability: "High", impact: "High", level: "High" },
   { probability: "Medium", impact: "Low", level: "Low" },
   { probability: "Medium", impact: "Medium", level: "Medium" },
@@ -44,6 +48,10 @@ const getLevelColor = (level: string) => {
 };
 
 const RiskDetails = () => {
+  const [isDeleteClicked, setIsDeleteClicked] = useState(false);
+  const [isEditClicked, setIsEditClicked] = useState(false);
+  const [riskRegisterModal, setRiskRegisterModal] = useState<boolean>(false);
+
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
   const selectedRisk = location.state?.selectedRisk as Risks;
@@ -52,6 +60,20 @@ const RiskDetails = () => {
   if (!selectedRisk || selectedRisk.id !== Number(id)) {
     return <div>Risk not found</div>;
   }
+
+  const handleBackClick = () => {
+    setIsDeleteClicked(false);
+  };
+  const handleDeleteClick = () => {
+    console.log("clicked");
+    setIsDeleteClicked(false);
+  };
+  const handleEditClicked = () => {
+    // console.log("first");
+
+    setIsEditClicked(true);
+  };
+
   return (
     <div className="mx-auto p-4">
       <h1 className="text-2xl font-medium text-greyText mb-4">View Risk</h1>
@@ -173,10 +195,16 @@ const RiskDetails = () => {
 
         {/* Action Buttons */}
         <div className="flex gap-4 mt-6">
-          <button className="w-[180px] px-6 py-2 bg-primary500 text-white rounded-lg">
+          <button
+            className="w-[180px] px-6 py-2 bg-primary500 text-white rounded-lg"
+            onClick={handleEditClicked}
+          >
             Edit
           </button>
-          <button className="px-6 py-2 bg-white border border-[#FF0301] text-[#B30100] rounded-lg">
+          <button
+            className="px-6 py-2 bg-white border border-[#FF0301] text-[#B30100] rounded-lg"
+            onClick={() => setIsDeleteClicked(true)}
+          >
             Delete
           </button>
         </div>
@@ -187,7 +215,7 @@ const RiskDetails = () => {
         <h2 className="text-2xl text-greyText font-semibold mb-4">
           3 x 3 Matrix
         </h2>
-        <div className="relative">
+        <div className="relative flex flex-col w-fit">
           {/* Probability Label */}
           <div className=" bg-blue50 py-[7px] px-[26.64px] absolute -left-28 top-1/2 -rotate-90 transform -translate-y-1/2">
             <span className=" text-greyText font-medium text-sm ">
@@ -196,25 +224,41 @@ const RiskDetails = () => {
           </div>
 
           {/* Matrix Cells */}
-          <div className="grid grid-cols-3 gap-1 w-[504.58px]">
-            {matrixData.map((cell, index) => (
-              <div
-                key={index}
-                className={`${getLevelColor(
-                  cell.level
-                )} h-[101.66px] text-[25.24px]  flex items-center justify-center text-white font-medium rounded`}
-              >
-                {cell.level}
-              </div>
-            ))}
+          <div className=" flex flex-col items-center">
+            <div className="grid grid-cols-3 gap-1 w-[504.58px]">
+              {matrixData.map((cell, index) => (
+                <div
+                  key={index}
+                  className={`${getLevelColor(
+                    cell.level
+                  )} h-[101.66px] text-[25.24px]  flex items-center justify-center text-white font-medium rounded`}
+                >
+                  {cell.level}
+                </div>
+              ))}
+            </div>
+            {/* Impact Label */}
+            <div className="bg-blue50 py-[7px] px-[26.64px] translate-x-1/2   w-fit mt-4">
+              <span className="text-sm font-medium text-greyText ">IMPACT</span>
+            </div>
           </div>
-
-          {/* Impact Label */}
-          <div className="bg-blue50 py-[7px] px-[26.64px] ml-[30%] w-fit mt-4">
-            <span className="text-sm font-medium text-greyText ">IMPACT</span>
-          </div>
+          {/*  */}
         </div>
       </div>
+      {/*  */}
+      {isDeleteClicked && (
+        <ModalLayout>
+          <DeleteModal
+            backClick={handleBackClick}
+            onDelete={handleDeleteClick}
+          />
+        </ModalLayout>
+      )}
+      {isEditClicked && (
+        <ModalLayout>
+          <RiskRegisterForm setRiskRegisterModal={setIsEditClicked} />
+        </ModalLayout>
+      )}
     </div>
   );
 };
