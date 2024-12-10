@@ -13,16 +13,37 @@ import userIcon from "../assets/svgs/usericon.svg";
 import signoutIcon from "../assets/svgs/signout.svg";
 import onlineStatus from "../assets/svgs/onlinestatus.svg";
 import profilePic from "../assets/profilepic.png";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useCustomization } from "../contexts/CustomizationContext";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 
+interface NavMenu {
+  name: string;
+  img: string;
+  path?: string;
+  subMenu?: NavMenuItem[];
+}
+
+interface NavMenuItem {
+  name: string;
+  path: string;
+}
+
 const SideNav = () => {
-  const [activeMenu, setActiveMenu] = useState("Overview");
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const [isUserManagementOpen, setIsUserManagementOpen] = useState(false);
-  const [isPhishingOpen, setIsPhishingOpen] = useState(false);
+  const [activeMenu, setActiveMenu] = useState<string>(
+    localStorage.getItem("activeMenu") || "Overview"
+  );
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
+  const [isUserManagementOpen, setIsUserManagementOpen] = useState<boolean>(
+    JSON.parse(localStorage.getItem("isUserManagementOpen") || "false")
+  );
+  const [isPhishingOpen, setIsPhishingOpen] = useState<boolean>(
+    JSON.parse(localStorage.getItem("isPhishingOpen") || "false")
+  );
   const { themeColor, logo } = useCustomization();
+
+  const location = useLocation(); // Current route
+  const navigate = useNavigate(); // Navigation
 
   const navMenus = [
     { name: "Overview", img: overviewIcon, path: "/" },
@@ -103,16 +124,102 @@ const SideNav = () => {
     setIsUserManagementOpen(savedUserManagementOpen);
     setIsPhishingOpen(savedPhishingOpen);
   }, []);
+  //
+
+  // Handle active menu persistence
+  useEffect(() => {
+    const savedPath = localStorage.getItem("activeRoute");
+
+    if (savedPath && savedPath !== location.pathname) {
+      navigate(savedPath);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("activeRoute", location.pathname);
+
+    const currentPath = location.pathname;
+    let matchedMenu = "Overview";
+
+    navMenus.forEach((menu) => {
+      if (menu.path === currentPath) {
+        matchedMenu = menu.name;
+      } else if (menu.subMenu) {
+        const matchedSubMenu = menu.subMenu.find(
+          (sub) => sub.path === currentPath
+        );
+        if (matchedSubMenu) {
+          matchedMenu = matchedSubMenu.name;
+          if (menu.name === "User Management") setIsUserManagementOpen(true);
+          if (menu.name === "Phishing Simulation") setIsPhishingOpen(true);
+        }
+      }
+    });
+
+    setActiveMenu(matchedMenu);
+  }, [location.pathname]);
 
   // Function to handle setting active menu and saving it to localStorage
-  const handleSetActiveMenu = (menuName: string) => {
+  // const handleSetActiveMenu = (menuName: string) => {
+  //   setActiveMenu(menuName);
+  //   localStorage.setItem("activeMenu", menuName); // Save activeMenu to localStorage
+  // };
+  // const handleSetActiveMenu = (menuName: string, parentName?: string) => {
+  //   setActiveMenu(menuName);
+  //   localStorage.setItem("activeMenu", menuName);
+
+  //   if (parentName) {
+  //     if (parentName === "User Management") {
+  //       setIsUserManagementOpen(true);
+  //       localStorage.setItem("isUserManagementOpen", "true");
+  //     } else if (parentName === "Phishing Simulation") {
+  //       setIsPhishingOpen(true);
+  //       localStorage.setItem("isPhishingOpen", "true");
+  //     }
+  //   }
+  // };
+  const handleSetActiveMenu = (menuName: string, parentName?: string) => {
     setActiveMenu(menuName);
-    localStorage.setItem("activeMenu", menuName); // Save activeMenu to localStorage
+    localStorage.setItem("activeMenu", menuName);
+
+    if (parentName) {
+      // Ensure submenu's parent menu opens when expanded
+      if (parentName === "User Management") {
+        setIsUserManagementOpen(true);
+        localStorage.setItem("isUserManagementOpen", "true");
+      } else if (parentName === "Phishing Simulation") {
+        setIsPhishingOpen(true);
+        localStorage.setItem("isPhishingOpen", "true");
+      }
+    }
+  };
+
+  // const isMenuActive = (menu: NavMenu): boolean => {
+  //   if (isCollapsed) {
+  //     return menu.subMenu
+  //       ? menu.subMenu.some((subItem) => subItem.name === activeMenu)
+  //       : menu.name === activeMenu;
+  //   } else {
+  //     return menu.name === activeMenu;
+  //   }
+  // };
+  const isMenuActive = (menu: NavMenu): boolean => {
+    if (isCollapsed) {
+      // When collapsed, check if any submenu item is active
+      return menu.subMenu
+        ? menu.subMenu.some((subItem) => subItem.name === activeMenu)
+        : menu.name === activeMenu;
+    } else {
+      // When expanded, check the direct active state
+      return menu.name === activeMenu;
+    }
   };
 
   return (
     <div
-      className={`custom-scrollbar h-screen overflow-y-auto overflow-x-hidden px-4 py-6 bg-primary10 text-white flex flex-col gap-4 transition-width duration-300 ${
+      onMouseEnter={() => setIsCollapsed(false)} // Expand on hover
+      onMouseLeave={() => setIsCollapsed(true)} // Collapse on mouse leave
+      className={`custom-scrollbar h-screen overflow-y-auto overflow-x-hidden px-4 py-6 bg-primary10 text-white flex flex-col gap-4 transition-all duration-1000 ${
         isCollapsed ? "w-[100px]" : "w-[294px]"
       }`}
       style={{ background: themeColor }}
@@ -125,7 +232,7 @@ const SideNav = () => {
           } `}
         >
           <div
-            className={`text-white flex flex-col transition-all duration-300`}
+            className={`text-white flex flex-col transition-all duration-1000`}
           >
             {logo ? (
               <img
@@ -168,11 +275,14 @@ const SideNav = () => {
               <div
                 className={`flex items-center gap-4 p-2 cursor-pointer py-3 px-4`}
                 style={{
-                  background: navMenu.subMenu
-                    ? // No active color for parent menus with submenus
-                      "transparent"
-                    : // Active color for other menus without submenus
-                    activeMenu === navMenu.name
+                  // background: navMenu.subMenu
+                  //   ? // No active color for parent menus with submenus
+                  //     "transparent"
+                  //   : // Active color for other menus without submenus
+                  //   activeMenu === navMenu.name
+                  //   ? darkerThemeColor
+                  //   : "transparent",
+                  background: isMenuActive(navMenu)
                     ? darkerThemeColor
                     : "transparent",
                 }}
@@ -224,7 +334,9 @@ const SideNav = () => {
             </Link>
 
             {/* Render submenus */}
-            {navMenu.subMenu &&
+            {/* Render submenus */}
+            {!isCollapsed &&
+              navMenu.subMenu &&
               navMenu.name === "User Management" &&
               isUserManagementOpen && (
                 <div>
@@ -242,7 +354,9 @@ const SideNav = () => {
                           justifyContent: isCollapsed ? "center" : "flex-start",
                           alignItems: "center",
                         }}
-                        onClick={() => handleSetActiveMenu(sub.name)}
+                        onClick={() =>
+                          handleSetActiveMenu(sub.name, navMenu.name)
+                        }
                       >
                         {!isCollapsed && (
                           <span className="ml-8 text-sm">{sub.name}</span>
@@ -253,10 +367,11 @@ const SideNav = () => {
                 </div>
               )}
 
-            {navMenu.subMenu &&
+            {!isCollapsed &&
+              navMenu.subMenu &&
               navMenu.name === "Phishing Simulation" &&
               isPhishingOpen && (
-                <div className="">
+                <div>
                   {navMenu.subMenu.map((sub, subIndex) => (
                     <Link to={sub.path} key={subIndex}>
                       <div
@@ -271,7 +386,9 @@ const SideNav = () => {
                           justifyContent: isCollapsed ? "center" : "flex-start",
                           alignItems: "center",
                         }}
-                        onClick={() => handleSetActiveMenu(sub.name)}
+                        onClick={() =>
+                          handleSetActiveMenu(sub.name, navMenu.name)
+                        }
                       >
                         {!isCollapsed && (
                           <span className="ml-8 text-sm">{sub.name}</span>
@@ -287,21 +404,33 @@ const SideNav = () => {
 
       {/* Footer with signout */}
       <div className="absolut bottom-0 w-full p-4">
-        <div className="flex items-center justify-between">
+        <div
+          className={`flex  justify-between gap-8 ${
+            isCollapsed ? "flex-col " : "flex-col"
+          }`}
+        >
           <div className="flex items-center gap-4">
-            <img
-              src={profilePic}
-              alt="User"
-              className="w-10 h-10 rounded-full"
-            />
+            <div className="w-10 h-10 rounded-full">
+              <img
+                src={profilePic}
+                alt="User"
+                className=" w-full h-full object-cover"
+              />
+            </div>
             {!isCollapsed && <span className="text-sm">John Doe</span>}
           </div>
-          <img
-            src={signoutIcon}
-            alt="Sign Out"
-            className="cursor-pointer"
-            width={24}
-          />
+          {/*  */}
+          <div className=" flex items-center gap-4">
+            <img
+              src={signoutIcon}
+              alt="Sign Out"
+              className="cursor-pointer"
+              width={24}
+            />
+            {!isCollapsed && (
+              <h2 className=" text-sm font-semibold">Log out</h2>
+            )}
+          </div>
         </div>
       </div>
     </div>

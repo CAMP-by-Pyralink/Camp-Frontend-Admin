@@ -1,13 +1,16 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 
 const SignIn = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     companyName: "",
     companyEmail: "",
     phoneNumber: "",
     password: "",
   });
+  const { login } = useAuth();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -16,6 +19,8 @@ const SignIn = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log(formData);
+    login();
+    navigate("/");
   };
 
   return (
@@ -41,8 +46,8 @@ const SignIn = () => {
               name="companyName"
               value={formData.companyName}
               onChange={handleChange}
-              className="w-full mt-2 p-1 border rounded-lg"
-              required
+              className="w-full mt-2 p-3 border rounded-lg"
+              // required
             />
           </div>
 
@@ -64,8 +69,8 @@ const SignIn = () => {
               name="phoneNumber"
               value={formData.phoneNumber}
               onChange={handleChange}
-              className="w-full mt-2 p-1 border rounded-lg"
-              required
+              className="w-full mt-2 p-3 border rounded-lg"
+              // required
             />
           </div>
 

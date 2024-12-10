@@ -3,6 +3,7 @@ import { useState } from "react";
 import ModalLayout from "../../../shared/ModalLayout";
 import DeleteModal from "../../../shared/DeleteModal";
 import RiskRegisterForm from "./RiskRegisterForm";
+import aiIcon from "../../../assets/svgs/ai-network.svg";
 
 interface RiskDetail {
   id: number;
@@ -119,9 +120,15 @@ const RiskDetails = () => {
               <p className="text-sm text-greyText font-semibold basis-[20%]">
                 Mitigation Strategy
               </p>
-              <p className=" text-greyText text-sm">
-                {selectedRisk.mitigrationStrategy}
-              </p>
+              <div className=" flex items-center gap-6">
+                <div className=" flex items-center gap-4 bg-[#F1F2FF] w-fit text-primary500 py-1 px-3 rounded-full">
+                  <img src={aiIcon} alt="" />
+                  AI generated
+                </div>
+                <p className=" text-greyText text-sm">
+                  {selectedRisk.mitigrationStrategy}
+                </p>
+              </div>
             </div>
           </div>
 

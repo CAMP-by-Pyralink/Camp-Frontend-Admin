@@ -40,20 +40,23 @@ const OTPVerification = () => {
 
         {/* OTP Form */}
         <form onSubmit={handleOtpSubmit}>
-          <div className="flex justify-between gap-2 mb-4">
-            {otp.map((digit, index) => (
-              <input
-                key={index}
-                type="text"
-                value={digit}
-                onChange={(e) => handleOtpChange(e, index)}
-                maxLength={1}
-                className="text-center text-2xl text-neutrals600 p-3 border border-primary600 rounded-lg w-14 h-14"
-                required
-              />
-            ))}
+          <div className=" w-full h-full flex items-center justify-center">
+            <div className="w-full flex  gap-4 mb-4">
+              {otp.map((digit, index) => (
+                <div className=" w-full">
+                  <input
+                    key={index}
+                    type="text"
+                    value={digit}
+                    onChange={(e) => handleOtpChange(e, index)}
+                    maxLength={1}
+                    className="text-center text-2xl text-neutrals600 p-3 border border-primary600 rounded-lg w-14 h-14"
+                    required
+                  />
+                </div>
+              ))}
+            </div>
           </div>
-
           <p className="text-sm text-primary500 mb-6">
             Didn&apos;t get a code?{" "}
             <a href="#" className=" underline">
@@ -65,7 +68,7 @@ const OTPVerification = () => {
           <div className="flex gap-4">
             <button
               type="button"
-              className="flex-1 py-[10px] px-[18px] rounded-lg border border-[#D0D5DD] font-medium text-[#344054]"
+              className="flex-1 py-[10px] px-[18px] rounded-lg border border-[#D0D5DD] font-medium text-[#344054] w-[174px]"
             >
               Cancel
             </button>
@@ -73,7 +76,7 @@ const OTPVerification = () => {
               {" "}
               <button
                 type="submit"
-                className="flex-1 bg-primary500 text-white py-[10px] px-[18px] rounded-lg font-medium"
+                className="flex-1 bg-primary500 text-white py-[10px] px-[18px] rounded-lg font-medium w-[174px]"
               >
                 Verify
               </button>

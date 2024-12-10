@@ -1,9 +1,9 @@
-import React from "react";
+import { Link } from "react-router-dom";
 import ModalLayout from "../../shared/ModalLayout";
 import closeIcon from "../../assets/svgs/closeicongrey.svg";
 import premiumIcon from "../../assets/svgs/premium-sub.svg";
 
-const PremiumModal = ({ setViewDetailedClicked }) => {
+const PremiumModal = ({ setViewDetailedClicked }: any) => {
   return (
     <>
       {/* <ModalLayout> */}
@@ -27,13 +27,15 @@ const PremiumModal = ({ setViewDetailedClicked }) => {
             placeholder="Search"
             className=" border border-[#D0D5DD] rounded-md w-[374px] py-2 px-[16px] placeholder:text-sm placeholder:text-[#454545]"
           /> */}
-          <button
-            className=" bg-primary500 py-2 px-6 rounded-lg text-white"
-            // onClick={() => setScanStarted(true)}
-          >
-            {/* Start scanning */}
-            Try premium
-          </button>
+          <Link to="/checkout">
+            <button
+              className=" bg-primary500 py-2 px-6 rounded-lg text-white"
+              // onClick={() => setScanStarted(true)}
+            >
+              {/* Start scanning */}
+              Try premium
+            </button>
+          </Link>
         </div>
       </div>
       {/* </ModalLayout> */}

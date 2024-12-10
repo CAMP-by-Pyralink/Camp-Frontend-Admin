@@ -22,6 +22,9 @@ import ScanDetails from "./components/Deep-Web-Moniroting/ScanDetails";
 import ScanResult from "./components/Deep-Web-Moniroting/ScanResult";
 import TrainingDetails from "./components/Admin/AwarenessTrainning/TrainingDetails";
 import PhishingPreview from "./components/Admin/PhishingStimulation/Campaigns/PhishingPreview";
+import Checkout from "./pages/Admin/Checkout";
+import Onboarding from "./_Auth/Admin/Onboarding";
+import ProtectedRoutes from "./layout/ProtectedRoutes";
 const Overview = lazy(() => import("./pages/Admin/Overview"));
 const UserManagement = lazy(() => import("./pages/Admin/UserManagement"));
 // const User = lazy(() => import("./pages/Admin/UserManagement/User"));
@@ -59,53 +62,69 @@ function App() {
           </Route>
           <Route path="/successful" element={<SuccessModal />} />
           <Route path="/otp" element={<OTPVerification />} />
+          <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/reset-password" element={<ResetPasswordLink />} />
 
           {/* ADMIN ROUTES */}
-          <Route path="/" element={<AdminLayout />}>
-            <Route index element={<Overview />} />
+          <Route element={<ProtectedRoutes />}>
+            <Route path="/" element={<AdminLayout />}>
+              <Route index element={<Overview />} />
 
-            {/* USER MANAGEMENT ROUTES */}
-            {/* <Route path="user-management" element={<UserManagement />}> */}
-            {/* <Route path="user" element={<User />} />
+              {/* USER MANAGEMENT ROUTES */}
+              {/* <Route path="user-management" element={<UserManagement />}> */}
+              {/* <Route path="user" element={<User />} />
               <Route path="admin" element={<Admin />} /> */}
-            <Route path="user-management/:type" element={<UserManagement />} />
-            <Route path="profile" element={<EmployeeProfile />} />
+              <Route
+                path="user-management/:type"
+                element={<UserManagement />}
+              />
+              <Route path="profile" element={<EmployeeProfile />} />
 
-            {/* </Route> */}
+              {/* </Route> */}
 
-            {/* PHISHING SIMULATION ROUTES */}
-            <Route path="phishing-simulation">
+              {/* PHISHING SIMULATION ROUTES */}
+              <Route path="phishing-simulation">
+                <Route
+                  path="/phishing-simulation/templates"
+                  element={<Templates />}
+                />
+                <Route
+                  path="/phishing-simulation/campaigns"
+                  element={<Campaigns />}
+                />
+                <Route
+                  path="/phishing-simulation/campaign-details/:id"
+                  element={<CampaignDetails />}
+                />
+                <Route
+                  path="/phishing-simulation/preview"
+                  element={<PhishingPreview />}
+                />
+              </Route>
+              <Route path="phishing-details" element={<PhishingDetails />} />
               <Route
-                path="/phishing-simulation/templates"
-                element={<Templates />}
+                path="awareness-training"
+                element={<AwarenessTraining />}
               />
               <Route
-                path="/phishing-simulation/campaigns"
-                element={<Campaigns />}
+                path="/training-details/:id"
+                element={<TrainingDetails />}
               />
+              <Route path="asset-management" element={<AssetManagement />} />
+              <Route path="/asset-detail/:id" element={<AssetsDetails />} />
+              <Route path="risk-assessment" element={<RiskAssessment />} />
+              <Route path="/risk-detail/:id" element={<RiskDetails />} />
               <Route
-                path="/phishing-simulation/campaign-details/:id"
-                element={<CampaignDetails />}
+                path="deep-web-monitoring"
+                element={<DeepWebMonitoring />}
               />
-              <Route
-                path="/phishing-simulation/preview"
-                element={<PhishingPreview />}
-              />
+              {/* <Route path="/scan-details" element={<ScanDetails />} /> */}
+              <Route path="/scan-details" element={<ScanResult />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/alerts" element={<Alerts />} />
             </Route>
-            <Route path="phishing-details" element={<PhishingDetails />} />
-            <Route path="awareness-training" element={<AwarenessTraining />} />
-            <Route path="/training-details/:id" element={<TrainingDetails />} />
-            <Route path="asset-management" element={<AssetManagement />} />
-            <Route path="/asset-detail/:id" element={<AssetsDetails />} />
-            <Route path="risk-assessment" element={<RiskAssessment />} />
-            <Route path="/risk-detail/:id" element={<RiskDetails />} />
-            <Route path="deep-web-monitoring" element={<DeepWebMonitoring />} />
-            {/* <Route path="/scan-details" element={<ScanDetails />} /> */}
-            <Route path="/scan-details" element={<ScanResult />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/alerts" element={<Alerts />} />
           </Route>
+          <Route path="/checkout" element={<Checkout />} />
         </Routes>
       </Suspense>
     </>

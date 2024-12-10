@@ -14,4 +14,4 @@ const HeaderTitle: React.FC<HeaderTitleProps> = ({ title, subTitle }) => {
   );
 };
 
-export default HeaderTitle;
+export default HeaderTitle; 
