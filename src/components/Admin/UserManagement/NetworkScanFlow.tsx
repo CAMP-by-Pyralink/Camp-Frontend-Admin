@@ -8,7 +8,7 @@ import successIcon from "../.././../assets/svgs/successIcon.svg";
 
 type ScanState = "initial" | "scanning" | "complete" | "upload-success";
 
-const NetworkScanFlow = ({ onClose }) => {
+const NetworkScanFlow = ({ onClose }: any) => {
   const [scanState, setScanState] = useState<ScanState>("initial");
   const [employeeCount, setEmployeeCount] = useState(0);
 

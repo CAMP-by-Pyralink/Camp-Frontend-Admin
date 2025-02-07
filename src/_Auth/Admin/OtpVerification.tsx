@@ -1,86 +1,167 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import otpIcon from "../../assets/svgs/otpicon.svg";
-import { Link } from "react-router-dom";
-const OTPVerification = () => {
-  const [otp, setOtp] = useState(Array(4).fill(""));
+import { useAuthStore } from "../../store/useAuthStore";
+import toast from "react-hot-toast";
+import { Loader2 } from "lucide-react";
 
-  const handleOtpChange = (
+const OTPVerification = () => {
+  const inputLength = 4;
+  const [otp, setOtp] = useState<string[]>(Array(inputLength).fill(""));
+  const email = sessionStorage.getItem("email");
+  const { verifyEmail, isVerifyingEmail, resendToken, isResendingToken } =
+    useAuthStore();
+  const navigate = useNavigate();
+
+  // Create a ref array to store input elements
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  // Handles input change for each OTP digit
+  const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     index: number
   ) => {
-    const newOtp = [...otp];
-    newOtp[index] = e.target.value;
-    setOtp(newOtp);
+    const { value } = e.target;
+
+    console.log(otp.join(""));
+    // Allow only digits
+    if (/^\d*$/.test(value)) {
+      const newOtp = [...otp];
+      // Use only the last character if user pastes more than one digit
+      newOtp[index] = value.slice(-1);
+      setOtp(newOtp);
+
+      // Move focus to the next input if available and the current input is not empty
+      if (value && index < inputLength - 1) {
+        inputRefs.current[index + 1]?.focus();
+      }
+    }
   };
 
-  const handleOtpSubmit = (e: React.FormEvent) => {
+  // Handle key down for backspace (and other keys if necessary)
+  const handleKeyDown = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    if (e.key === "Backspace" && !otp[index] && index > 0) {
+      // When pressing backspace on an empty input, focus previous
+      inputRefs.current[index - 1]?.focus();
+    }
+  };
+
+  const handleOtpSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(otp.join(""));
-    // Handle OTP verification logic
+    // Join the OTP digits into one string
+    const otpCode = otp.join("");
+    console.log("Entered OTP:", otpCode);
+    try {
+      if (email) {
+        const response = await verifyEmail({
+          verificationToken: otpCode,
+          email,
+        });
+        if (response && (response.status === 200 || response.status === 201)) {
+          navigate("/successful");
+          console.log("OTP verification successful");
+        } else {
+          console.error("OTP verification failed");
+        }
+      } else {
+        console.error("Email not found in session storage");
+      }
+    } catch (error) {
+      console.error("OTP verification failed", error);
+    }
+  };
+
+  const handleResendToken = async () => {
+    if (email) {
+      try {
+        const response = await resendToken({ email });
+        if ((response && response.status === 201) || 200) {
+          console.log("Token resent successfully");
+          toast.success(" Token resent successfully");
+        } else {
+          console.error("Failed to resend token");
+        }
+      } catch (error) {
+        console.error("Failed to resend token", error);
+        toast.error(" Failed to resend token");
+      }
+    } else {
+      console.error("Email not found ");
+    }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white shadow-[5px_5px_40px_rgba(107,151,255,0.3)] p-6 rounded-lg  w-fit  text-center relative">
-        {/* Mail Icon */}
+      <div className="bg-white shadow-[5px_5px_40px_rgba(107,151,255,0.3)] p-6 rounded-lg w-fit text-center relative">
+        {/* OTP Icon */}
         <div className="flex justify-center items-center mb-4">
-          <div className="">
-            {/* <AiOutlineMail className="text-blue-500" size={32} /> */}
-            <img src={otpIcon} alt="" className=" h-12 w-12" />
-          </div>
+          <img src={otpIcon} alt="OTP icon" className="h-12 w-12" />
         </div>
 
         {/* Heading and description */}
-        <h2 className="text-lg font-medium text-[#101828] ">
+        <h2 className="text-lg font-medium text-[#101828]">
           Please check your email.
         </h2>
         <p className="text-sm text-[#667085] mb-4">
-          We&apos;ve sent a code to <strong>olamidee@gmail.com</strong>
+          We&apos;ve sent a code to <strong>{email}</strong>
         </p>
 
         {/* OTP Form */}
         <form onSubmit={handleOtpSubmit}>
-          <div className=" w-full h-full flex items-center justify-center">
-            <div className="w-full flex  gap-4 mb-4">
+          <div className="w-full flex items-center justify-center mb-4">
+            <div className="flex gap-4">
               {otp.map((digit, index) => (
-                <div className=" w-full">
-                  <input
-                    key={index}
-                    type="text"
-                    value={digit}
-                    onChange={(e) => handleOtpChange(e, index)}
-                    maxLength={1}
-                    className="text-center text-2xl text-neutrals600 p-3 border border-primary600 rounded-lg w-14 h-14"
-                    required
-                  />
-                </div>
+                <input
+                  key={index}
+                  ref={(el) => (inputRefs.current[index] = el)}
+                  type="text"
+                  inputMode="numeric"
+                  value={digit}
+                  onChange={(e) => handleChange(e, index)}
+                  onKeyDown={(e) => handleKeyDown(e, index)}
+                  maxLength={1}
+                  className="text-center text-2xl text-neutral-600 p-3 border border-primary600 rounded-lg w-14 h-14 outline-none focus:ring-2 focus:ring-primary500/20 focus:border-primary500"
+                  // required
+                />
               ))}
             </div>
           </div>
           <p className="text-sm text-primary500 mb-6">
             Didn&apos;t get a code?{" "}
-            <a href="#" className=" underline">
+            <p
+              className=" inline underline cursor-pointer"
+              onClick={handleResendToken}
+            >
               Click to resend.
-            </a>
+            </p>
           </p>
 
           {/* Buttons */}
-          <div className="flex gap-4">
+          <div className="flex gap-4 justify-center">
             <button
               type="button"
-              className="flex-1 py-[10px] px-[18px] rounded-lg border border-[#D0D5DD] font-medium text-[#344054] w-[174px]"
+              className="py-2 px-4 rounded-lg border border-[#D0D5DD] font-medium text-[#344054] w-[174px]"
             >
               Cancel
             </button>
-            <Link to="/successful">
-              {" "}
-              <button
-                type="submit"
-                className="flex-1 bg-primary500 text-white py-[10px] px-[18px] rounded-lg font-medium w-[174px]"
-              >
-                Verify
-              </button>
-            </Link>
+
+            <button
+              type="submit"
+              disabled={isVerifyingEmail}
+              className="bg-primary500 text-white py-2 px-4 rounded-lg font-medium w-[174px] flex items-center justify-center"
+            >
+              {isVerifyingEmail ? (
+                <>
+                  <Loader2 className=" size-6 mr-2 animate-spin" />
+                  Verifying...
+                </>
+              ) : (
+                <>Verify</>
+              )}
+            </button>
           </div>
         </form>
       </div>

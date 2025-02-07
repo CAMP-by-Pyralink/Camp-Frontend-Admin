@@ -4,7 +4,6 @@
 //   return result ? result.slice(1).map((x) => parseInt(x, 16)) : null;
 // }
 
-// //  Function to create a fainter version of a hex color (simplified)
 // function getSlightlyFainterColor(hex, opacity = 0.8) {
 //   const rgb = hexToRgb(hex);
 //   if (rgb) {

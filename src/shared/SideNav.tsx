@@ -42,8 +42,8 @@ const SideNav = () => {
   );
   const { themeColor, logo } = useCustomization();
 
-  const location = useLocation(); // Current route
-  const navigate = useNavigate(); // Navigation
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const navMenus = [
     { name: "Overview", img: overviewIcon, path: "/" },
@@ -88,7 +88,7 @@ const SideNav = () => {
       ); // Save submenu state
     } else if (menuName === "Phishing Simulation") {
       setIsPhishingOpen(!isPhishingOpen);
-      localStorage.setItem("isPhishingOpen", JSON.stringify(!isPhishingOpen)); // Save submenu state
+      localStorage.setItem("isPhishingOpen", JSON.stringify(!isPhishingOpen));
     }
   }
 
@@ -135,28 +135,84 @@ const SideNav = () => {
     }
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem("activeRoute", location.pathname);
+  // useEffect(() => {
+  //   const currentPath = location.pathname;
+  //   let matchedMenu = activeMenu; // Use the current activeMenu initially
 
+  //   const isMenuFound = navMenus.some((menu) => {
+  //     if (menu.path === currentPath) {
+  //       matchedMenu = menu.name;
+  //       return true;
+  //     } else if (menu.subMenu) {
+  //       return menu.subMenu.some((sub) => {
+  //         if (sub.path === currentPath) {
+  //           matchedMenu = sub.name;
+  //           return true;
+  //         }
+  //         return false;
+  //       });
+  //     }
+  //     return false;
+  //   });
+
+  //   // If no match is found, keep the current activeMenu
+  //   if (!isMenuFound) {
+  //     setActiveMenu(matchedMenu);
+  //   }
+
+  //   localStorage.setItem("activeRoute", location.pathname);
+  // }, [location.pathname]);
+
+  // useEffect(() => {
+  //   localStorage.setItem("activeRoute", location.pathname);
+
+  //   const currentPath = location.pathname;
+  //   let matchedMenu = "Overview";
+
+  //   navMenus.forEach((menu) => {
+  //     if (menu.path === currentPath) {
+  //       matchedMenu = menu.name;
+  //     } else if (menu.subMenu) {
+  //       const matchedSubMenu = menu.subMenu.find(
+  //         (sub) => sub.path === currentPath
+  //       );
+  //       if (matchedSubMenu) {
+  //         matchedMenu = matchedSubMenu.name;
+  //         if (menu.name === "User Management") setIsUserManagementOpen(true);
+  //         if (menu.name === "Phishing Simulation") setIsPhishingOpen(true);
+  //       }
+  //     }
+  //   });
+
+  //   setActiveMenu(matchedMenu);
+  // }, [location.pathname]);
+
+  useEffect(() => {
     const currentPath = location.pathname;
-    let matchedMenu = "Overview";
+    let matchedMenu = activeMenu; // Initialize with the current activeMenu
 
     navMenus.forEach((menu) => {
       if (menu.path === currentPath) {
         matchedMenu = menu.name;
       } else if (menu.subMenu) {
-        const matchedSubMenu = menu.subMenu.find(
+        const subMenuMatch = menu.subMenu.find(
           (sub) => sub.path === currentPath
         );
-        if (matchedSubMenu) {
-          matchedMenu = matchedSubMenu.name;
-          if (menu.name === "User Management") setIsUserManagementOpen(true);
-          if (menu.name === "Phishing Simulation") setIsPhishingOpen(true);
+        if (subMenuMatch) {
+          matchedMenu = subMenuMatch.name;
+          // Update parent menu's open state if necessary
+          if (menu.name === "User Management") {
+            setIsUserManagementOpen(true);
+          } else if (menu.name === "Phishing Simulation") {
+            setIsPhishingOpen(true);
+          }
         }
       }
     });
 
+    // Update the activeMenu state
     setActiveMenu(matchedMenu);
+    localStorage.setItem("activeMenu", matchedMenu);
   }, [location.pathname]);
 
   // Function to handle setting active menu and saving it to localStorage
@@ -245,7 +301,7 @@ const SideNav = () => {
             ) : (
               <h1
                 className={`font-semibold leading-[49.2px] tracking-[-2%] ${
-                  isCollapsed ? "text-[41px] ml-4 " : "text-[41px]"
+                  isCollapsed ? "text-[41px] " : "text-[41px]"
                 }`}
               >
                 {isCollapsed ? "C" : "CAMP"}
@@ -257,13 +313,13 @@ const SideNav = () => {
               </p>
             )}
           </div>
-          <img
+          {/* <img
             className={`cursor-pointer ${isCollapsed ? " pt-1" : "block"}`}
             src={isCollapsed ? navCloseIcon : navIcon}
             alt="Navigation Icon"
             width={24}
             onClick={() => setIsCollapsed(!isCollapsed)}
-          />
+          /> */}
         </div>
       </div>
 

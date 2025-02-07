@@ -94,7 +94,7 @@ const CustomizationSetting: React.FC<CustomizationSettingProps> = ({
   ];
 
   const handleClick = () => {
-    setIsOpen(!isOpen); // Toggle dropdown visibility
+    setIsOpen(!isOpen);
   };
 
   const popularFonts = [
@@ -143,7 +143,7 @@ const CustomizationSetting: React.FC<CustomizationSettingProps> = ({
             <input
               type="file"
               accept="image/*"
-              className=" absolute top-[78%] hidden z-50"
+              className=" absolute top-[78%]  z-50 "
               id="upload-logo"
               onChange={handleFileUpload}
             />
@@ -178,7 +178,7 @@ const CustomizationSetting: React.FC<CustomizationSettingProps> = ({
               />
             </label>
           </div>
-          {isOpen && ( // Conditionally render dropdown options
+          {isOpen && (
             <ul className=" w-[90%] mx-8 absolute top-[60%] z-50 left-0  bg-white shadow-md rounded-[6px] overflow-hidden text-black">
               {popularFonts.map((fontOption) => (
                 <li

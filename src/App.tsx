@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import AdminLayout from "./layout/AdminLayout";
 import { ClipLoader } from "react-spinners"; // Example spinner
 import AuthLayout from "./layout/AuthLayout";
@@ -25,6 +25,8 @@ import PhishingPreview from "./components/Admin/PhishingStimulation/Campaigns/Ph
 import Checkout from "./pages/Admin/Checkout";
 import Onboarding from "./_Auth/Admin/Onboarding";
 import ProtectedRoutes from "./layout/ProtectedRoutes";
+import { Toaster } from "react-hot-toast";
+import { useAuthStore } from "./store/useAuthStore";
 const Overview = lazy(() => import("./pages/Admin/Overview"));
 const UserManagement = lazy(() => import("./pages/Admin/UserManagement"));
 // const User = lazy(() => import("./pages/Admin/UserManagement/User"));
@@ -44,13 +46,39 @@ const Settings = lazy(() => import("./pages/Admin/Settings"));
 const Alerts = lazy(() => import("./pages/Admin/Alerts"));
 
 function App() {
+  const { setIsAuthenticated } = useAuthStore();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const isAuthenticated = sessionStorage.getItem("isAuthenticated");
+    if (isAuthenticated === "true") {
+      setIsAuthenticated(true);
+    }
+    setLoading(false);
+  }, [setIsAuthenticated]);
+
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <ClipLoader size={50} color="#123abc" />
+      </div>
+    );
+  }
+  // const { setIsAuthenticated } = useAuthStore();
+  // useEffect(() => {
+  //   const isAuthenticated = sessionStorage.getItem("isAuthenticated");
+  //   if (isAuthenticated === "true") {
+  //     setIsAuthenticated(true);
+  //   }
+  // }, [setIsAuthenticated]);
   return (
     <>
       <Suspense
         fallback={
-          <div className="loading-container">
-            <ClipLoader size={50} color="#123abc" />
-          </div>
+          null
+          // <div className="loading-container">
+          //   <ClipLoader size={50} color="#123abc" />
+          // </div>
         }
       >
         <Routes>
@@ -126,6 +154,7 @@ function App() {
           </Route>
           <Route path="/checkout" element={<Checkout />} />
         </Routes>
+        <Toaster />
       </Suspense>
     </>
   );

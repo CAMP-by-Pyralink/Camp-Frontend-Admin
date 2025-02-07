@@ -22,10 +22,10 @@ const Warranty = () => {
           className=" w-[760px] h-[261px] border border-[#D0D5DD] outline-none rounded-md"
         />
         <div className=" flex justify-end mt-4">
-          <button className=" bg-primary500 text-sm px-3 py-[10px] rounded text-white font-semibold">
+          {/* <button className=" bg-primary500 text-sm px-3 py-[10px] rounded text-white font-semibold">
             Add Warranty
-          </button>
-          {/* <Button label="Add Warranty" onClick={handleAddWaranty}></Button> */}
+          </button> */}
+          <Button label="Add Warranty" width="180px"></Button>
         </div>
       </div>
     </div>

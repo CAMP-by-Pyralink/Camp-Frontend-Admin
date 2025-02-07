@@ -1,27 +1,46 @@
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, useEffect } from "react";
 import addIcon from "../../assets/svgs/add-halfcircle-icon.svg";
 
-const AddDepartments: React.FC = () => {
-  const [departments, setDepartments] = useState<string[]>([]); // Store selected departments
-  const [customDepartment, setCustomDepartment] = useState<string>(""); // Store custom department input value
+type AddDepartmentsData = {
+  companyDepartments: string[];
+};
+
+type AddDepartmentsProps = AddDepartmentsData & {
+  updateFields: (fields: Partial<AddDepartmentsData>) => void;
+};
+
+const AddDepartments: React.FC<AddDepartmentsProps> = ({
+  companyDepartments,
+  updateFields,
+}) => {
+  // Use local state to manage the UI, then update the parent's state when changes occur
+  const [localDepartments, setLocalDepartments] =
+    useState<string[]>(companyDepartments);
+  const [customDepartment, setCustomDepartment] = useState<string>("");
   const [isCustomInputVisible, setIsCustomInputVisible] =
-    useState<boolean>(false); // Toggle custom input visibility
+    useState<boolean>(false);
+
+  // Whenever localDepartments changes, update the parent state
+  useEffect(() => {
+    updateFields({ companyDepartments: localDepartments });
+  }, [localDepartments, updateFields]);
 
   // Handle selecting a department from the dropdown
   const handleSelectDepartment = (
     event: ChangeEvent<HTMLSelectElement>
   ): void => {
     const selectedDepartment = event.target.value;
-    if (selectedDepartment && !departments.includes(selectedDepartment)) {
-      setDepartments([...departments, selectedDepartment]);
-      // setNewDepartment("");
+    if (selectedDepartment && !localDepartments.includes(selectedDepartment)) {
+      const newDepartments = [...localDepartments, selectedDepartment];
+      setLocalDepartments(newDepartments);
     }
   };
 
   // Handle adding a custom department
   const handleAddCustomDepartment = (): void => {
-    if (customDepartment && !departments.includes(customDepartment)) {
-      setDepartments([...departments, customDepartment]);
+    if (customDepartment && !localDepartments.includes(customDepartment)) {
+      const newDepartments = [...localDepartments, customDepartment];
+      setLocalDepartments(newDepartments);
       setCustomDepartment(""); // Clear input
       setIsCustomInputVisible(false); // Hide input box
     }
@@ -58,7 +77,7 @@ const AddDepartments: React.FC = () => {
       {/* Selected departments */}
       <div className="flex flex-wrap items-center gap-4 justify-between mt-4">
         <div className="flex flex-wrap gap-2">
-          {departments.map((dept, index) => (
+          {localDepartments.map((dept, index) => (
             <span
               key={index}
               className="px-3 py-1 bg-secondary100 rounded-full text-sm"
@@ -82,20 +101,21 @@ const AddDepartments: React.FC = () => {
       {/* Custom department input */}
       {isCustomInputVisible && (
         <div className="mt-4 flex items-center gap-4">
-          <div className=" w-full">
-            <label htmlFor="">Custom department</label>
+          <div className="w-full">
+            <label htmlFor="customDepartment">Custom department</label>
             <div className="flex items-center gap-4">
               <input
                 type="text"
+                id="customDepartment"
                 value={customDepartment}
                 onChange={(e) => setCustomDepartment(e.target.value)}
                 placeholder="Enter custom department"
-                className="block w-full px-3 py-3 border border-[#D0D5DD] rounded-md focus:outline-none text-sm"
+                className="block w-full px-3 py-4 border border-[#D0D5DD] rounded-md focus:outline-none text-sm"
               />
               <button
                 type="button"
                 onClick={handleAddCustomDepartment}
-                className=" w-[168px] px-4 py-3 text-white bg-primary500 rounded-md"
+                className="w-[168px] px-4 py-3 text-white bg-primary500 rounded-md"
               >
                 Add
               </button>

@@ -18,7 +18,7 @@ const PreviewModal = ({ setContinueClicked }) => {
     >
       <div className="bg-white rounded-lg shadow-lg  w-full max-w-xl">
         <div className="bg-[#DEEFFC] py-4 px-12 flex justify-between items-center border-b">
-          <h2 className="text-2xl  text-[#333333]">Preview & Apply</h2>
+          <h2 className="text-xl  text-[#333333]">Preview & Apply</h2>
           {/* <div className="text-gray-500 hover:text-gray-800">✕</div> */}
           <img
             src={closeIcon}
@@ -29,7 +29,7 @@ const PreviewModal = ({ setContinueClicked }) => {
           />
         </div>
         {/*  */}
-        <div className=" py-4 px-4">
+        <div className=" py- px-4">
           <div className=" mx-12">
             <label htmlFor="" className=" block text-[#333333] font-medium">
               Campaign name
@@ -65,7 +65,7 @@ const PreviewModal = ({ setContinueClicked }) => {
           <hr />
         </div>
         {/*  */}
-        <div className=" py-4 px-4">
+        <div className=" py-2 px-4">
           <div className=" mx-12">
             <div className=" flex items-center justify-between mb-4">
               <h1 className=" text-[#454545] text-xl font-semibold">
@@ -77,7 +77,7 @@ const PreviewModal = ({ setContinueClicked }) => {
               </div>
             </div>
             {/*  */}
-            <div className=" flex gap-4 items-center mb-8">
+            <div className=" flex gap-2 items-center mb-4">
               <div className=" bg-blue50 w-fit py-1 px-2 rounded-[10px] text-[#454545] text-sm">
                 <div className=" flex gap-4 items-center">
                   <h1>
@@ -116,11 +116,11 @@ const PreviewModal = ({ setContinueClicked }) => {
             </div>
             <div className=" flex gap-4 items-center py-8">
               <Link to="/phishing-simulation/campaigns">
-                <button className=" py-4 px-6 bg-primary500 font-medium text-white rounded-lg">
+                <button className=" py-2 px-6 bg-primary500 font-medium text-white rounded-lg">
                   Start campaign
                 </button>
               </Link>
-              <button className=" font-medium py-4 px-6 text-primary500 border border-primary500 rounded-lg ">
+              <button className=" font-medium py-2 px-6 text-primary500 border border-primary500 rounded-lg ">
                 Send test email
               </button>
               <Link to="/phishing-simulation/preview">

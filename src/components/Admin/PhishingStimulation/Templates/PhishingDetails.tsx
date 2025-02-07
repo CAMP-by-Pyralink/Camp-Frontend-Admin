@@ -14,7 +14,7 @@ import PreviewModal from "./PreviewModal";
 import { startOfMonth } from "date-fns";
 
 const PhishingDetails: React.FC = () => {
-  const [continueClicked, setContinueClicked] = useState(false);
+  const [continueClicked, setContinueClicked] = useState<boolean>(false);
   const { title } = useParams<{ title: string }>();
   const [isToggled, setIsToggled] = useState(false);
   const handleToggle = () => {

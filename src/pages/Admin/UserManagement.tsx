@@ -31,7 +31,7 @@ interface SelectedFilters {
   status: string;
 }
 
-const UserManagement = ({ label, onClick }) => {
+const UserManagement = () => {
   const { type } = useParams<{ type: string }>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
@@ -61,8 +61,8 @@ const UserManagement = ({ label, onClick }) => {
   };
 
   const handleExportClick = () => {
-    setImportCsv((prev) => !prev);
-    setExportCsv((prev) => !prev);
+    // setImportCsv((prev) => !prev);
+    // setExportCsv((prev) => !prev);
   };
 
   const handleFilterClick = () => {
@@ -137,7 +137,7 @@ const UserManagement = ({ label, onClick }) => {
             <p className="text-[#464646]">
               Nothing here, add/upload your employees
             </p>
-            <Button label="Add User"></Button>
+            <Button label="Add User" width="180px"></Button>
           </div>
           {isModalOpen && <CreateUserModal onClose={handleCloseModal} />}
         </div>
