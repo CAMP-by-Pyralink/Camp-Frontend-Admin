@@ -16,6 +16,7 @@ import profilePic from "../assets/profilepic.png";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useCustomization } from "../contexts/CustomizationContext";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { useAuthStore } from "../store/useAuthStore";
 
 interface NavMenu {
   name: string;
@@ -44,6 +45,11 @@ const SideNav = () => {
 
   const location = useLocation();
   const navigate = useNavigate();
+  const { logout } = useAuthStore();
+
+  const handleSignOut = async () => {
+    await logout();
+  };
 
   const navMenus = [
     { name: "Overview", img: overviewIcon, path: "/" },
@@ -476,7 +482,10 @@ const SideNav = () => {
             {!isCollapsed && <span className="text-sm">John Doe</span>}
           </div>
           {/*  */}
-          <div className=" flex items-center gap-4">
+          <div
+            className=" flex items-center gap-4 cursor-pointer"
+            onClick={handleSignOut}
+          >
             <img
               src={signoutIcon}
               alt="Sign Out"

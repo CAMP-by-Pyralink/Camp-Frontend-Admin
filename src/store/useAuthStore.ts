@@ -113,9 +113,11 @@ export const useAuthStore = create<AuthStore>((set) => ({
       console.log(response.data);
       return response;
     } catch (error: any) {
-      const message = "Registration Failed";
-      // error.response?.data?.message || error.message || "Registration failed";
-      toast.error(message);
+      console.log(error.response?.data);
+      const message = error?.response.data.msg || "Registration failed";
+      toast.error(message, {
+        style: { maxWidth: "100%" },
+      });
       return null;
     } finally {
       set({ isSigningUp: false });
@@ -242,8 +244,8 @@ export const useAuthStore = create<AuthStore>((set) => ({
       toast.success("Logged in successfully!");
       return response;
     } catch (error: any) {
-      const message = "Login failed, Try again";
-      // error.response?.data?.message || error.message || "Login failed";
+      const message =
+        error?.response.data.msg || error.message || "Login failed";
       toast.error(message);
       return null;
     } finally {

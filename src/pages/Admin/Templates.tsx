@@ -1,9 +1,10 @@
 import { useState } from "react";
 import TemplateLists from "../../components/Admin/PhishingStimulation/Templates/TemplateLists";
 import FilterModal from "../../components/Admin/UserManagement/FilterModal";
-// import Button from "../../shared/Button";
 import HeaderTitle from "../../shared/HeaderTitle";
 import PagesHomeLayout from "../../shared/PagesHomeLayout";
+import AddTemplateModal from "../../components/Admin/PhishingStimulation/Templates/AddtemplateModal";
+// import AddTemplateModal from "../../components/Admin/PhishingStimulation/Templates/AddTemplateModal";
 
 // Define FilterConfig interface
 interface FilterConfig {
@@ -20,6 +21,7 @@ interface SelectedFilters {
 
 const Templates = () => {
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   // State to hold the selected filter values
   const [selectedFilters, setSelectedFilters] = useState({
@@ -28,8 +30,9 @@ const Templates = () => {
   });
 
   const handleAdd = () => {
-    console.log("first");
+    setIsAddModalOpen(true);
   };
+
   const handleFilterClick = () => {
     setIsFilterModalOpen((prev) => !prev);
     console.log("Filter button clicked");
@@ -46,6 +49,7 @@ const Templates = () => {
   const handleExportClick = () => {
     // Export logic based on id
   };
+
   // Define your filters array
   const filters: FilterConfig[] = [
     {
@@ -69,19 +73,21 @@ const Templates = () => {
       ],
     },
   ];
+
   return (
     <div>
-      <div className=" flex justify-between items-center mb-">
+      <div className="flex justify-between items-center mb-">
         <HeaderTitle
           title="Phishing Simulation"
           subTitle="  Create phishing simulations to test your employees."
         ></HeaderTitle>
-        {/* <Button onClick={handleAdd} label="Add New" /> */}
-        <button className=" h-fit py-2 px-12 bg-primary500 rounded-md text-white">
+        <button
+          className="h-fit py-2 px-12 bg-primary500 rounded-md text-white"
+          onClick={handleAdd}
+        >
           Add New
         </button>
       </div>
-      {/*  */}
       <PagesHomeLayout
         onFilterClick={handleFilterClick}
         onExportClick={handleExportClick}
@@ -89,7 +95,6 @@ const Templates = () => {
         showExport={false}
       >
         <TemplateLists />
-        {/* Your content */}
       </PagesHomeLayout>
       {isFilterModalOpen && (
         <FilterModal
@@ -99,6 +104,9 @@ const Templates = () => {
           selectedFilters={selectedFilters} // Pass selected filters
           handleFilterChange={handleFilterChange} // Handle filter value changes
         />
+      )}
+      {isAddModalOpen && (
+        <AddTemplateModal onClose={() => setIsAddModalOpen(false)} />
       )}
     </div>
   );

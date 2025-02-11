@@ -147,9 +147,7 @@ const UserManagement = () => {
             <HeaderTitle
               title="User Management"
               subTitle={
-                type === "Admin"
-                  ? "Add or view admin users"
-                  : "Add or view users"
+                type === "Admin" ? "Add or view Admins " : "Add or view Users"
               }
             ></HeaderTitle>
 
@@ -159,7 +157,7 @@ const UserManagement = () => {
                 className="bg-primary500 py-[10px] text-center rounded-lg text-white w-[180px] cursor-pointer flex items-center justify-center gap-2 "
                 onClick={toggleDropdown}
               >
-                Add {type === "admin" ? "Admin" : "User"}
+                Add {type === "Admin" ? "Admin" : "User"}
                 <img src={downArrowIcon} alt="" />
               </div>
 

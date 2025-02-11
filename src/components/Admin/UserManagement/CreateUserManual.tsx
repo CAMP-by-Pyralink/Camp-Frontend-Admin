@@ -1,70 +1,62 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import closeIcon from "../../../assets/svgs/close.svg";
-import UploadSuccessful from "./UploadSuccessful";
 import NewUserAdded from "./NewUserAdded";
-// import UploadSuccessful from "./UploadSuccessful";
-
-interface Permission {
-  id: string;
-  label: string;
-  description: string;
-}
+import { useAdminStore } from "../../../store/useAdminStore";
+import { generatePassword } from "../../../utils/generatePassword";
 
 interface CreateUserManualProps {
-  type: string;
   onCreate: () => void;
   onClose: () => void;
 }
-
-const permissions: Permission[] = [
-  {
-    id: "allAccess",
-    label: "All Access",
-    description: "This is a placeholder for the description",
-  },
-  {
-    id: "access1",
-    label: "Access 1",
-    description: "This is a placeholder for the description",
-  },
-  {
-    id: "access2",
-    label: "Access 2",
-    description: "This is a placeholder for the description",
-  },
-  {
-    id: "access3",
-    label: "Access 3",
-    description: "This is a placeholder for the description",
-  },
-];
 
 const CreateUserManual: React.FC<CreateUserManualProps> = ({
   onCreate,
   onClose,
 }) => {
   const [email, setEmail] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [department, setDepartment] = useState("");
   const [create, setCreate] = useState(false);
-  const [selectedPermissions, setSelectedPermissions] = useState<string[]>([
-    "allAccess",
-  ]);
   const { type } = useParams<{ type: string }>();
+  const { departments, fetchDepartments, registerAdmin } = useAdminStore();
 
-  const togglePermission = (id: string) => {
-    setSelectedPermissions((prev) =>
-      prev.includes(id) ? prev.filter((perm) => perm !== id) : [...prev, id]
-    );
-  };
+  useEffect(() => {
+    fetchDepartments();
+  }, [fetchDepartments]);
 
-  const handleCreateClick = () => {
-    setCreate(true);
-    onCreate();
+  useEffect(() => {
+    if (departments.length > 0) {
+      setDepartment(departments[0]);
+    }
+  }, [departments]);
+
+  const handleCreateClick = async () => {
+    // const password = generatePassword();
+    const newUser = {
+      fname: firstName,
+      lname: lastName,
+      email,
+      // password,
+      // confirmPassword: password,
+      department,
+      type: "admin",
+      authProvider: "manual",
+    };
+    console.log("New User:", newUser);
+    const response = await registerAdmin(newUser);
+    if (response && response.status === 201) {
+      setCreate(true);
+      onCreate();
+    } else {
+      console.error("Failed to create user");
+    }
   };
 
   return (
     <div
-      className="fixed inset-0 bg-[#344054B2] bg-opacity-40 flex justify-center items-center "
+      className="fixed inset-0 bg-[#344054B2] bg-opacity-40 flex justify-center items-center"
       style={{ backdropFilter: "blur(7px)" }}
     >
       <div className="bg-[#F7F9FC] w-fit px-8 py-4 rounded-lg shadow-lg relative">
@@ -76,12 +68,12 @@ const CreateUserManual: React.FC<CreateUserManualProps> = ({
         />
         {!create ? (
           <div>
-            <h1 className="text-center text-2xl font-medium mb-4 mt-4">
+            <h1 className="text-center text-2xl font-medium mb-2 mt-">
               Manual
             </h1>
 
             <div>
-              <div className="text-[#454545] text-center mb-4">
+              <div className="text-[#454545] text-center mb-2">
                 <h2 className="text-2xl font-semibold">
                   Create a New {type === "Admin" ? "Admin" : "Employee"}
                 </h2>
@@ -90,7 +82,7 @@ const CreateUserManual: React.FC<CreateUserManualProps> = ({
                   add a new {type === "Admin" ? "admin" : "employee"}
                 </p>
               </div>
-
+              {/* Email */}
               <div className="mb-4">
                 <label className="block text-[#101928] text-sm font-medium mb-1">
                   Email
@@ -99,8 +91,49 @@ const CreateUserManual: React.FC<CreateUserManualProps> = ({
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-2 border  rounded-lg outline-none focus:outline-none  "
+                  className="w-full px-4 py-2 border rounded-lg outline-none focus:outline-none"
                 />
+              </div>
+              {/* First name */}
+              <div className="mb-4">
+                <label className="block text-[#101928] text-sm font-medium mb-1">
+                  First Name
+                </label>
+                <input
+                  type="text"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  className="w-full px-4 py-2 border rounded-lg outline-none focus:outline-none"
+                />
+              </div>
+              {/* Last name */}
+              <div className="mb-4">
+                <label className="block text-[#101928] text-sm font-medium mb-1">
+                  Last Name
+                </label>
+                <input
+                  type="text"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  className="w-full px-4 py-2 border rounded-lg outline-none focus:outline-none"
+                />
+              </div>
+              {/* Departments */}
+              <div className="mb-4">
+                <label className="block text-[#101928] text-sm font-medium mb-1">
+                  Department
+                </label>
+                <select
+                  value={department}
+                  onChange={(e) => setDepartment(e.target.value)}
+                  className="w-full px-4 py-2 border rounded-lg outline-none focus:outline-none"
+                >
+                  {departments.map((dept) => (
+                    <option key={dept} value={dept}>
+                      {dept}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="mb-4">
@@ -113,67 +146,17 @@ const CreateUserManual: React.FC<CreateUserManualProps> = ({
                   className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
-
-              {type === "Admin" && (
-                <div className="mb-6">
-                  <h3 className="text-lg text-[#101928]">Permissions</h3>
-                  <p className="text-[#101928] mb-4">
-                    Set the permissions for this role
-                  </p>
-                  {permissions.map((perm) => (
-                    <div key={perm.id} className="flex items-start mb-2">
-                      <div
-                        onClick={() => togglePermission(perm.id)}
-                        style={{
-                          width: "32.5px",
-                          height: "20px",
-                          borderRadius: "12px",
-                          backgroundColor: selectedPermissions.includes(perm.id)
-                            ? "#282EFF"
-                            : "#ccc",
-                          position: "relative",
-                          cursor: "pointer",
-                          display: "inline-flex",
-                          alignItems: "center",
-                          justifyContent: selectedPermissions.includes(perm.id)
-                            ? "flex-end"
-                            : "flex-start",
-                          padding: "2px",
-                        }}
-                      >
-                        <div
-                          style={{
-                            width: "16px",
-                            height: "16px",
-                            borderRadius: "50%",
-                            backgroundColor: "#fff",
-                            transition: "0.3s",
-                          }}
-                        />
-                      </div>
-                      <div className="flex flex-col mt-[-5px] ml-3">
-                        <label className="text-sm text-[#101928] font-semibold">
-                          {perm.label}
-                        </label>
-                        <p className="text-[#667185] text-sm">
-                          {perm.description}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
 
             <button
               onClick={handleCreateClick}
-              className=" w-full bg-primary500 text-white py-2 rounded-lg font-semibold mb-8"
+              className="w-full bg-primary500 text-white py-2 rounded-lg font-semibold mb-1"
             >
               Create
             </button>
           </div>
         ) : (
-          <NewUserAdded onClose={onClose} />
+          <NewUserAdded email={email} onClose={onClose} />
         )}
       </div>
     </div>

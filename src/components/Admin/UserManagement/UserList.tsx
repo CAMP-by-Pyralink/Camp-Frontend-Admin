@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useAdminStore } from "../../../store/useAdminStore";
 
 interface User {
   id: string;
@@ -9,6 +10,9 @@ interface User {
 }
 
 const UserList: React.FC = () => {
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const { getAdmins } = useAdminStore();
+
   const users: User[] = [
     {
       id: "PY 0022",
@@ -47,8 +51,9 @@ const UserList: React.FC = () => {
       dateAdded: "15/05/2023 10:00AM",
     },
   ];
-
-  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  useEffect(() => {
+    getAdmins();
+  }, [getAdmins]);
 
   const handleButtonClick = (userId: string) => {
     setSelectedUserId((prevUserId) => (prevUserId === userId ? null : userId));

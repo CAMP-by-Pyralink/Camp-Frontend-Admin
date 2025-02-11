@@ -1,7 +1,11 @@
 import successIcon from "../../../assets/svgs/successIcon.svg";
-// import closeIcon from "../../../assets/svgs/close.svg";
 
-const NewUserAdded = ({ handleCloseModal, onClose }) => {
+interface NewUserAddedProps {
+  email: string;
+  onClose: () => void;
+}
+
+const NewUserAdded: React.FC<NewUserAddedProps> = ({ email, onClose }) => {
   return (
     <div className="   ">
       <div className=" relative p-4 w-[532px] rounded-lg  text-center">
@@ -17,7 +21,7 @@ const NewUserAdded = ({ handleCloseModal, onClose }) => {
           New User Added
         </h2>
         <p className="text-[#04012D] text-lg ">
-          You have successfully added <br /> olamide@pyralink
+          You have successfully added <br /> {email}
         </p>
         {/* <button className="bg-blue-500 text-white py-2 px-6 rounded-lg">
           Go to Dashboard
