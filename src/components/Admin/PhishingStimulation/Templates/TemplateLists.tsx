@@ -94,7 +94,7 @@ const TemplateLists: React.FC = () => {
               to={`/phishing-details`}
               state={{
                 title: selectedCard.title,
-                img: selectedCard.img,
+                img: selectedCard.bannerImage,
               }}
             >
               <button className="w-full bg-primary500 py-4 px-6 rounded-lg text-white">

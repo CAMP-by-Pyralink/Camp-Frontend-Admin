@@ -49,14 +49,14 @@ export interface LoginData {
 
 // --- User Interface ---
 
-export interface User {
+export interface AuthUser {
   token: string;
 }
 
 // --- Auth Store Interface ---
 
 interface AuthStore {
-  authUser: User | null;
+  authUser: AuthUser | null;
   // Loading/Processing States
   isLoading: boolean;
   isSigningUp: boolean;
@@ -67,7 +67,7 @@ interface AuthStore {
   isAuthenticated: boolean;
 
   // State Setters
-  setAuthUser: (user: User | null) => void;
+  setAuthUser: (user: AuthUser | null) => void;
   setIsLoading: (value: boolean) => void;
   setIsAuthenticated: (value: boolean) => void;
 
@@ -96,7 +96,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
   isOnboarding: false,
 
   // Setters
-  setAuthUser: (user: User | null) => set({ authUser: user }),
+  setAuthUser: (user: AuthUser | null) => set({ authUser: user }),
   setIsLoading: (value: boolean) => set({ isLoading: value }),
   setIsAuthenticated: (value: boolean) => set({ isAuthenticated: value }),
 
@@ -235,7 +235,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
         toast.success("Login successful!");
       }
 
-      const user: User = response.data.token;
+      const user: AuthUser = response.data.token;
       set({ isAuthenticated: true });
       set({ authUser: user });
       sessionStorage.setItem("isAuthenticated", "true");

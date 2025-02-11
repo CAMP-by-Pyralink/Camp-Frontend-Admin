@@ -10,18 +10,31 @@ const api = axios.create({
   },
 });
 
+// Add a request interceptor to attach the bearer token
+api.interceptors.request.use(
+  (config) => {
+    const { authUser } = useAuthStore.getState();
+    if (authUser) {
+      config.headers.Authorization = `Bearer ${authUser}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 // --- Data Payload Interfaces ---
 
 export interface registerAdminData {
-  fname: string;
-  lname: string;
+  fName: string;
+  lName: string;
   email: string;
   // password: string;
   // confirmPassword: string;
   department: string;
   type: string;
   authProvider: string;
-  // companyName: string;
 }
 
 export interface getAdminsData {
@@ -33,32 +46,23 @@ export interface getAdminsData {
 interface AdminStore {
   isRegisteringAdmin: boolean;
   departments: string[];
+  admins: any[];
   fetchDepartments: () => Promise<void>;
-  registerAdmin: (data: registerAdminData) => Promise<any>;
+  getAdmins: () => Promise<void>;
+  registerAdmin: (data: registerAdminData) => Promise<AxiosResponse | void>;
 }
-
-const { authUser } = useAuthStore.getState();
-if (!authUser) {
-  console.error("No auth user found");
-  // return;
-}
-console.log(authUser);
 
 export const useAdminStore = create<AdminStore>((set) => ({
   isRegisteringAdmin: false,
   departments: [],
+  admins: [],
 
   registerAdmin: async (data: registerAdminData) => {
     set({ isRegisteringAdmin: true });
     try {
       const response: AxiosResponse = await api.post(
         "/company/registerAdmin",
-        data,
-        {
-          headers: {
-            Authorization: `Bearer ${authUser}`,
-          },
-        }
+        data
       );
       console.log(response);
       toast.success("Admin registered successfully!");
@@ -70,43 +74,27 @@ export const useAdminStore = create<AdminStore>((set) => ({
       set({ isRegisteringAdmin: false });
     }
   },
+
   getAdmins: async () => {
     try {
-      const response: AxiosResponse = await api.get("/admin/getAdmins", {
-        headers: {
-          Authorization: `Bearer ${authUser}`,
-        },
-      });
-      console.log(response);
+      const response: AxiosResponse = await api.get("/admin/getAdmins");
+      set({ admins: response.data.admins });
+      console.log("getAdmins", response.data.admins);
     } catch (error) {
-      console.error(error);
+      console.error("getAdmins", error);
     }
   },
-  getCurrentAdmin: async () => {
-    try {
-      const response: AxiosResponse = await api.get("/admin/currentAdmin");
-      console.log(response);
-    } catch (error) {
-      console.error(error);
-    }
-  },
+
   fetchDepartments: async () => {
-    console.log(authUser);
     try {
       const response: AxiosResponse = await api.get(
-        "/admin/getCompanyDepartments",
-        {
-          headers: {
-            Authorization: `Bearer ${authUser}`,
-          },
-        }
+        "/admin/getCompanyDepartments"
       );
-      set({ departments: response.data.departments });
-      console.log("Authorization Header:", `Bearer ${authUser?.token}`);
       set({ departments: response.data.companyDepartments });
       console.log("departments", response.data.companyDepartments);
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      toast.error("Failed to fetch departments.");
     }
   },
 }));

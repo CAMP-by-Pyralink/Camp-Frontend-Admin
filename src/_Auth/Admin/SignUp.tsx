@@ -205,6 +205,15 @@ const SignUp = () => {
     }
   };
 
+  const validatePassword = (password: string) => {
+    const isLongEnough = password.length >= 12;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    return { isLongEnough, hasUpperCase, hasSpecialChar };
+  };
+
+  const passwordValidation = validatePassword(formData.password);
+
   return (
     <div className="flex items-center max-h-[621px] max-w-[480px]">
       <div className="w-full h-full">
@@ -320,7 +329,75 @@ const SignUp = () => {
               )}
             </div>
           </div>
-
+          {/*  */}
+          <div className="mb-4">
+            <ul className="text-sm text-gray-600">
+              <li className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={passwordValidation.isLongEnough}
+                  readOnly
+                  className={`mr-2 ${
+                    passwordValidation.isLongEnough
+                      ? "text-green-500"
+                      : "text-red-500"
+                  }`}
+                />
+                <span
+                  className={
+                    passwordValidation.isLongEnough
+                      ? "text-green-500"
+                      : "text-red-500"
+                  }
+                >
+                  Password must be at least 12 characters long
+                </span>
+              </li>
+              <li className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={passwordValidation.hasUpperCase}
+                  readOnly
+                  className={`mr-2 ${
+                    passwordValidation.hasUpperCase
+                      ? "text-green-500"
+                      : "text-red-500"
+                  }`}
+                />
+                <span
+                  className={
+                    passwordValidation.hasUpperCase
+                      ? "text-green-500"
+                      : "text-red-500"
+                  }
+                >
+                  Password must contain an uppercase letter
+                </span>
+              </li>
+              <li className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={passwordValidation.hasSpecialChar}
+                  readOnly
+                  className={`mr-2 ${
+                    passwordValidation.hasSpecialChar
+                      ? "text-green-500"
+                      : "text-red-500"
+                  }`}
+                />
+                <span
+                  className={
+                    passwordValidation.hasSpecialChar
+                      ? "text-green-500"
+                      : "text-red-500"
+                  }
+                >
+                  Password must contain a special character
+                </span>
+              </li>
+            </ul>
+          </div>
+          {/*  */}
           <button
             type="submit"
             disabled={isSigningUp}

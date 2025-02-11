@@ -2,61 +2,29 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAdminStore } from "../../../store/useAdminStore";
 
-interface User {
-  id: string;
-  name: string;
-  department: string;
-  dateAdded: string;
-}
-
 const UserList: React.FC = () => {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
-  const { getAdmins } = useAdminStore();
+  const { admins, getAdmins } = useAdminStore();
 
-  const users: User[] = [
-    {
-      id: "PY 0022",
-      name: "Kristin Watson",
-      department: "IT",
-      dateAdded: "23/04/2023 11:59PM",
-    },
-    {
-      id: "PY 0023",
-      name: "Jacob Black",
-      department: "HR",
-      dateAdded: "15/05/2023 10:00AM",
-    },
-    {
-      id: "PY 0024",
-      name: "Jacob Black",
-      department: "HR",
-      dateAdded: "15/05/2023 10:00AM",
-    },
-    {
-      id: "PY 0025",
-      name: "Jacob Black",
-      department: "HR",
-      dateAdded: "15/05/2023 10:00AM",
-    },
-    {
-      id: "PY 0026",
-      name: "Jacob Black",
-      department: "HR",
-      dateAdded: "15/05/2023 10:00AM",
-    },
-    {
-      id: "PY 0027",
-      name: "Jacob Black",
-      department: "HR",
-      dateAdded: "15/05/2023 10:00AM",
-    },
-  ];
   useEffect(() => {
     getAdmins();
   }, [getAdmins]);
 
   const handleButtonClick = (userId: string) => {
     setSelectedUserId((prevUserId) => (prevUserId === userId ? null : userId));
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+    const year = date.getFullYear();
+    const hours = date.getHours();
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const ampm = hours >= 12 ? "PM" : "AM";
+    const formattedHours = hours % 12 || 12; // Convert to 12-hour format
+
+    return `${day}/${month}/${year} ${formattedHours}:${minutes}${ampm}`;
   };
 
   return (
@@ -75,29 +43,31 @@ const UserList: React.FC = () => {
           </tr>
         </thead>
         <tbody className="bg-white">
-          {users.map((user) => (
+          {admins.map((admin) => (
             <tr
-              key={user.id}
+              key={admin._id}
               className="text-[#101928] hover:bg-gray-50 relative"
             >
               <td className="p-4 border-b border-gray-200">
                 <input type="checkbox" />
               </td>
-              <td className="p-4 border-b border-gray-200">{user.id}</td>
-              <td className="p-4 border-b border-gray-200">{user.name}</td>
+              <td className="p-4 border-b border-gray-200">{admin._id}</td>
+              <td className="p-4 border-b border-gray-200">{`${admin.lName} ${admin.fName}`}</td>
               <td className="p-4 text-[#737373] text-[14px] border-b border-gray-200">
-                {user.department}
+                {admin.department || "N/A"}
               </td>
-              <td className="p-4 border-b border-gray-200">{user.dateAdded}</td>
+              <td className="p-4 border-b border-gray-200">
+                {formatDate(admin.createdAt) || "N/A"}
+              </td>
               <td className="p-4 border-b border-gray-200 text-center relative">
                 <div
                   className=" cursor-pointer flex items-center justify-center border border-[#E4E7EC] rounded-lg w-8 h-8"
-                  onClick={() => handleButtonClick(user.id)}
+                  onClick={() => handleButtonClick(admin._id)}
                 >
                   ⋮
                 </div>
 
-                {selectedUserId === user.id && (
+                {selectedUserId === admin._id && (
                   <div className="absolute left-0 mt-2 w-[89px]  bg-white border border-[#C7C7CC] rounded-md  shadow-[5px_5px_40px_rgba(107,151,255,0.3)] z-10">
                     <ul className="text-left">
                       <Link to="/profile">
