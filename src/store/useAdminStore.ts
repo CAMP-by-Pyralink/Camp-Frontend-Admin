@@ -47,6 +47,7 @@ interface AdminStore {
   isRegisteringAdmin: boolean;
   departments: string[];
   admins: any[];
+  currentUser: any[];
   fetchDepartments: () => Promise<void>;
   getAdmins: () => Promise<void>;
   registerAdmin: (data: registerAdminData) => Promise<AxiosResponse | void>;
@@ -56,6 +57,7 @@ export const useAdminStore = create<AdminStore>((set) => ({
   isRegisteringAdmin: false,
   departments: [],
   admins: [],
+  currentUser: [],
 
   registerAdmin: async (data: registerAdminData) => {
     set({ isRegisteringAdmin: true });
@@ -67,9 +69,11 @@ export const useAdminStore = create<AdminStore>((set) => ({
       console.log(response);
       toast.success("Admin registered successfully!");
       return response;
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      toast.error("Failed to register admin.");
+      toast.error(error.response.data.msg, {
+        style: { maxWidth: "100%" },
+      });
     } finally {
       set({ isRegisteringAdmin: false });
     }
@@ -79,6 +83,15 @@ export const useAdminStore = create<AdminStore>((set) => ({
     try {
       const response: AxiosResponse = await api.get("/admin/getAdmins");
       set({ admins: response.data.admins });
+      console.log("getAdmins", response.data.admins);
+    } catch (error) {
+      console.error("getAdmins", error);
+    }
+  },
+  getCurrentAdmin: async () => {
+    try {
+      const response: AxiosResponse = await api.get("/admin/currentAdmin");
+      set({ currentUser: response.data.admins });
       console.log("getAdmins", response.data.admins);
     } catch (error) {
       console.error("getAdmins", error);

@@ -147,6 +147,7 @@
 // };
 
 // export default SignUp;
+
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -331,18 +332,33 @@ const SignUp = () => {
           </div>
           {/*  */}
           <div className="mb-4">
-            <ul className="text-sm text-gray-600">
-              <li className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={passwordValidation.isLongEnough}
-                  readOnly
-                  className={`mr-2 ${
+            <ul className="text-sm flex flex-col gap-1 text-gray-600">
+              <li className="flex  items-center">
+                <label
+                  htmlFor="scanOption"
+                  className={` size-5 ${
                     passwordValidation.isLongEnough
-                      ? "text-green-500"
-                      : "text-red-500"
-                  }`}
-                />
+                      ? "bg-[#15B097]"
+                      : "bg-red-500"
+                  } rounded-full flex items-center justify-center cursor-pointer peer-checked:bg-blue50 peer-checked:border-primary500 peer-checked:text-white mr-2`}
+                >
+                  <svg
+                    className=" size-3.5"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke={passwordValidation.isLongEnough ? "#fff" : ""}
+                    // stroke={onboardingType === "scan" ? "#282EFF" : "#B4B4B4"}
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path
+                      className="transition-all duration-300"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </label>
                 <span
                   className={
                     passwordValidation.isLongEnough
@@ -353,17 +369,34 @@ const SignUp = () => {
                   Password must be at least 12 characters long
                 </span>
               </li>
+              {/*  */}
               <li className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={passwordValidation.hasUpperCase}
-                  readOnly
-                  className={`mr-2 ${
+                <label
+                  htmlFor="scanOption"
+                  className={` size-5 ${
                     passwordValidation.hasUpperCase
-                      ? "text-green-500"
-                      : "text-red-500"
-                  }`}
-                />
+                      ? "bg-[#15B097]"
+                      : "bg-red-500"
+                  } rounded-full flex items-center justify-center cursor-pointer peer-checked:bg-blue50 peer-checked:border-primary500 peer-checked:text-white mr-2`}
+                >
+                  <svg
+                    className=" size-3.5"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke={passwordValidation.hasUpperCase ? "#fff" : ""}
+                    // stroke={onboardingType === "scan" ? "#282EFF" : "#B4B4B4"}
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path
+                      className="transition-all duration-300"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </label>
+
                 <span
                   className={
                     passwordValidation.hasUpperCase
@@ -375,16 +408,31 @@ const SignUp = () => {
                 </span>
               </li>
               <li className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={passwordValidation.hasSpecialChar}
-                  readOnly
-                  className={`mr-2 ${
+                <label
+                  htmlFor="scanOption"
+                  className={` size-5 ${
                     passwordValidation.hasSpecialChar
-                      ? "text-green-500"
-                      : "text-red-500"
-                  }`}
-                />
+                      ? "bg-[#15B097]"
+                      : "bg-red-500"
+                  } rounded-full flex items-center justify-center cursor-pointer peer-checked:bg-blue50 peer-checked:border-primary500 peer-checked:text-white mr-2`}
+                >
+                  <svg
+                    className=" size-3.5"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke={passwordValidation.hasSpecialChar ? "#fff" : ""}
+                    // stroke={onboardingType === "scan" ? "#282EFF" : "#B4B4B4"}
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path
+                      className="transition-all duration-300"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </label>
                 <span
                   className={
                     passwordValidation.hasSpecialChar

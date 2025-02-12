@@ -28,6 +28,7 @@ export interface PhishingTemplate {
 // --- Phishing store interface
 interface PhishingStore {
   isCreatingTemplate: boolean;
+  isUpdatingTemplate: boolean;
   phishingTemplates: PhishingTemplate[];
   fetchPhishingTemplates: (page: number) => Promise<void>;
   createPhishingTemplate: (data: createTemplateData) => Promise<any>;
@@ -35,6 +36,7 @@ interface PhishingStore {
 
 export const usePhishingStore = create<PhishingStore>((set) => ({
   isCreatingTemplate: false,
+  isUpdatingTemplate: false,
   phishingTemplates: [],
 
   fetchPhishingTemplates: async (page: number) => {
@@ -95,6 +97,38 @@ export const usePhishingStore = create<PhishingStore>((set) => ({
       );
     } finally {
       set({ isCreatingTemplate: false });
+    }
+  },
+  updatePhishingTemplate: async (data: PhishingTemplate) => {
+    const { authUser } = useAuthStore.getState();
+    if (!authUser) {
+      console.error("No auth user found or token missing");
+      toast.error("Authentication error. Please log in again.");
+      return;
+    }
+    set({ isUpdatingTemplate: true });
+    try {
+      console.log("Request Data:", data);
+      const response: AxiosResponse = await api.patch(
+        `template/updatePhishingTemplate/1`,
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${authUser}`,
+          },
+        }
+      );
+      console.log("Request Headers:", {
+        Authorization: `Bearer ${authUser}`,
+      });
+      console.log("Response:", response);
+      toast.success("Template updated successfully!");
+      return response;
+    } catch (error: any) {
+      console.log(error);
+      toast.error(error.response?.data?.msg || "Failed to update template.");
+    } finally {
+      set({ isUpdatingTemplate: false });
     }
   },
 }));

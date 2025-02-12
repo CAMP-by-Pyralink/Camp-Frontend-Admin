@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import closeIcon from "../../../../assets/svgs/closeicongrey.svg";
 import { useParams } from "react-router-dom";
 // import { DateRange } from "react-date-range";
@@ -12,6 +12,7 @@ import organizationicon from "../../../../assets/svgs/organization.svg";
 import PreviewModal from "./PreviewModal";
 // import CustomDatePicker from "./CustomDatePicker";
 import { startOfMonth } from "date-fns";
+import { usePhishingStore } from "../../../../store/usePhishingStore";
 
 const PhishingDetails: React.FC = () => {
   const [continueClicked, setContinueClicked] = useState<boolean>(false);
@@ -21,6 +22,8 @@ const PhishingDetails: React.FC = () => {
     setIsToggled(!isToggled);
   };
   const currentMonth = startOfMonth(new Date()); // First day of the current month
+
+  const { updatePhishingTemplate } = usePhishingStore();
 
   // const [dateRange, setDateRange] = useState([
   //   {
@@ -44,6 +47,20 @@ const PhishingDetails: React.FC = () => {
       title: "Specific employee",
     },
   ];
+
+  const handleUpdate = async () => {
+    const data = {
+      id: "67ab28fd86d351caa4e5d7b4",
+      title: "Updated Title",
+      content: "Updated Content",
+      bannerImage: "updated-banner-image-url", // Replace with the actual banner image URL
+    };
+    await updatePhishingTemplate(data);
+  };
+
+  // useEffect(() => {
+  //   handleUpdate();
+  // }, []);
 
   return (
     <>

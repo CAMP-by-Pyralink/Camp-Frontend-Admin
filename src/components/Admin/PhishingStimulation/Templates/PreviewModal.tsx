@@ -109,7 +109,9 @@ const PreviewModal = ({ setContinueClicked }) => {
               </div>
             </div>
             <div className=" flex gap-4 items-center">
-              <img src={img} alt={title} className=" w-[85px]" />
+              <div className=" w-[85px] h-[43px]">
+                <img src={img} alt={title} className=" w-full h-full " />
+              </div>
               <h1 className=" text-[#454545] font-semibold text-2xl">
                 {title}
               </h1>
