@@ -8,7 +8,8 @@ import { Link } from "react-router-dom";
 import he from "he";
 import { X, Edit, Trash, MoreVertical } from "lucide-react";
 import toast from "react-hot-toast";
-import AddTemplateModal from "./AddTemplateModal";
+import AddTemplateModal from "./AddtemplateModal";
+// import AddTemplateModal from "./AddTemplateModal";
 
 const TemplateLists: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
