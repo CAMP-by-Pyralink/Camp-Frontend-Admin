@@ -3,20 +3,18 @@ import {
   PhishingTemplate,
   usePhishingStore,
 } from "../../../../store/usePhishingStore";
-import closeIcon from "../../../../assets/svgs/close.svg";
-import { Link } from "react-router-dom";
-import he from "he";
-import { X, Edit, Trash, MoreVertical } from "lucide-react";
+import { MoreVertical } from "lucide-react";
 import toast from "react-hot-toast";
-import AddTemplateModal from "./AddtemplateModal";
-// import AddTemplateModal from "./AddTemplateModal";
+import DOMPurify from "dompurify";
+import he from "he";
+import AddTemplateModal from "./AddTemplateModal";
 
 const TemplateLists: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [isOptionsModalOpen, setIsOptionsModalOpen] = useState<boolean>(false);
   const [selectedCard, setSelectedCard] = useState<PhishingTemplate | null>(
     null
   );
+  const [optionsIndex, setOptionsIndex] = useState<number | null>(null);
   const { phishingTemplates, fetchPhishingTemplates, deletePhishingTemplate } =
     usePhishingStore();
   const [page, setPage] = useState<number>(1);
@@ -37,11 +35,11 @@ const TemplateLists: React.FC = () => {
 
   const handleOptionsClick = (index: number) => {
     setSelectedCard(phishingTemplates[index]);
-    setIsOptionsModalOpen(true);
+    setOptionsIndex(optionsIndex === index ? null : index);
   };
 
   const handleCloseOptionsModal = () => {
-    setIsOptionsModalOpen(false);
+    setOptionsIndex(null);
     setSelectedCard(null);
   };
 
@@ -54,12 +52,12 @@ const TemplateLists: React.FC = () => {
     } else {
       toast.error("Failed to delete template.");
     }
+    setOptionsIndex(null); // Hide the options menu
   };
 
   const handleEdit = () => {
-    setIsOptionsModalOpen(false);
+    setOptionsIndex(null); // Hide the options menu
     setIsModalOpen(true);
-    console.log(selectedCard, "Sss");
   };
 
   return (
@@ -72,32 +70,50 @@ const TemplateLists: React.FC = () => {
               className="bg-white border border-[#D3D3D3] p-3 rounded-lg flex flex-col gap-2 cursor-pointer relative"
             >
               <div className="absolute top-2 right-2"></div>
-              <div className=" w-full h-[300px]">
+              <div className="w-full h-[300px]">
                 <img
                   src={bannerImage}
                   alt={title}
-                  className="w-full h-full object-cover "
+                  className="w-full h-full object-cover"
                 />
               </div>
-              {/*  */}
-              <div className=" flex justify-between">
+              <div className="flex justify-between">
                 <h1 className="text-[#333333] font-medium text-xl">{title}</h1>
-                <button
-                  className=" hover:text-gray-700"
+                <div
+                  className="hover:text-gray-700 relative"
                   onClick={() => handleOptionsClick(index)}
                 >
-                  <MoreVertical className=" size-6" />
-                </button>
+                  <MoreVertical className="size-6" />
+                  {optionsIndex === index && (
+                    <div className="absolute top-8 right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                      <button
+                        className="w-full text-left px-4 py-2 border-b text-textColor hover:bg-blue50"
+                        onClick={handleEdit}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="w-full text-left px-4 py-2 text-textColor hover:bg-blue50"
+                        onClick={() => handleDelete(_id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div
                 className="prose prose-blue prose-xl prose-headings:underline prose-a:text-[#0007FC] prose-headings:text-[2rem] text-[#333333] text-sm text-opacity-80"
-                dangerouslySetInnerHTML={{ __html: he.decode(content) }}
+                dangerouslySetInnerHTML={{
+                  __html: DOMPurify.sanitize(he.decode(content)),
+                }}
               />
             </div>
           )
         )}
       </div>
+
       <div className="flex justify-between items-center mt-4">
         <span className="text-sm text-[#070707]">Page {page}</span>
         <div className="flex gap-2">
@@ -116,42 +132,12 @@ const TemplateLists: React.FC = () => {
           </button>
         </div>
       </div>
+
       {isModalOpen && (
         <AddTemplateModal
           onClose={handleCloseModal}
           templateToEdit={selectedCard}
         />
-      )}
-      {isOptionsModalOpen && selectedCard && (
-        <div
-          className="fixed inset-0 bg-[#344054B2] bg-opacity-40 flex justify-center items-center "
-          style={{ backdropFilter: "blur(7.06999969482422px)" }}
-        >
-          <div className="bg-white min-w-[300px] p-8 flex flex-col gap-4 rounded-md">
-            <div className="flex justify-between">
-              <h1 className="text-[#454545] text-xl font-bold">Options</h1>
-              <img
-                src={closeIcon}
-                alt="Close"
-                aria-label="Close"
-                onClick={handleCloseOptionsModal}
-                className="cursor-pointer"
-              />
-            </div>
-            <button
-              className="w-full bg-blue-600 text-white py-2 rounded-md text-lg font-semibold hover:bg-blue-700 transition-all duration-300"
-              onClick={handleEdit}
-            >
-              Edit
-            </button>
-            <button
-              className="w-full bg-red-600 text-white py-2 rounded-md text-lg font-semibold hover:bg-red-700 transition-all duration-300"
-              onClick={() => handleDelete(selectedCard._id)}
-            >
-              Delete
-            </button>
-          </div>
-        </div>
       )}
     </div>
   );

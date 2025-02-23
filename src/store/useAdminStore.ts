@@ -112,7 +112,7 @@ export const useAdminStore = create<AdminStore>((set) => ({
         "/admin/getAllAdmins?page=1"
       );
       set({ admins: response.data.admins });
-      console.log("getAdmins", response.data.admins);
+      console.log("getAdmins", response.data.allAdmins);
     } catch (error) {
       console.error("getAdmins", error);
     }
