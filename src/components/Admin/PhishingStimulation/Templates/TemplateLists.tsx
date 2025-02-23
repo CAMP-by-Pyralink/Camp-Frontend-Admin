@@ -7,7 +7,8 @@ import { MoreVertical } from "lucide-react";
 import toast from "react-hot-toast";
 import DOMPurify from "dompurify";
 import he from "he";
-import AddTemplateModal from "./AddTemplateModal";
+import AddTemplateModal from "./AddtemplateModal";
+// import AddTemplateModal from "./AddTemplateModal";
 
 const TemplateLists: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
