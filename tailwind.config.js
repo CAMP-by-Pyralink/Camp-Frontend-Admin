@@ -48,5 +48,5 @@ export default {
       "custom-shadow": "5px 5px 40px rgba(107, 151, 255, 0.3)",
     },
   },
-  plugins: [require("tailwindcss-filters")],
+  plugins: [require("tailwindcss-filters"), require("@tailwindcss/typography")],
 };

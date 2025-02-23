@@ -1,14 +1,28 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useAdminStore } from "../../../store/useAdminStore";
 
-const UserList: React.FC = () => {
+interface UserListProps {
+  setHasData: (hasData: boolean) => void;
+}
+
+const UserList: React.FC<UserListProps> = ({ setHasData }) => {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
-  const { admins, getAdmins } = useAdminStore();
+  const { type } = useParams<{ type: string }>();
+  const { admins, users, getAdmins, getUsers } = useAdminStore();
 
   useEffect(() => {
-    getAdmins();
-  }, [getAdmins]);
+    if (type === "Admin") {
+      getAdmins();
+    } else {
+      getUsers();
+    }
+  }, [getAdmins, getUsers, type]);
+
+  useEffect(() => {
+    const data = type === "Admin" ? admins : users;
+    setHasData(data && data.length > 0);
+  }, [admins, users, type, setHasData]);
 
   const handleButtonClick = (userId: string) => {
     setSelectedUserId((prevUserId) => (prevUserId === userId ? null : userId));
@@ -27,6 +41,12 @@ const UserList: React.FC = () => {
     return `${day}/${month}/${year} ${formattedHours}:${minutes}${ampm}`;
   };
 
+  const data = type === "Admin" ? admins : users;
+
+  if (!data || data.length === 0) {
+    return null;
+  }
+
   return (
     <div className="relative">
       <table className="w-full border-collapse border border-gray-200">
@@ -43,31 +63,31 @@ const UserList: React.FC = () => {
           </tr>
         </thead>
         <tbody className="bg-white">
-          {admins.map((admin) => (
+          {data.map((user) => (
             <tr
-              key={admin._id}
+              key={user._id}
               className="text-[#101928] hover:bg-gray-50 relative"
             >
               <td className="p-4 border-b border-gray-200">
                 <input type="checkbox" />
               </td>
-              <td className="p-4 border-b border-gray-200">{admin._id}</td>
-              <td className="p-4 border-b border-gray-200">{`${admin.lName} ${admin.fName}`}</td>
+              <td className="p-4 border-b border-gray-200">{user._id}</td>
+              <td className="p-4 border-b border-gray-200">{`${user.lName} ${user.fName}`}</td>
               <td className="p-4 text-[#737373] text-[14px] border-b border-gray-200">
-                {admin.department || "N/A"}
+                {user.department || "N/A"}
               </td>
               <td className="p-4 border-b border-gray-200">
-                {formatDate(admin.createdAt) || "N/A"}
+                {formatDate(user.createdAt) || "N/A"}
               </td>
               <td className="p-4 border-b border-gray-200 text-center relative">
                 <div
                   className=" cursor-pointer flex items-center justify-center border border-[#E4E7EC] rounded-lg w-8 h-8"
-                  onClick={() => handleButtonClick(admin._id)}
+                  onClick={() => handleButtonClick(user._id)}
                 >
                   ⋮
                 </div>
 
-                {selectedUserId === admin._id && (
+                {selectedUserId === user._id && (
                   <div className="absolute left-0 mt-2 w-[89px]  bg-white border border-[#C7C7CC] rounded-md  shadow-[5px_5px_40px_rgba(107,151,255,0.3)] z-10">
                     <ul className="text-left">
                       <Link to="/profile">

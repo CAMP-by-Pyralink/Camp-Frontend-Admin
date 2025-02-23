@@ -93,10 +93,10 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({ onClose }) => {
               <>
                 <div className="text-[#454545] text-center">
                   <h2 className="text-2xl font-semibold mb-">
-                    Create a New {type === "Admin" ? "Admin" : "Employee"}
+                    Create a New {type === "admin" ? "Admin" : "Employee"}
                   </h2>
                   <p className="text-[#333333] mb-">
-                    Enter {type === "Admin" ? "admin's" : "employee's"} details
+                    Enter {type === "admin" ? "admin's" : "employee's"} details
                     to add a new {type === "Admin" ? "admin" : "employee"}
                   </p>
                 </div>

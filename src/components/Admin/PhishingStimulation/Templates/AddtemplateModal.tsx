@@ -1,20 +1,39 @@
 import { X } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   usePhishingStore,
   createTemplateData,
+  PhishingTemplate,
 } from "../../../../store/usePhishingStore";
 import toast from "react-hot-toast";
+import ReactQuill from "react-quill";
+import QuillToolbar, { modules, formats } from "../../../../utils/QuillToolBar";
+import "react-quill/dist/quill.snow.css";
+import DOMPurify from "dompurify";
 
 interface AddTemplateModalProps {
   onClose: () => void;
+  templateToEdit?: PhishingTemplate | null;
 }
 
-const AddTemplateModal: React.FC<AddTemplateModalProps> = ({ onClose }) => {
-  const { createPhishingTemplate } = usePhishingStore();
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [bannerImage, setBannerImage] = useState<string | null>(null);
+const AddTemplateModal: React.FC<AddTemplateModalProps> = ({
+  onClose,
+  templateToEdit,
+}) => {
+  const { createPhishingTemplate, updatePhishingTemplate } = usePhishingStore();
+  const [title, setTitle] = useState(templateToEdit?.title || "");
+  const [content, setContent] = useState(templateToEdit?.content || "");
+  const [bannerImage, setBannerImage] = useState<string | null>(
+    templateToEdit?.bannerImage || null
+  );
+
+  useEffect(() => {
+    if (templateToEdit) {
+      setTitle(templateToEdit.title);
+      setContent(templateToEdit.content);
+      setBannerImage(templateToEdit.bannerImage);
+    }
+  }, [templateToEdit]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -33,18 +52,40 @@ const AddTemplateModal: React.FC<AddTemplateModalProps> = ({ onClose }) => {
       return;
     }
 
+    // Sanitize the content before sending it to the backend
+    const sanitizedContent = DOMPurify.sanitize(content);
+
     const formData: createTemplateData = {
       title,
-      content,
+      content: sanitizedContent,
       bannerImage,
     };
 
-    const response = await createPhishingTemplate(formData);
+    let response;
+    if (templateToEdit) {
+      response = await updatePhishingTemplate(templateToEdit._id, {
+        title,
+        content: sanitizedContent,
+        bannerImage,
+      });
+      console.log(templateToEdit._id, "Yoooo");
+    } else {
+      response = await createPhishingTemplate(formData);
+    }
+
     if (response && response.status === 201) {
-      toast.success("Template created successfully!");
+      toast.success(
+        templateToEdit
+          ? "Template updated successfully!"
+          : "Template created successfully!"
+      );
       onClose();
     } else {
-      toast.error("Failed to create template.");
+      toast.error(
+        templateToEdit
+          ? "Failed to update template."
+          : "Failed to create template."
+      );
     }
   };
 
@@ -62,7 +103,7 @@ const AddTemplateModal: React.FC<AddTemplateModalProps> = ({ onClose }) => {
 
         {/* Title */}
         <h2 className="text-xl font-semibold text-gray-800 mb-6">
-          Edit/create new
+          {templateToEdit ? "Edit Template" : "Create New Template"}
         </h2>
 
         {/* Form Section */}
@@ -98,12 +139,16 @@ const AddTemplateModal: React.FC<AddTemplateModalProps> = ({ onClose }) => {
             <label className="block text-sm font-medium text-gray-700">
               Content
             </label>
-            <textarea
-              className="w-full border border-gray-300 py-2 px-3 rounded-md h-36 focus:outline-none"
-              placeholder="Enter your message..."
+            <QuillToolbar toolbarId={"t1"} />
+            <ReactQuill
+              modules={modules("t1")}
+              formats={formats}
+              theme="snow"
               value={content}
-              onChange={(e) => setContent(e.target.value)}
-            ></textarea>
+              onChange={setContent}
+              placeholder="Enter your message..."
+              className=" h-44"
+            />
           </div>
         </div>
 
@@ -112,7 +157,7 @@ const AddTemplateModal: React.FC<AddTemplateModalProps> = ({ onClose }) => {
           className="mt-6 w-full bg-blue-600 text-white py-2 rounded-md text-lg font-semibold hover:bg-blue-700 transition-all duration-300"
           onClick={handleSubmit}
         >
-          Save
+          {templateToEdit ? "Update" : "Save"}
         </button>
       </div>
     </div>

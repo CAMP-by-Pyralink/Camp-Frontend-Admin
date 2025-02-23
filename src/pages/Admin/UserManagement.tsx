@@ -36,9 +36,9 @@ const UserManagement = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [activeUser, setActiveUser] = useState(false);
   const [uploadCsv, setUploadCsv] = useState(false);
   const [scanNetwork, setScanNetwork] = useState(false);
+  const [hasData, setHasData] = useState(false);
 
   // State to hold the selected filter values
   const [selectedFilters, setSelectedFilters] = useState({
@@ -126,7 +126,7 @@ const UserManagement = () => {
 
   return (
     <div>
-      {activeUser ? (
+      {hasData ? (
         <div className="flex justify-center items-center h-screen">
           <div className="flex flex-col items-center gap-4">
             <img
@@ -137,7 +137,7 @@ const UserManagement = () => {
             <p className="text-[#464646]">
               Nothing here, add/upload your employees
             </p>
-            <Button label="Add User" width="180px"></Button>
+            <Button label="Add User" width="180px" onClick={handleManual} />
           </div>
           {isModalOpen && <CreateUserModal onClose={handleCloseModal} />}
         </div>
@@ -202,13 +202,15 @@ const UserManagement = () => {
             showFilter={true}
             showExport={true}
           >
-            <UserList />
+            <UserList setHasData={setHasData} />
 
             {/* Your content */}
           </PagesHomeLayout>
 
           {/* Modals */}
-          {isModalOpen && <CreateUserManual onClose={handleCloseModal} />}
+          {isModalOpen && (
+            <CreateUserManual onClose={handleCloseModal} type={type} />
+          )}
           {uploadCsv && <UploadCsvModal onClose={handleCloseModal} />}
           {scanNetwork && <NetworkScanFlow onClose={handleCloseModal} />}
           {isFilterModalOpen && (

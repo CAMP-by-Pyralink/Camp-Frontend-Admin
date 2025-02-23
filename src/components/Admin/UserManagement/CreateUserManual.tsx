@@ -8,6 +8,7 @@ import { generatePassword } from "../../../utils/generatePassword";
 interface CreateUserManualProps {
   onCreate: () => void;
   onClose: () => void;
+  type: string;
 }
 
 const CreateUserManual: React.FC<CreateUserManualProps> = ({
@@ -20,7 +21,8 @@ const CreateUserManual: React.FC<CreateUserManualProps> = ({
   const [department, setDepartment] = useState("");
   const [create, setCreate] = useState(false);
   const { type } = useParams<{ type: string }>();
-  const { departments, fetchDepartments, registerAdmin } = useAdminStore();
+  const { departments, fetchDepartments, registerAdmin, registerUser } =
+    useAdminStore();
 
   useEffect(() => {
     fetchDepartments();
@@ -32,6 +34,27 @@ const CreateUserManual: React.FC<CreateUserManualProps> = ({
     }
   }, [departments]);
 
+  // const handleCreateClick = async () => {
+  //   // const password = generatePassword();
+  //   const newUser = {
+  //     fName: firstName,
+  //     lName: lastName,
+  //     email,
+  //     // password,
+  //     // confirmPassword: password,
+  //     department,
+  //     type: "admin",
+  //     authProvider: "manual",
+  //   };
+  //   console.log("New User:", newUser);
+  //   const response = await registerAdmin(newUser);
+  //   if (response && response.status === 201) {
+  //     setCreate(true);
+  //     onCreate();
+  //   } else {
+  //     console.error("Failed to create user");
+  //   }
+  // };
   const handleCreateClick = async () => {
     // const password = generatePassword();
     const newUser = {
@@ -41,11 +64,14 @@ const CreateUserManual: React.FC<CreateUserManualProps> = ({
       // password,
       // confirmPassword: password,
       department,
-      type: "admin",
+      type: type.toLowerCase(),
       authProvider: "manual",
     };
     console.log("New User:", newUser);
-    const response = await registerAdmin(newUser);
+    const response =
+      type === "Admin"
+        ? await registerAdmin(newUser)
+        : await registerUser(newUser);
     if (response && response.status === 201) {
       setCreate(true);
       onCreate();

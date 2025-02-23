@@ -7,11 +7,11 @@ import { Loader, Loader2 } from "lucide-react";
 
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+  const navigate = useNavigate();
   const { login, isLoggingIn } = useAuthStore();
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {

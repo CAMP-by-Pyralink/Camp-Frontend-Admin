@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // import profilePic from "../../assets/profilepic.png";
 import CompanyProfileTab from "../../components/Admin/Settings/CompanyProfileTab";
 import AdminProfileTab from "../../components/Admin/Settings/AdminProfileTab";
 import profilePic from "../../assets/avatar.png";
+import { useAdminStore } from "../../store/useAdminStore";
 
 interface CompanyData {
   name: string;
@@ -18,6 +19,12 @@ const Settings = () => {
     website: "campbypyralink.com",
     departments: ["Finance", "ICT", "Marketing"],
   });
+
+  const { getCurrentAdmin, currentUser } = useAdminStore();
+
+  useEffect(() => {
+    getCurrentAdmin();
+  }, [getCurrentAdmin]);
 
   return (
     <div className=" ">
@@ -92,7 +99,7 @@ const Settings = () => {
         </div>
       </div>
       {activeTab === "profile" ? (
-        <AdminProfileTab />
+        <AdminProfileTab currentUser={currentUser} />
       ) : (
         /* Company profile section */
         // <div className="mb-8">

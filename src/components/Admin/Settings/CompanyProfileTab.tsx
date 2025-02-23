@@ -1,5 +1,10 @@
 import React, { useState } from "react";
 import addIcon from "../../../assets/svgs/add-halfcircle-icon.svg";
+import { GetCurrentAdminData } from "../../../store/useAdminStore";
+
+interface AdminProfileTabProps {
+  currentUser: GetCurrentAdminData | null;
+}
 
 const CompanyProfileTab: React.FC = () => {
   const [companyName, setCompanyName] = useState("Camp by Pyralink");

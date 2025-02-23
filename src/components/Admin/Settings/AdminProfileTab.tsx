@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
+import { GetCurrentAdminData } from "../../../store/useAdminStore";
 
 interface ProfileData {
   userId: string;
@@ -12,17 +13,43 @@ interface ProfileData {
   address: string;
 }
 
-const AdminProfileTab = () => {
+interface AdminProfileTabProps {
+  currentUser: GetCurrentAdminData | null;
+}
+
+const AdminProfileTab: React.FC<AdminProfileTabProps> = ({ currentUser }) => {
   const [profileData, setProfileData] = useState<ProfileData>({
-    userId: "PY 11234",
-    role: "Admin",
-    lastName: "Sarah",
-    firstName: "Brown",
-    department: "Human resource",
-    email: "thegirlfromphantom@gmail.com",
-    phone: "+2348109394858",
-    address: "House 6 Tropia street, Ajah",
+    userId: "",
+    role: "",
+    lastName: "",
+    firstName: "",
+    department: "",
+    email: "",
+    phone: "",
+    address: "",
   });
+
+  useEffect(() => {
+    if (currentUser) {
+      setProfileData({
+        userId: currentUser.adminId,
+        role: currentUser.role,
+        lastName: currentUser.lName,
+        firstName: currentUser.fName,
+        department: currentUser.department,
+        email: currentUser.email,
+        phone: currentUser.phoneNumber,
+        address: currentUser.address,
+      });
+    }
+  }, [currentUser]);
+
+  console.log(currentUser?.department);
+
+  if (!currentUser) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="mb-8">
       <div className="grid grid-cols-2 gap-6 border-[0.5px] rounded-lg border-[#333333] border-dotted p-10">
@@ -34,6 +61,7 @@ const AdminProfileTab = () => {
             <input
               type="text"
               value={profileData.userId}
+              disabled
               onChange={(e) =>
                 setProfileData({ ...profileData, userId: e.target.value })
               }
@@ -47,6 +75,7 @@ const AdminProfileTab = () => {
             <input
               type="text"
               value={profileData.role}
+              disabled
               onChange={(e) =>
                 setProfileData({ ...profileData, role: e.target.value })
               }
@@ -89,23 +118,17 @@ const AdminProfileTab = () => {
             <label className="block text-sm text-[#101928] font-medium mb-1">
               Department
             </label>
-            <div className="relative">
-              <select
-                value={profileData.department}
-                onChange={(e) =>
-                  setProfileData({
-                    ...profileData,
-                    department: e.target.value,
-                  })
-                }
-                className="w-full p-4 border border-[#D0D5DD] rounded-md appearance-none pr-8"
-              >
-                <option value="Human resource">Human resource</option>
-                <option value="Finance">Finance</option>
-                <option value="IT">IT</option>
-              </select>
-              <ChevronDown className="w-4 h-4 absolute right-2 top-3 text-gray-500" />
-            </div>
+            <input
+              type="text"
+              value={profileData.department}
+              onChange={(e) =>
+                setProfileData({
+                  ...profileData,
+                  department: e.target.value,
+                })
+              }
+              className="w-full p-4 border border-[#D0D5DD] rounded-md"
+            />
           </div>
           <div>
             <label className="block text-sm text-[#101928] font-medium mb-1">
@@ -113,7 +136,7 @@ const AdminProfileTab = () => {
             </label>
             <input
               type="email"
-              placeholder={profileData.email}
+              value={profileData.email}
               disabled
               onChange={(e) =>
                 setProfileData({ ...profileData, email: e.target.value })
@@ -127,8 +150,8 @@ const AdminProfileTab = () => {
             </label>
             <input
               type="tel"
+              value={profileData.phone}
               disabled
-              placeholder={profileData.phone}
               onChange={(e) =>
                 setProfileData({ ...profileData, phone: e.target.value })
               }
@@ -141,8 +164,8 @@ const AdminProfileTab = () => {
             </label>
             <input
               type="text"
+              value={profileData.address}
               disabled
-              placeholder={profileData.address}
               onChange={(e) =>
                 setProfileData({ ...profileData, address: e.target.value })
               }
