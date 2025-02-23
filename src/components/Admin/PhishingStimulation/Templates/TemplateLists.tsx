@@ -47,11 +47,9 @@ const TemplateLists: React.FC = () => {
   const handleDelete = async (id: string) => {
     const response = await deletePhishingTemplate(id);
     if (response && response.status === 200) {
-      toast.success("Template deleted successfully!");
+      // toast.success("Template deleted successfully!");
       fetchPhishingTemplates(page);
       handleCloseOptionsModal();
-    } else {
-      toast.error("Failed to delete template.");
     }
     setOptionsIndex(null); // Hide the options menu
   };

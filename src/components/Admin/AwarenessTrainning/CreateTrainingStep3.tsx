@@ -1,8 +1,13 @@
+// CreateTrainingStep3.tsx
 import React from "react";
-import { useForm, useFieldArray, Controller } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import QuestionCard from "./QuestionCard";
 
-export type QuestionType = "Multiple choices" | "Checkboxes";
+export type QuestionType =
+  | "Multiple choices"
+  | "Checkboxes"
+  | "Short text"
+  | "Long text";
 
 export interface Choice {
   id: string;
@@ -22,14 +27,18 @@ interface FormData {
 }
 
 const CreateTrainingStep3: React.FC = () => {
-  const { control, handleSubmit, watch } = useForm<FormData>({
+  const { control, handleSubmit } = useForm<FormData>({
     defaultValues: {
       questions: [
         {
           id: "q1",
           text: "",
           type: "Multiple choices",
-          choices: [{ id: "c1", text: "", isChecked: false }],
+          choices: Array.from({ length: 4 }, (_, i) => ({
+            id: `c${i + 1}`,
+            text: "",
+            isChecked: false,
+          })),
         },
       ],
     },
@@ -38,7 +47,7 @@ const CreateTrainingStep3: React.FC = () => {
   const {
     fields: questions,
     append,
-    update,
+    remove,
   } = useFieldArray({
     control,
     name: "questions",
@@ -57,7 +66,7 @@ const CreateTrainingStep3: React.FC = () => {
             question={question}
             questionIndex={questionIndex}
             control={control}
-            update={update}
+            onRemove={() => remove(questionIndex)}
           />
         ))}
 
@@ -68,20 +77,17 @@ const CreateTrainingStep3: React.FC = () => {
               id: `q${questions.length + 1}`,
               text: "",
               type: "Multiple choices",
-              choices: [{ id: `c1`, text: "", isChecked: false }],
+              choices: Array.from({ length: 4 }, (_, i) => ({
+                id: `c${i + 1}`,
+                text: "",
+                isChecked: false,
+              })),
             })
           }
           className="mt-4 px-4 py-2 border border-primary500 text-black rounded"
         >
           Add Question
         </button>
-
-        {/* <button
-          type="submit"
-          className="mt-4 px-4 py-2 bg-green-500 text-white rounded"
-        >
-          Submit
-        </button> */}
       </form>
     </div>
   );

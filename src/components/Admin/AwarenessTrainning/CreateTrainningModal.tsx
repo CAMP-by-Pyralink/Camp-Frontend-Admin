@@ -20,7 +20,7 @@ const CreateTrainningModal = ({ setCreateTraining }: any) => {
       className="  fixed z-[999] inset-0 bg-[#344054B2] bg-opacity-40 flex justify-center items-center h-screen"
       style={{ backdropFilter: "blur(7.06999969482422px)" }}
     >
-      <div className=" bg-white w-[799px] overflow-y-scroll">
+      <div className=" bg-white w-[799px] overflow-y-auto max-h-[90%] h-full">
         <div className=" flex items-center justify-between bg-[#DEEFFC] py-6 px-12 ">
           <h1>Create Training Content</h1>
           <h1 onClick={() => setCreateTraining(false)}>X</h1>
