@@ -25,10 +25,10 @@ const SignIn = () => {
       password: formData.password,
       authProvider: "manual",
     };
-    console.log(loginData);
+    // console.log(loginData);
 
     const response = await login(loginData);
-    console.log(response);
+    // console.log(response);
     if ((response && response.status === 201) || 200) {
       navigate("/");
     }

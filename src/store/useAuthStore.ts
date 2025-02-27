@@ -239,7 +239,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
       set({ isAuthenticated: true });
       set({ authUser: user });
       sessionStorage.setItem("isAuthenticated", "true");
-      console.log("token:", user);
+      // console.log("token:", user);
 
       toast.success("Logged in successfully!");
       return response;

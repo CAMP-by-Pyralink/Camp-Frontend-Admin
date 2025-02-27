@@ -12,6 +12,7 @@
   "dependencies": {
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
+    "@hello-pangea/dnd": "^18.0.1",
     "@lexical/list": "^0.20.0",
     "@lexical/markdown": "^0.20.0",
     "@lexical/react": "^0.20.2",
@@ -26,6 +27,7 @@
     "lexical": "^0.20.2",
     "lucide-react": "^0.456.0",
     "react": "^18.3.1",
+    "react-beautiful-dnd": "^13.1.1",
     "react-circular-progressbar": "^2.1.0",
     "react-d3-speedometer": "^2.2.1",
     "react-date-range": "^2.0.1",
@@ -51,6 +53,7 @@
     "@types/he": "^1.2.3",
     "@types/quill": "^2.0.14",
     "@types/react": "^18.3.10",
+    "@types/react-beautiful-dnd": "^13.1.8",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.2",
     "autoprefixer": "^10.4.20",

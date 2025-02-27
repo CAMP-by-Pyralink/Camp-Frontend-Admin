@@ -1,13 +1,11 @@
-// CreateTrainingStep3.tsx
 import React from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import QuestionCard from "./QuestionCard";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import dragIcon from "../../../assets/svgs/dragIcon.svg";
+import { QuestionType } from "../../../store/useAwarenessTrainingStore";
 
-export type QuestionType =
-  | "Multiple choices"
-  | "Checkboxes"
-  | "Short text"
-  | "Long text";
+// export type QuestionType = "multiple-choice" | "checkbox" | "input" | "others";
 
 export interface Choice {
   id: string;
@@ -26,14 +24,16 @@ interface FormData {
   questions: Question[];
 }
 
-const CreateTrainingStep3: React.FC = () => {
-  const { control, handleSubmit } = useForm<FormData>({
+const CreateTrainingStep3: React.FC<{ onChange: (data: any) => void }> = ({
+  onChange,
+}) => {
+  const { control, handleSubmit, watch } = useForm<FormData>({
     defaultValues: {
       questions: [
         {
           id: "q1",
           text: "",
-          type: "Multiple choices",
+          type: "" as QuestionType,
           choices: Array.from({ length: 4 }, (_, i) => ({
             id: `c${i + 1}`,
             text: "",
@@ -48,27 +48,75 @@ const CreateTrainingStep3: React.FC = () => {
     fields: questions,
     append,
     remove,
+    move,
   } = useFieldArray({
     control,
     name: "questions",
   });
 
   const onSubmit = (data: FormData) => {
-    console.log("Form Data:", data);
+    const transformedQuestions = data.questions.map((q) => ({
+      question: q.text,
+      questionType: q.type,
+      options: q.choices.map((c) => c.text),
+      correctAnswer: q.choices.find((c) => c.isChecked)?.text || "",
+      answerMethod: "user-selection",
+    }));
+
+    console.log("Transformed questions:", transformedQuestions);
+    onChange({ questions: transformedQuestions });
+  };
+
+  const onDragEnd = (result: any) => {
+    if (!result.destination) return;
+    move(result.source.index, result.destination.index);
   };
 
   return (
-    <div className="p-4">
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        {questions.map((question, questionIndex) => (
-          <QuestionCard
-            key={question.id}
-            question={question}
-            questionIndex={questionIndex}
-            control={control}
-            onRemove={() => remove(questionIndex)}
-          />
-        ))}
+    <div className="px-12">
+      <div className="space-y-6">
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="questions-list">
+            {(provided) => (
+              <div
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+                className="space-y-4"
+              >
+                {questions.map((question, questionIndex) => (
+                  <Draggable
+                    key={question.id}
+                    draggableId={question.id}
+                    index={questionIndex}
+                  >
+                    {(provided) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        className="flex items-center gap-4"
+                      >
+                        <div
+                          {...provided.dragHandleProps}
+                          className="cursor-grab mb-24"
+                        >
+                          <img src={dragIcon} alt="Drag" className="size-12" />
+                        </div>
+
+                        <QuestionCard
+                          question={question}
+                          questionIndex={questionIndex}
+                          control={control}
+                          onRemove={() => remove(questionIndex)}
+                        />
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
 
         <button
           type="button"
@@ -76,7 +124,7 @@ const CreateTrainingStep3: React.FC = () => {
             append({
               id: `q${questions.length + 1}`,
               text: "",
-              type: "Multiple choices",
+              type: "" as QuestionType,
               choices: Array.from({ length: 4 }, (_, i) => ({
                 id: `c${i + 1}`,
                 text: "",
@@ -88,7 +136,7 @@ const CreateTrainingStep3: React.FC = () => {
         >
           Add Question
         </button>
-      </form>
+      </div>
     </div>
   );
 };
