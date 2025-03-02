@@ -1,23 +1,24 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import QuestionCard from "./QuestionCard";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import dragIcon from "../../../assets/svgs/dragIcon.svg";
 import { QuestionType } from "../../../store/useAwarenessTrainingStore";
 
-// export type QuestionType = "multiple-choice" | "checkbox" | "input" | "others";
-
-export interface Choice {
+interface Choice {
   id: string;
   text: string;
   isChecked: boolean;
 }
 
-export interface Question {
+interface Question {
   id: string;
   text: string;
   type: QuestionType;
   choices: Choice[];
+  answer?: string;
+  isLongText?: boolean; // Added to distinguish between short and long text inputs
+  displayType?: string; // For UI display purposes
 }
 
 interface FormData {
@@ -27,18 +28,21 @@ interface FormData {
 const CreateTrainingStep3: React.FC<{ onChange: (data: any) => void }> = ({
   onChange,
 }) => {
-  const { control, handleSubmit, watch } = useForm<FormData>({
+  const { control, watch, setValue } = useForm<FormData>({
     defaultValues: {
       questions: [
         {
           id: "q1",
           text: "",
-          type: "" as QuestionType,
-          choices: Array.from({ length: 4 }, (_, i) => ({
+          type: "multiple-choice",
+          displayType: "Multiple choice", // For UI display
+          choices: Array.from({ length: 2 }, (_, i) => ({
             id: `c${i + 1}`,
             text: "",
             isChecked: false,
           })),
+          answer: "",
+          isLongText: false,
         },
       ],
     },
@@ -54,17 +58,61 @@ const CreateTrainingStep3: React.FC<{ onChange: (data: any) => void }> = ({
     name: "questions",
   });
 
-  const onSubmit = (data: FormData) => {
-    const transformedQuestions = data.questions.map((q) => ({
-      question: q.text,
-      questionType: q.type,
-      options: q.choices.map((c) => c.text),
-      correctAnswer: q.choices.find((c) => c.isChecked)?.text || "",
-      answerMethod: "user-selection",
-    }));
+  const formData = watch();
 
-    console.log("Transformed questions:", transformedQuestions);
-    onChange({ questions: transformedQuestions });
+  // Use a debounced version of the onChange handler to prevent excessive updates
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const transformedQuestions = formData.questions.map((q) => {
+        const answerMethod = getAnswerMethod(q.type, q.isLongText);
+        const options = ["multiple-choice", "checkbox"].includes(q.type)
+          ? q.choices.map((c) => c.text)
+          : [];
+        const correctAnswer = getCorrectAnswer(q);
+
+        return {
+          question: q.text,
+          questionType: q.type,
+          options,
+          correctAnswer,
+          answerMethod,
+          isLongText: q.isLongText, // Pass this to backend if needed
+        };
+      });
+
+      onChange({ questions: transformedQuestions });
+    }, 300); // 300ms debounce
+
+    return () => clearTimeout(timer);
+  }, [formData, onChange]);
+
+  const getCorrectAnswer = (q: Question) => {
+    switch (q.type) {
+      case "multiple-choice":
+        return q.choices.find((c) => c.isChecked)?.text || "";
+      case "checkbox":
+        return q.choices
+          .filter((c) => c.isChecked)
+          .map((c) => c.text)
+          .join(",");
+      case "input":
+        return q.answer || "";
+      default:
+        return "";
+    }
+  };
+
+  const getAnswerMethod = (type: QuestionType, isLongText?: boolean) => {
+    switch (type) {
+      case "multiple-choice":
+        return "multi-choice";
+      case "checkbox":
+        return "checkbox";
+      case "input":
+        return isLongText ? "input" : "input";
+      default:
+        return "null";
+    }
   };
 
   const onDragEnd = (result: any) => {
@@ -101,11 +149,11 @@ const CreateTrainingStep3: React.FC<{ onChange: (data: any) => void }> = ({
                         >
                           <img src={dragIcon} alt="Drag" className="size-12" />
                         </div>
-
                         <QuestionCard
                           question={question}
                           questionIndex={questionIndex}
                           control={control}
+                          setValue={setValue}
                           onRemove={() => remove(questionIndex)}
                         />
                       </div>
@@ -124,12 +172,15 @@ const CreateTrainingStep3: React.FC<{ onChange: (data: any) => void }> = ({
             append({
               id: `q${questions.length + 1}`,
               text: "",
-              type: "" as QuestionType,
-              choices: Array.from({ length: 4 }, (_, i) => ({
+              type: "multiple-choice",
+              displayType: "Multiple choice", // For UI display
+              choices: Array.from({ length: 2 }, (_, i) => ({
                 id: `c${i + 1}`,
                 text: "",
                 isChecked: false,
               })),
+              answer: "",
+              isLongText: false,
             })
           }
           className="mt-4 px-4 py-2 border border-primary500 text-black rounded"

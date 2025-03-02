@@ -19,7 +19,7 @@ const CreateTrainingStep1 = ({
       reader.onloadend = () => {
         const base64String = reader.result as string;
         setBannerImage(base64String);
-        onChange({ bannerImageFile: base64String });
+        onChange({ bannerImage: base64String });
       };
       reader.readAsDataURL(file);
     }
@@ -28,12 +28,12 @@ const CreateTrainingStep1 = ({
   return (
     <div className="px-12 space-y-6">
       <div>
-        <label htmlFor="bannerImageFile" className="block text-sm font-medium">
+        <label htmlFor="bannerImage" className="block text-sm font-medium">
           Upload image
         </label>
         <input
           type="file"
-          name="bannerImageFile"
+          name="bannerImage"
           className="border border-primary100 py-4 px-3 w-[634px] rounded-md"
           onChange={handleFileChange}
         />

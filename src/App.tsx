@@ -135,7 +135,7 @@ function App() {
                 element={<AwarenessTraining />}
               />
               <Route
-                path="/training-details/:id"
+                path="/training-details/:trainingId"
                 element={<TrainingDetails />}
               />
               <Route path="asset-management" element={<AssetManagement />} />

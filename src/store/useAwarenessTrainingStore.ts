@@ -23,7 +23,7 @@ api.interceptors.request.use(
   }
 );
 
-export type QuestionType = "multiple-choice" | "checkbox" | "input" | "others";
+export type QuestionType = "multiple-choice" | "checkbox" | "input";
 export type LessonType = "video" | "document" | "link" | "text & image";
 
 export interface Lesson {
@@ -41,11 +41,11 @@ interface Question {
   questionType: QuestionType;
   options: string[];
   correctAnswer: string;
-  answerMethod: string;
+  answerMethod: "multiple-choice" | "checkbox" | "input";
 }
 
 export interface CreateTrainingData {
-  bannerImageFile: string;
+  bannerImage: string;
   title: string;
   description: string;
   startDate: string;
@@ -57,9 +57,12 @@ export interface CreateTrainingData {
 interface TrainingState {
   isCreatingTraining: boolean;
   trainings: CreateTrainingData[];
+  singleTraining: CreateTrainingData | null;
   modules: Module[];
   questions: Question[];
   createTraining: (data: CreateTrainingData) => Promise<any>;
+  fetchTrainings: (fetchType: string, page: number) => Promise<void>;
+  fetchSingleTraining: (trainingId: string) => Promise<void>;
   setCreateTrainingData: (data: Partial<CreateTrainingData>) => void;
   addModule: (module: Module) => void;
   addQuestion: (question: Question) => void;
@@ -69,6 +72,7 @@ interface TrainingState {
 export const useTrainingStore = create<TrainingState>((set) => ({
   isCreatingTraining: false,
   trainings: [],
+  singleTraining: null,
   modules: [
     { moduleTitle: "", lessons: [{ lessonType: "video", content: "" }] },
   ],
@@ -78,7 +82,7 @@ export const useTrainingStore = create<TrainingState>((set) => ({
       questionType: "multiple-choice",
       options: ["", ""],
       correctAnswer: "",
-      answerMethod: "",
+      answerMethod: "multiple-choice",
     },
   ],
 
@@ -101,6 +105,33 @@ export const useTrainingStore = create<TrainingState>((set) => ({
     }
   },
 
+  fetchTrainings: async (fetchType: string, page: number) => {
+    try {
+      const response: AxiosResponse = await api.post(
+        `/training/getAllTrainingsAdmin?page=${page}`,
+        { fetchType }
+      );
+      set({ trainings: response.data.trainings || [] });
+    } catch (error: any) {
+      console.log(error);
+      toast.error(
+        error.response?.data?.message || "Failed to fetch trainings."
+      );
+    }
+  },
+
+  fetchSingleTraining: async (trainingId: string) => {
+    try {
+      const response: AxiosResponse = await api.get(
+        `/training/getSingleTrainingAdmin/${trainingId}`
+      );
+      set({ singleTraining: response.data.training });
+    } catch (error: any) {
+      console.log(error);
+      toast.error(error.response?.data?.message || "Failed to fetch training.");
+    }
+  },
+
   setCreateTrainingData: (data) => set((state) => ({ ...state, ...data })),
 
   addModule: (module) =>
@@ -111,7 +142,7 @@ export const useTrainingStore = create<TrainingState>((set) => ({
 
   resetTraining: () =>
     set(() => ({
-      bannerImageFile: "",
+      bannerImage: "",
       title: "",
       description: "",
       startDate: "",
@@ -125,7 +156,7 @@ export const useTrainingStore = create<TrainingState>((set) => ({
           questionType: "multiple-choice",
           options: ["", ""],
           correctAnswer: "",
-          answerMethod: "",
+          answerMethod: "multiple-choice",
         },
       ],
     })),

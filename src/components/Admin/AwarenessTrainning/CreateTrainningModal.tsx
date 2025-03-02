@@ -13,7 +13,7 @@ import {
 const CreateTrainningModal = ({ setCreateTraining }: any) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<CreateTrainingData>({
-    bannerImageFile: "",
+    bannerImage: "",
     title: "",
     description: "",
     startDate: "",

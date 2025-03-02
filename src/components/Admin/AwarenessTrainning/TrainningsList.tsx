@@ -1,21 +1,27 @@
-import { useState } from "react";
-import { TabContent, TabItem, tabContent } from "./data";
+import { useState, useEffect } from "react";
+import { TabContent, TabItem } from "./data";
 import { useNavigate } from "react-router-dom";
 import profilepic from "../../../assets/avatar.png";
+import { useTrainingStore } from "../../../store/useAwarenessTrainingStore";
 
 const TrainningsList: React.FC = () => {
   const [activeTab, setActiveTab] = useState<keyof TabContent>("browse");
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = 2500;
   const navigate = useNavigate();
+  const { fetchTrainings, trainings } = useTrainingStore();
 
   const avatars = [profilepic, profilepic, profilepic, profilepic];
+
+  useEffect(() => {
+    fetchTrainings(activeTab, currentPage);
+  }, [activeTab, currentPage, fetchTrainings]);
 
   // Navigate to training details
   // For card click
   const handleCardClick = (training: TabItem) => {
     // Navigate to the normal TrainingDetails layout
-    navigate(`/training-details/${training.id}`, {
+    navigate(`/training-details/${training._id}`, {
       state: {
         ...training,
         isViewMode: false, // Ensure it's not the table layout
@@ -27,7 +33,7 @@ const TrainningsList: React.FC = () => {
   // For View button click
   const handleViewClick = (training: TabItem) => {
     // Navigate to the TrainingDetails layout with the table
-    navigate(`/training-details/${training.id}`, {
+    navigate(`/training-details/${training._id}`, {
       state: {
         ...training,
         isViewMode: true, // Ensure it shows the table layout
@@ -50,7 +56,10 @@ const TrainningsList: React.FC = () => {
               className={`pb-2 cursor-pointer ${
                 activeTab === tab ? "text-primary900" : "text-[#5A5555]"
               }`}
-              onClick={() => setActiveTab(tab as keyof TabContent)}
+              onClick={() => {
+                setActiveTab(tab as keyof TabContent);
+                setCurrentPage(1); // Reset to first page when tab changes
+              }}
             >
               {tab === "browse"
                 ? "Browse Trainings"
@@ -68,72 +77,80 @@ const TrainningsList: React.FC = () => {
 
       {/* Tab Content */}
       <div className="grid grid-cols-3 gap-6">
-        {tabContent[activeTab].map((item, index) => (
-          <div
-            key={index}
-            className="bg-white border border-[#D3D3D3] rounded-lg p-2 cursor-pointer pb-6"
-            onClick={() => handleCardClick(item)}
-          >
-            <img
-              src={item.image}
-              alt={item.title}
-              className="w-full object-cover rounded mb-4"
-            />
-            <h3 className="text-2xl font-medium text-[#333333]">
-              {item.title.slice(0, 30)}...
-            </h3>
-            <p className="text-sm text-[#333333] mt-2">
-              {item.description.slice(0, 100)}...
-            </p>
-
-            {activeTab === "assigned" && (
-              <div>
-                {/* Progress bar */}
-                <div className="flex items-center gap-2 mt-4">
-                  <div className="w-full bg-secondary100 rounded-md h-[9px]">
-                    <div
-                      className="bg-secondary600 h-[9px] rounded-md"
-                      style={{
-                        width: `${getProgressPercentage(
-                          item.current || 0,
-                          item.total || 100
-                        )}%`,
-                      }}
-                    ></div>
-                  </div>
-                  <span className="text-sm font-medium">
-                    {item.current || 0}%
-                  </span>
-                </div>
-
-                {/* Profile avatars and View All */}
-                <div className="flex items-center justify-between mt-4">
-                  <div className="flex -space-x-4 overflow-hidden">
-                    {avatars.map((avatar, index) => (
-                      <img
-                        key={index}
-                        src={avatar}
-                        alt={`Avatar ${index + 1}`}
-                        className={`inline-block h-8 w-8 rounded-full ${
-                          index === 0 ? "z-30" : `z-${20 - index}`
-                        } object-cover`}
-                      />
-                    ))}
-                  </div>
-                  <button
-                    className="text-primary500 text-xs underline"
-                    onClick={(e) => {
-                      e.stopPropagation(); // Prevent card click event
-                      handleViewClick(item); // View button click for table layout
-                    }}
-                  >
-                    View &gt;
-                  </button>
-                </div>
+        {Array.isArray(trainings) && trainings.length > 0 ? (
+          trainings.map((item, index) => (
+            <div
+              key={index}
+              className="bg-white border border-[#D3D3D3] rounded-lg p-3  cursor-pointer pb-6"
+              onClick={() => handleCardClick(item)}
+            >
+              <div className=" w-full h-[220px] mb-8">
+                <img
+                  src={item.bannerImage}
+                  alt={item.title}
+                  className="w-full object-cover rounded  h-full  mb-8"
+                />
               </div>
-            )}
+              <h3 className="text-2xl font-medium text-[#333333]">
+                {item.title.slice(0, 30)}...
+              </h3>
+              <p className="text-sm text-[#333333] mt-2">
+                {item.description.slice(0, 100)}...
+              </p>
+
+              {activeTab === "assigned" && (
+                <div>
+                  {/* Progress bar */}
+                  <div className="flex items-center gap-2 mt-4">
+                    <div className="w-full bg-secondary100 rounded-md h-[9px]">
+                      <div
+                        className="bg-secondary600 h-[9px] rounded-md"
+                        style={{
+                          width: `${getProgressPercentage(
+                            item.current || 0,
+                            item.total || 100
+                          )}%`,
+                        }}
+                      ></div>
+                    </div>
+                    <span className="text-sm font-medium">
+                      {item.current || 0}%
+                    </span>
+                  </div>
+
+                  {/* Profile avatars and View All */}
+                  <div className="flex items-center justify-between mt-4">
+                    <div className="flex -space-x-4 overflow-hidden">
+                      {avatars.map((avatar, index) => (
+                        <img
+                          key={index}
+                          src={avatar}
+                          alt={`Avatar ${index + 1}`}
+                          className={`inline-block h-8 w-8 rounded-full ${
+                            index === 0 ? "z-30" : `z-${20 - index}`
+                          } object-cover`}
+                        />
+                      ))}
+                    </div>
+                    <button
+                      className="text-primary500 text-xs underline"
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent card click event
+                        handleViewClick(item); // View button click for table layout
+                      }}
+                    >
+                      View &gt;
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ))
+        ) : (
+          <div className="col-span-3 text-center text-gray-500">
+            No trainings available.
           </div>
-        ))}
+        )}
       </div>
 
       {/* Pagination */}

@@ -2,18 +2,36 @@ import React from "react";
 import { Controller, useFieldArray, useWatch } from "react-hook-form";
 import deleteIcon from "../../../assets/svgs/deleteIcon-gray.svg";
 import addIcon from "../../../assets/svgs/add-circle.svg";
+import { QuestionType } from "../../../store/useAwarenessTrainingStore";
 
 interface QuestionCardProps {
   question: any;
   questionIndex: number;
   control: any;
+  setValue: any;
   onRemove: () => void;
 }
+
+// Mapping UI display options to backend values
+const QUESTION_TYPE_MAPPING = {
+  "Multiple choice": "multiple-choice",
+  Checkbox: "checkbox",
+  "Short text": "input",
+  "Long text": "input",
+};
+
+// Inverse mapping for display purposes
+const BACKEND_TO_UI_MAPPING = {
+  "multiple-choice": "Multiple choice",
+  checkbox: "Checkbox",
+  input: "Short text", // Default to Short text for existing data
+};
 
 const QuestionCard: React.FC<QuestionCardProps> = ({
   question,
   questionIndex,
   control,
+  setValue,
   onRemove,
 }) => {
   const { fields, append, remove } = useFieldArray({
@@ -27,10 +45,52 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
     defaultValue: question.type,
   });
 
+  const handleChoiceChange = (choiceIndex: number, value: string) => {
+    setValue(`questions.${questionIndex}.choices.${choiceIndex}.text`, value);
+  };
+
+  const handleCheckboxChange = (choiceIndex: number, checked: boolean) => {
+    setValue(
+      `questions.${questionIndex}.choices.${choiceIndex}.isChecked`,
+      checked
+    );
+  };
+
+  // Handle question type change
+  const handleQuestionTypeChange = (uiValue: string) => {
+    // Map the UI value to backend value
+    const backendValue =
+      QUESTION_TYPE_MAPPING[uiValue as keyof typeof QUESTION_TYPE_MAPPING];
+
+    // Set the type value using the backend format
+    setValue(`questions.${questionIndex}.type`, backendValue);
+
+    // For long text, set a property to distinguish from short text
+    if (uiValue === "Long text") {
+      setValue(`questions.${questionIndex}.isLongText`, true);
+    } else {
+      setValue(`questions.${questionIndex}.isLongText`, false);
+    }
+  };
+
+  // Determine if the current input type is long text
+  const isLongText = useWatch({
+    control,
+    name: `questions.${questionIndex}.isLongText`,
+    defaultValue: false,
+  });
+
+  // Get UI display value for current question type
+  const displayQuestionType =
+    questionType === "input" && isLongText
+      ? "Long text"
+      : BACKEND_TO_UI_MAPPING[
+          questionType as keyof typeof BACKEND_TO_UI_MAPPING
+        ] || "Short text";
+
   return (
     <div className="w-full p-8 mb-4 border border-primary100 rounded-2xl shadow space-y-8">
       <div className="w-full flex gap-4 items-start">
-        {/* Question Input */}
         <div className="w-full">
           <label className="block text-sm text-[#101928] font-semibold mb-2">
             Question
@@ -48,21 +108,26 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
           />
         </div>
 
-        {/* Question Type Dropdown */}
         <div className="w-full">
           <label className="block text-sm text-[#101928] font-semibold mb-2">
             Question type
           </label>
+          {/* Use Controller with custom onChange handler */}
           <Controller
-            name={`questions.${questionIndex}.type`}
+            name={`questions.${questionIndex}.displayType`}
             control={control}
+            defaultValue={displayQuestionType}
             render={({ field }) => (
               <select
-                {...field}
+                value={displayQuestionType}
+                onChange={(e) => {
+                  field.onChange(e);
+                  handleQuestionTypeChange(e.target.value);
+                }}
                 className="border border-primary100 bg-transparent py-4 px-3 w-full rounded-md"
               >
-                <option value="Multiple choices">Multiple choices</option>
-                <option value="Checkboxes">Checkboxes</option>
+                <option value="Multiple choice">Multiple choice</option>
+                <option value="Checkbox">Checkbox</option>
                 <option value="Short text">Short text</option>
                 <option value="Long text">Long text</option>
               </select>
@@ -75,40 +140,29 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
         </button>
       </div>
 
-      {/* Conditional Rendering Based on Question Type */}
-      {questionType === "Multiple choices" || questionType === "Checkboxes" ? (
+      {questionType !== "input" ? (
         <div className="space-y-4">
           <label className="block text-sm text-[#101928] font-semibold">
             Choices
           </label>
           {fields.map((item, choiceIndex) => (
             <div key={item.id} className="flex items-center gap-3">
-              <Controller
-                name={`questions.${questionIndex}.choices.${choiceIndex}.isChecked`}
-                control={control}
-                render={({ field }) => (
-                  <input
-                    {...field}
-                    type={
-                      questionType === "Multiple choices" ? "radio" : "checkbox"
-                    }
-                    className="h-4 w-4"
-                  />
-                )}
+              <input
+                type={questionType === "multiple-choice" ? "radio" : "checkbox"}
+                className="h-4 w-4"
+                checked={item.isChecked}
+                onChange={(e) =>
+                  handleCheckboxChange(choiceIndex, e.target.checked)
+                }
               />
 
-              <Controller
-                name={`questions.${questionIndex}.choices.${choiceIndex}.text`}
-                control={control}
-                render={({ field }) => (
-                  <input
-                    {...field}
-                    placeholder={`Option ${String.fromCharCode(
-                      65 + choiceIndex
-                    )}`}
-                    className="border border-primary100 py-4 px-3 w-96 rounded-md"
-                  />
-                )}
+              <input
+                value={item.text}
+                onChange={(e) =>
+                  handleChoiceChange(choiceIndex, e.target.value)
+                }
+                placeholder={`Option ${String.fromCharCode(65 + choiceIndex)}`}
+                className="border border-primary100 py-4 px-3 w-96 rounded-md"
               />
 
               {fields.length > 1 && (
@@ -138,34 +192,32 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
             <img src={addIcon} alt="Add" className="h-5 w-5" />
           </button>
         </div>
-      ) : null}
-
-      {/* Answer Input for Text-based Questions */}
-      {(questionType === "Short text" || questionType === "Long text") && (
+      ) : (
         <div className="space-y-4">
           <label className="block text-sm text-[#101928] font-semibold">
-            Answer
+            Correct Answer
           </label>
           <Controller
             name={`questions.${questionIndex}.answer`}
             control={control}
-            render={({ field }) =>
-              questionType === "Short text" ? (
-                <input
-                  {...field}
-                  type="text"
-                  placeholder="Enter short answer"
-                  className="border border-primary100 py-4 px-3 w-full rounded-md"
-                />
-              ) : (
-                <textarea
-                  {...field}
-                  placeholder="Enter long answer"
-                  className="border border-primary100 py-4 px-3 w-full rounded-md"
-                  rows={4}
-                />
-              )
-            }
+            render={({ field }) => (
+              <div>
+                {isLongText ? (
+                  <textarea
+                    {...field}
+                    placeholder="Enter correct answer"
+                    className="border border-primary100 py-4 px-3 w-full rounded-md min-h-24"
+                  />
+                ) : (
+                  <input
+                    {...field}
+                    type="text"
+                    placeholder="Enter correct answer"
+                    className="border border-primary100 py-4 px-3 w-full rounded-md"
+                  />
+                )}
+              </div>
+            )}
           />
         </div>
       )}
