@@ -61,7 +61,7 @@ const CreateTrainningModal = ({ setCreateTraining }: any) => {
         questions: data.questions || prevData.questions,
       };
 
-      console.log("Updated formData:", newData);
+      // console.log("Updated formData:", newData);
       return newData;
     });
   };

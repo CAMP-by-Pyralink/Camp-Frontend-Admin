@@ -61,7 +61,33 @@ const CreateTrainingStep3: React.FC<{ onChange: (data: any) => void }> = ({
   const formData = watch();
 
   // Use a debounced version of the onChange handler to prevent excessive updates
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     const transformedQuestions = formData.questions.map((q) => {
+  //       const answerMethod = getAnswerMethod(q.type, q.isLongText);
+  //       const options = ["multiple-choice", "checkbox"].includes(q.type)
+  //         ? q.choices.map((c) => c.text)
+  //         : [];
+  //       const correctAnswer = getCorrectAnswer(q);
+
+  //       return {
+  //         question: q.text,
+  //         questionType: q.type,
+  //         options,
+  //         correctAnswer,
+  //         answerMethod,
+  //         isLongText: q.isLongText, // Pass this to backend if needed
+  //       };
+  //     });
+
+  //     onChange({ questions: transformedQuestions });
+  //   }, 300); // 300ms debounce
+
+  //   return () => clearTimeout(timer);
+  // }, [formData, onChange]);
   useEffect(() => {
+    const stringifiedFormData = JSON.stringify(formData.questions);
+
     const timer = setTimeout(() => {
       const transformedQuestions = formData.questions.map((q) => {
         const answerMethod = getAnswerMethod(q.type, q.isLongText);
@@ -76,7 +102,7 @@ const CreateTrainingStep3: React.FC<{ onChange: (data: any) => void }> = ({
           options,
           correctAnswer,
           answerMethod,
-          isLongText: q.isLongText, // Pass this to backend if needed
+          isLongText: q.isLongText,
         };
       });
 
@@ -84,7 +110,7 @@ const CreateTrainingStep3: React.FC<{ onChange: (data: any) => void }> = ({
     }, 300); // 300ms debounce
 
     return () => clearTimeout(timer);
-  }, [formData, onChange]);
+  }, [JSON.stringify(formData.questions), onChange]);
 
   const getCorrectAnswer = (q: Question) => {
     switch (q.type) {

@@ -27,28 +27,38 @@ const CreateTrainningStep2 = ({
   ];
   const [activeTab, setActiveTab] = useState(0);
 
+  // Set lesson type when tab changes
   const handleTabClick = (index: number) => {
     setActiveTab(index);
-    onChange({ lessonType: uploadtabs[index].type });
+    onChange({
+      modules: [
+        {
+          lessons: [
+            {
+              lessonType: uploadtabs[index].type,
+              content: "",
+            },
+          ],
+        },
+      ],
+    });
   };
 
+  // Handle text inputs (module title and link)
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
-    // For module title
     if (name === "moduleTitle") {
       onChange({
         modules: [{ moduleTitle: value }],
       });
-    }
-    // For lesson content
-    else if (name === "linkContent") {
+    } else if (name === "linkContent") {
       onChange({
         modules: [
           {
             lessons: [
               {
-                lessonType: uploadtabs[activeTab].type,
+                lessonType: "link",
                 content: value,
               },
             ],
@@ -58,28 +68,34 @@ const CreateTrainningStep2 = ({
     }
   };
 
-  // Update file inputs
+  // Convert files to Base64
   const handleFileChange =
     (type: LessonType) => (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
-      if (file) {
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64 = reader.result as string;
         onChange({
           modules: [
             {
               lessons: [
                 {
                   lessonType: type,
-                  content: URL.createObjectURL(file),
+                  content: base64,
                 },
               ],
             },
           ],
         });
-      }
+      };
+      reader.readAsDataURL(file);
     };
 
   return (
     <div className="px-12 space-y-8">
+      {/* Module Title Input */}
       <div>
         <label htmlFor="moduleTitle" className="block text-sm font-medium">
           Module training
@@ -92,6 +108,8 @@ const CreateTrainningStep2 = ({
           onChange={handleInputChange}
         />
       </div>
+
+      {/* Lesson Type Tabs */}
       <h1>Select lesson type</h1>
       <div className="flex justify-between">
         {uploadtabs.map(({ icon, name }, index) => (
@@ -110,6 +128,8 @@ const CreateTrainningStep2 = ({
           </div>
         ))}
       </div>
+
+      {/* Content Inputs */}
       <div>
         {activeTab === 0 && (
           <div>
@@ -118,12 +138,13 @@ const CreateTrainningStep2 = ({
             </label>
             <input
               type="file"
-              name="videoContent"
-              className="border border-primary100 py-4 px-3 w-full rounded-md"
-              onChange={handleInputChange}
+              accept="video/*"
+              className=" border border-primary100 py-4 px-3 w-full rounded-md"
+              onChange={handleFileChange("video")}
             />
           </div>
         )}
+
         {activeTab === 1 && (
           <div>
             <label
@@ -134,12 +155,13 @@ const CreateTrainningStep2 = ({
             </label>
             <input
               type="file"
-              name="documentContent"
-              className="border border-primary100 py-4 px-3 w-full rounded-md"
-              onChange={handleInputChange}
+              accept=".pdf,.doc,.docx"
+              className=" border border-primary100 py-4 px-3 w-full rounded-md"
+              onChange={handleFileChange("document")}
             />
           </div>
         )}
+
         {activeTab === 2 && (
           <div>
             <label htmlFor="linkContent" className="block text-sm font-medium">
@@ -154,6 +176,7 @@ const CreateTrainningStep2 = ({
             />
           </div>
         )}
+
         {activeTab === 3 && <Editor />}
       </div>
     </div>

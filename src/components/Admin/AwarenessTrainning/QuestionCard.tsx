@@ -147,22 +147,32 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
           </label>
           {fields.map((item, choiceIndex) => (
             <div key={item.id} className="flex items-center gap-3">
-              <input
-                type={questionType === "multiple-choice" ? "radio" : "checkbox"}
-                className="h-4 w-4"
-                checked={item.isChecked}
-                onChange={(e) =>
-                  handleCheckboxChange(choiceIndex, e.target.checked)
-                }
+              <Controller
+                name={`questions.${questionIndex}.choices.${choiceIndex}.isChecked`}
+                control={control}
+                render={({ field }) => (
+                  <input
+                    {...field}
+                    type={
+                      questionType === "multiple-choice" ? "radio" : "checkbox"
+                    }
+                    className="h-4 w-4"
+                  />
+                )}
               />
 
-              <input
-                value={item.text}
-                onChange={(e) =>
-                  handleChoiceChange(choiceIndex, e.target.value)
-                }
-                placeholder={`Option ${String.fromCharCode(65 + choiceIndex)}`}
-                className="border border-primary100 py-4 px-3 w-96 rounded-md"
+              <Controller
+                name={`questions.${questionIndex}.choices.${choiceIndex}.text`}
+                control={control}
+                render={({ field }) => (
+                  <input
+                    {...field}
+                    placeholder={`Option ${String.fromCharCode(
+                      65 + choiceIndex
+                    )}`}
+                    className="border text-black border-primary100 py-4 px-3 w-96 rounded-md"
+                  />
+                )}
               />
 
               {fields.length > 1 && (
