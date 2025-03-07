@@ -111,6 +111,7 @@ export const useTrainingStore = create<TrainingState>((set) => ({
         `/training/getAllTrainingsAdmin?page=${page}`,
         { fetchType }
       );
+      console.log(response.data.trainings);
       set({ trainings: response.data.trainings || [] });
     } catch (error: any) {
       console.log(error);
@@ -126,9 +127,40 @@ export const useTrainingStore = create<TrainingState>((set) => ({
         `/training/getSingleTrainingAdmin/${trainingId}`
       );
       set({ singleTraining: response.data.training });
+      console.log(response.data.training);
     } catch (error: any) {
       console.log(error);
       toast.error(error.response?.data?.message || "Failed to fetch training.");
+    }
+  },
+
+  updateTraining: async (
+    trainingId: string,
+    data: Partial<CreateTrainingData>
+  ) => {
+    set({ isUpdatingTraining: true });
+    try {
+      const response: AxiosResponse = await api.patch(
+        `/training/updateTraining/${trainingId}`,
+        data
+      );
+      toast.success("Training updated successfully!");
+
+      // Refresh the single training if it's the one we're updating
+      const { singleTraining } = get();
+      if (singleTraining && trainingId) {
+        await get().fetchSingleTraining(trainingId);
+      }
+
+      return response;
+    } catch (error: any) {
+      console.log(error);
+      toast.error(
+        error.response?.data?.message || "Failed to update training."
+      );
+      throw error;
+    } finally {
+      set({ isUpdatingTraining: false });
     }
   },
 
