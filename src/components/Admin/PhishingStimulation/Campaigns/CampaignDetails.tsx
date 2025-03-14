@@ -49,10 +49,8 @@ const CampaignDetails = () => {
     }));
   };
 
-  const handleExportClick = () => {
-    // Export logic based on id
-  };
-  // Define your filters array
+  const handleExportClick = () => {};
+
   const filters: FilterConfig[] = [
     {
       key: "department",

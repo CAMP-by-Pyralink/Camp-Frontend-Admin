@@ -2,6 +2,7 @@ import { create } from "zustand";
 import axios, { AxiosResponse } from "axios";
 import toast from "react-hot-toast";
 import { useAuthStore } from "./useAuthStore";
+import Cookies from "js-cookie";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_APP_BASE_URL,
@@ -9,6 +10,9 @@ const api = axios.create({
     "Content-Type": "application/json",
   },
 });
+
+const token = Cookies.get("token");
+console.log("Token:", token);
 
 // --- Data Payload Interfaces ---
 
@@ -47,19 +51,19 @@ export const usePhishingStore = create<PhishingStore>((set) => ({
   phishingTemplates: [],
 
   fetchPhishingTemplates: async (page: number) => {
-    const { authUser } = useAuthStore.getState();
-    if (!authUser) {
-      console.error("No auth user found or token missing");
-      toast.error("Authentication error. Please log in again.");
-      return;
-    }
+    // const { authUser } = useAuthStore.getState();
+    // if (!authUser) {
+    //   console.error("No auth user found or token missing");
+    //   toast.error("Authentication error. Please log in again.");
+    //   return;
+    // }
 
     try {
       const response: AxiosResponse = await api.get(
         `/template/getPhishingTemplates?page=${page}`,
         {
           headers: {
-            Authorization: `Bearer ${authUser}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );

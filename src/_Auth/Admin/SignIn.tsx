@@ -29,7 +29,7 @@ const SignIn = () => {
 
     const response = await login(loginData);
     // console.log(response);
-    if ((response && response.status === 201) || 200) {
+    if (response && (response.status === 200 || response.status === 201)) {
       navigate("/");
     }
   };

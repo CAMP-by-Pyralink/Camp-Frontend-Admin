@@ -5,10 +5,10 @@ import { useAuthStore } from "../store/useAuthStore";
 // import { useAuth } from "./AuthContext"; // Assuming you have an AuthContext
 
 const ProtectedRoutes = () => {
-  const { isAuthenticated } = useAuthStore();
-  console.log(isAuthenticated);
+  const { authUser } = useAuthStore();
+  console.log(authUser);
 
-  return isAuthenticated ? <Outlet /> : <Navigate to="/signin" replace />;
+  return authUser ? <Outlet /> : <Navigate to="/signin" replace />;
 };
 
 export default ProtectedRoutes;

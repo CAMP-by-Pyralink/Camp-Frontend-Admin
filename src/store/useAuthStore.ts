@@ -2,6 +2,7 @@
 import { create } from "zustand";
 import axios, { AxiosResponse } from "axios";
 import toast from "react-hot-toast";
+import Cookies from "js-cookie";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_APP_BASE_URL,
@@ -232,20 +233,15 @@ export const useAuthStore = create<AuthStore>((set) => ({
     try {
       const response = await api.post("/company/login", data);
       if (response.status === 201) {
-        toast.success("Login successful!");
+        toast.success(response.data.msg);
+        const token = response.data.token;
+        Cookies.set("authToken", token, { expires: 1, secure: true });
+        set({ authUser: { token } });
+        return response;
       }
-
-      const user: AuthUser = response.data.token;
-      set({ isAuthenticated: true });
-      set({ authUser: user });
-      sessionStorage.setItem("isAuthenticated", "true");
-      // console.log("token:", user);
-
-      toast.success("Logged in successfully!");
-      return response;
+      return null;
     } catch (error: any) {
-      const message =
-        error?.response.data.msg || error.message || "Login failed";
+      const message = error?.response.data.msg || "Login failed";
       toast.error(message);
       return null;
     } finally {
@@ -255,8 +251,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
 
   logout: async () => {
     set({ authUser: null });
-    set({ isAuthenticated: false });
-    sessionStorage.removeItem("isAuthenticated"); // Remove from session storage
+    Cookies.remove("authToken");
     toast.success("Logged out successfully!");
   },
 }));
