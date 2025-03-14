@@ -44,18 +44,23 @@ const RiskAssessment = lazy(() => import("./pages/Admin/RiskAssessment"));
 const DeepWebMonitoring = lazy(() => import("./pages/Admin/DeepWebMonitoring"));
 const Settings = lazy(() => import("./pages/Admin/Settings"));
 const Alerts = lazy(() => import("./pages/Admin/Alerts"));
+import Cookies from "js-cookie";
 
 function App() {
   const { setIsAuthenticated } = useAuthStore();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const isAuthenticated = sessionStorage.getItem("isAuthenticated");
-    if (isAuthenticated === "true") {
+    const token = Cookies.get("token");
+
+    if (token) {
       setIsAuthenticated(true);
+    } else {
+      setIsAuthenticated(false);
     }
+
     setLoading(false);
-  }, [setIsAuthenticated]);
+  }, []);
 
   if (loading) {
     return (

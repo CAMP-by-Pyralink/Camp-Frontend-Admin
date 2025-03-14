@@ -60,12 +60,15 @@ interface AuthStore {
   authUser: AuthUser | null;
   // Loading/Processing States
   isLoading: boolean;
+  isAuthLoaded: boolean;
   isSigningUp: boolean;
   isVerifyingEmail: boolean;
   isResendingToken: boolean;
   isOnboarding: boolean;
   isLoggingIn: boolean;
   isAuthenticated: boolean;
+
+  set: (state: Partial<AuthStore>) => void;
 
   // State Setters
   setAuthUser: (user: AuthUser | null) => void;
@@ -95,6 +98,8 @@ export const useAuthStore = create<AuthStore>((set) => ({
   isLoggingIn: false,
   isAuthenticated: false,
   isOnboarding: false,
+  isAuthLoaded: false,
+  set: (state) => set(state),
 
   // Setters
   setAuthUser: (user: AuthUser | null) => set({ authUser: user }),
@@ -228,22 +233,27 @@ export const useAuthStore = create<AuthStore>((set) => ({
     }
   },
 
-  login: async (data: LoginData) => {
+  login: async (data) => {
     set({ isLoggingIn: true });
+
     try {
       const response = await api.post("/company/login", data);
+
       if (response.status === 201) {
-        toast.success(response.data.msg);
         const token = response.data.token;
         Cookies.set("authToken", token, { expires: 1, secure: true });
-        set({ authUser: { token } });
-        return response;
+
+        set({ authUser: { token }, isAuthenticated: true });
+
+        return true;
       }
-      return null;
+      toast.success(response.data.msg);
+
+      return false;
     } catch (error: any) {
-      const message = error?.response.data.msg || "Login failed";
+      const message = error?.response?.data?.msg || "Login failed";
       toast.error(message);
-      return null;
+      return false;
     } finally {
       set({ isLoggingIn: false });
     }
@@ -253,5 +263,14 @@ export const useAuthStore = create<AuthStore>((set) => ({
     set({ authUser: null });
     Cookies.remove("authToken");
     toast.success("Logged out successfully!");
+  },
+
+  checkAuth: () => {
+    const token = Cookies.get("authToken");
+    if (token) {
+      set({ authUser: { token }, isAuthenticated: true, isAuthLoaded: true });
+    } else {
+      set({ authUser: null, isAuthenticated: false, isAuthLoaded: true });
+    }
   },
 }));

@@ -29,9 +29,16 @@ const SignIn = () => {
 
     const response = await login(loginData);
     // console.log(response);
-    if (response && (response.status === 200 || response.status === 201)) {
-      navigate("/");
-    }
+    // if (response && (response.status === 200 || response.status === 201)) {
+    //   navigate("/");
+    // }
+    // if (response) {
+    //   // Add a small delay to ensure store state is updated
+    //   setTimeout(() => {
+    //     navigate("/");
+    //   }, 100);
+    // }
+    navigate("/");
   };
 
   return (

@@ -141,57 +141,57 @@ const SideNav = () => {
     }
   }, []);
 
-  // useEffect(() => {
-  //   const currentPath = location.pathname;
-  //   let matchedMenu = activeMenu; // Use the current activeMenu initially
+  useEffect(() => {
+    const currentPath = location.pathname;
+    let matchedMenu = activeMenu; // Use the current activeMenu initially
 
-  //   const isMenuFound = navMenus.some((menu) => {
-  //     if (menu.path === currentPath) {
-  //       matchedMenu = menu.name;
-  //       return true;
-  //     } else if (menu.subMenu) {
-  //       return menu.subMenu.some((sub) => {
-  //         if (sub.path === currentPath) {
-  //           matchedMenu = sub.name;
-  //           return true;
-  //         }
-  //         return false;
-  //       });
-  //     }
-  //     return false;
-  //   });
+    const isMenuFound = navMenus.some((menu) => {
+      if (menu.path === currentPath) {
+        matchedMenu = menu.name;
+        return true;
+      } else if (menu.subMenu) {
+        return menu.subMenu.some((sub) => {
+          if (sub.path === currentPath) {
+            matchedMenu = sub.name;
+            return true;
+          }
+          return false;
+        });
+      }
+      return false;
+    });
 
-  //   // If no match is found, keep the current activeMenu
-  //   if (!isMenuFound) {
-  //     setActiveMenu(matchedMenu);
-  //   }
+    // If no match is found, keep the current activeMenu
+    if (!isMenuFound) {
+      setActiveMenu(matchedMenu);
+    }
 
-  //   localStorage.setItem("activeRoute", location.pathname);
-  // }, [location.pathname]);
+    localStorage.setItem("activeRoute", location.pathname);
+  }, [location.pathname]);
 
-  // useEffect(() => {
-  //   localStorage.setItem("activeRoute", location.pathname);
+  useEffect(() => {
+    localStorage.setItem("activeRoute", location.pathname);
 
-  //   const currentPath = location.pathname;
-  //   let matchedMenu = "Overview";
+    const currentPath = location.pathname;
+    let matchedMenu = "Overview";
 
-  //   navMenus.forEach((menu) => {
-  //     if (menu.path === currentPath) {
-  //       matchedMenu = menu.name;
-  //     } else if (menu.subMenu) {
-  //       const matchedSubMenu = menu.subMenu.find(
-  //         (sub) => sub.path === currentPath
-  //       );
-  //       if (matchedSubMenu) {
-  //         matchedMenu = matchedSubMenu.name;
-  //         if (menu.name === "User Management") setIsUserManagementOpen(true);
-  //         if (menu.name === "Phishing Simulation") setIsPhishingOpen(true);
-  //       }
-  //     }
-  //   });
+    navMenus.forEach((menu) => {
+      if (menu.path === currentPath) {
+        matchedMenu = menu.name;
+      } else if (menu.subMenu) {
+        const matchedSubMenu = menu.subMenu.find(
+          (sub) => sub.path === currentPath
+        );
+        if (matchedSubMenu) {
+          matchedMenu = matchedSubMenu.name;
+          if (menu.name === "User Management") setIsUserManagementOpen(true);
+          if (menu.name === "Phishing Simulation") setIsPhishingOpen(true);
+        }
+      }
+    });
 
-  //   setActiveMenu(matchedMenu);
-  // }, [location.pathname]);
+    setActiveMenu(matchedMenu);
+  }, [location.pathname]);
 
   useEffect(() => {
     const currentPath = location.pathname;

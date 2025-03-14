@@ -2,6 +2,7 @@ import { create } from "zustand";
 import axios, { AxiosResponse } from "axios";
 import toast from "react-hot-toast";
 import { useAuthStore } from "./useAuthStore";
+import Cookies from "js-cookie";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_APP_BASE_URL,
@@ -12,9 +13,15 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    const { authUser } = useAuthStore.getState();
-    if (authUser) {
-      config.headers.Authorization = `Bearer ${authUser}`;
+    // const { authUser } = useAuthStore.getState();
+    // if (authUser) {
+    //   config.headers.Authorization = `Bearer ${authUser}`;
+    // }
+    const token = Cookies.get("token");
+
+    // If token exists, add it to the headers
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
@@ -134,35 +141,35 @@ export const useTrainingStore = create<TrainingState>((set) => ({
     }
   },
 
-  updateTraining: async (
-    trainingId: string,
-    data: Partial<CreateTrainingData>
-  ) => {
-    set({ isUpdatingTraining: true });
-    try {
-      const response: AxiosResponse = await api.patch(
-        `/training/updateTraining/${trainingId}`,
-        data
-      );
-      toast.success("Training updated successfully!");
+  // updateTraining: async (
+  //   trainingId: string,
+  //   data: Partial<CreateTrainingData>
+  // ) => {
+  //   set({ isUpdatingTraining: true });
+  //   try {
+  //     const response: AxiosResponse = await api.patch(
+  //       `/training/updateTraining/${trainingId}`,
+  //       data
+  //     );
+  //     toast.success("Training updated successfully!");
 
-      // Refresh the single training if it's the one we're updating
-      const { singleTraining } = get();
-      if (singleTraining && trainingId) {
-        await get().fetchSingleTraining(trainingId);
-      }
+  //     // Refresh the single training if it's the one we're updating
+  //     const { singleTraining } = get();
+  //     if (singleTraining && trainingId) {
+  //       await get().fetchSingleTraining(trainingId);
+  //     }
 
-      return response;
-    } catch (error: any) {
-      console.log(error);
-      toast.error(
-        error.response?.data?.message || "Failed to update training."
-      );
-      throw error;
-    } finally {
-      set({ isUpdatingTraining: false });
-    }
-  },
+  //     return response;
+  //   } catch (error: any) {
+  //     console.log(error);
+  //     toast.error(
+  //       error.response?.data?.message || "Failed to update training."
+  //     );
+  //     throw error;
+  //   } finally {
+  //     set({ isUpdatingTraining: false });
+  //   }
+  // },
 
   setCreateTrainingData: (data) => set((state) => ({ ...state, ...data })),
 

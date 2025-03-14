@@ -2,6 +2,7 @@ import { create } from "zustand";
 import axios, { AxiosResponse } from "axios";
 import toast from "react-hot-toast";
 import { useAuthStore } from "./useAuthStore";
+import Cookies from "js-cookie";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_APP_BASE_URL,
@@ -13,9 +14,19 @@ const api = axios.create({
 // Add a request interceptor to attach the bearer token
 api.interceptors.request.use(
   (config) => {
-    const { authUser } = useAuthStore.getState();
-    if (authUser) {
-      config.headers.Authorization = `Bearer ${authUser}`;
+    // const { authUser } = useAuthStore.getState();
+    // console.log(authToken, "dfg");
+
+    // if (authUser) {
+    //   console.log(authUser, "dfg");
+    //   config.headers.Authorization = `Bearer ${authUser}`;
+    // }
+
+    const token = Cookies.get("token");
+
+    // If token exists, add it to the headers
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
