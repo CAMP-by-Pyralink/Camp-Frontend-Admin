@@ -54,6 +54,23 @@ export interface AuthUser {
   token: string;
 }
 
+export interface ForgotPassword {
+  email: string;
+}
+export interface VerifyEmailResetPassword {
+  token: string;
+  email: string;
+}
+
+export interface ResendTokenAdmin {
+  email: string;
+}
+export interface ChangePassword {
+  email: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
 // --- Auth Store Interface ---
 
 interface AuthStore {
@@ -86,6 +103,10 @@ interface AuthStore {
   onboardCompany: (data: OnboardingData) => Promise<any>;
   login: (data: LoginData) => Promise<any>;
   logout: () => Promise<void>;
+  forgotPassword: (data: ForgotPassword) => Promise<any>;
+  verifyEmailResetPassword: (data: VerifyEmailResetPassword) => Promise<any>;
+  resendTokenForgotPassword: (data: ResendTokenAdmin) => Promise<any>;
+  changepassword: (data: ChangePassword) => Promise<any>;
 }
 
 export const useAuthStore = create<AuthStore>((set) => ({
@@ -239,15 +260,14 @@ export const useAuthStore = create<AuthStore>((set) => ({
     try {
       const response = await api.post("/company/login", data);
 
-      if (response.status === 201) {
+      if (response.status === 200) {
         const token = response.data.token;
-        Cookies.set("authToken", token, { expires: 1, secure: true });
-
+        Cookies.set("token", token, { expires: 1, secure: true });
         set({ authUser: { token }, isAuthenticated: true });
 
+        toast.success(response.data.msg);
         return true;
       }
-      toast.success(response.data.msg);
 
       return false;
     } catch (error: any) {
@@ -258,15 +278,85 @@ export const useAuthStore = create<AuthStore>((set) => ({
       set({ isLoggingIn: false });
     }
   },
+  forgotPassword: async (data) => {
+    set({ isLoading: true });
+    try {
+      const response = await api.post("/admin/forgotPassword", data);
+      if (response.status === 200) {
+        toast.success(response.data.msg);
+        sessionStorage.setItem("email", response.data.email);
+        return true;
+      }
+      console.log(response.data);
+      return false;
+    } catch (error: any) {
+      // const message = error?.response?.data?.msg || "Login failed";
+      toast.error(error.response.data.msg);
+      return false;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  verifyEmailResetPassword: async (data) => {
+    set({ isLoading: true });
+    try {
+      const response = await api.post("/admin/verifyEmailResetPassword", data);
+      if (response.status === 200) {
+        toast.success(response.data.msg);
+        return true;
+      }
+      console.log(response.data);
+      return false;
+    } catch (error: any) {
+      toast.error(error.response.data.msg);
+      return false;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  resendTokenForgotPassword: async (data) => {
+    set({ isLoading: true });
+    try {
+      const response = await api.post("/admin/resendToken", data);
+      if (response.status === 200) {
+        toast.success(response.data.msg);
+        return true;
+      }
+      console.log(response.data);
+      return false;
+    } catch (error: any) {
+      toast.error(error.response.data.msg);
+      return false;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  changepassword: async (data) => {
+    set({ isLoading: true });
+    try {
+      const response = await api.patch("/admin/changePassword", data);
+      if (response.status === 200) {
+        toast.success(response.data.msg);
+        return true;
+      }
+      console.log(response.data);
+      return false;
+    } catch (error: any) {
+      toast.error(error.response.data.msg);
+      return false;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
 
   logout: async () => {
-    set({ authUser: null });
-    Cookies.remove("authToken");
+    set({ authUser: null, isAuthenticated: false });
+    Cookies.remove("token");
     toast.success("Logged out successfully!");
   },
 
   checkAuth: () => {
-    const token = Cookies.get("authToken");
+    const token = Cookies.get("token");
     if (token) {
       set({ authUser: { token }, isAuthenticated: true, isAuthLoaded: true });
     } else {

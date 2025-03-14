@@ -7,6 +7,7 @@ import ModalLayout from "../../shared/ModalLayout";
 import UploadCsvModal from "../../shared/UploadCsvModal";
 import HeaderTitle from "../../shared/HeaderTitle";
 import FilterModal from "../../components/Admin/UserManagement/FilterModal";
+import LockedPage from "../../shared/LockedPage";
 
 // Define FilterConfig interface
 interface FilterConfig {
@@ -27,6 +28,7 @@ const RiskAssessment = () => {
   const [importCsv, setImportCsv] = useState(false);
   const [exportCsv, setExportCsv] = useState(false);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const locked = true;
 
   // State to hold the selected filter values
   const [selectedFilters, setSelectedFilters] = useState({
@@ -95,6 +97,10 @@ const RiskAssessment = () => {
     setImportCsv((prev) => !prev);
     setExportCsv((prev) => !prev);
   };
+
+  if (locked) {
+    return <LockedPage />;
+  }
   return (
     <div>
       <div className=" flex justify-between mb-">

@@ -45,6 +45,7 @@ const DeepWebMonitoring = lazy(() => import("./pages/Admin/DeepWebMonitoring"));
 const Settings = lazy(() => import("./pages/Admin/Settings"));
 const Alerts = lazy(() => import("./pages/Admin/Alerts"));
 import Cookies from "js-cookie";
+import ResetPassword from "./_Auth/Admin/ResetPassword";
 
 function App() {
   const { setIsAuthenticated } = useAuthStore();
@@ -92,11 +93,12 @@ function App() {
             <Route path="/signup" element={<SignUp />} />
             <Route path="/signin" element={<SignIn />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
           </Route>
           <Route path="/successful" element={<SuccessModal />} />
           <Route path="/otp" element={<OTPVerification />} />
           <Route path="/onboarding" element={<Onboarding />} />
-          <Route path="/reset-password" element={<ResetPasswordLink />} />
+          <Route path="/reset-password-link" element={<ResetPasswordLink />} />
 
           {/* ADMIN ROUTES */}
           <Route element={<ProtectedRoutes />}>

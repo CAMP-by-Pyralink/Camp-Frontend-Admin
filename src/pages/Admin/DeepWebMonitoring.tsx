@@ -1,6 +1,12 @@
 import ScanSearch from "../../components/Deep-Web-Moniroting/ScanSearch";
 import HeaderTitle from "../../shared/HeaderTitle";
+import LockedPage from "../../shared/LockedPage";
 const DeepWebMonitoring = () => {
+  const locked = true;
+
+  if (locked) {
+    return <LockedPage />;
+  }
   return (
     <div className=" h-full ">
       {/* <h1 className="text-greyText text-2xl font-medium">

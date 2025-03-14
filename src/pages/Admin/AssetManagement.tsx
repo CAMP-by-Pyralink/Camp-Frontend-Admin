@@ -11,6 +11,7 @@ import QrCodeScan from "../../components/Admin/AssetsManagement/QrCodeScan";
 import OnboardAssets from "../../components/Admin/AssetsManagement/OnboardAssets";
 import HeaderTitle from "../../shared/HeaderTitle";
 import FilterModal from "../../components/Admin/UserManagement/FilterModal";
+import LockedPage from "../../shared/LockedPage";
 
 // Define FilterConfig interface
 interface FilterConfig {
@@ -34,6 +35,7 @@ const AssetManagement = () => {
   const [scanQr, setScanQr] = useState(false);
   const toggleDropdown = () => setIsOpen(!isOpen);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const locked = true;
 
   // State to hold the selected filter values
   const [selectedFilters, setSelectedFilters] = useState({
@@ -104,6 +106,10 @@ const AssetManagement = () => {
     //   type: "date",
     // },
   ];
+
+  if (locked) {
+    return <LockedPage />;
+  }
   return (
     <div>
       <div className=" flex justify-between mb-">

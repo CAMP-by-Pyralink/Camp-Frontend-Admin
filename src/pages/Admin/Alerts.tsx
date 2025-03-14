@@ -1,8 +1,13 @@
 import AlertsTable from "../../components/Admin/Alerts/AlertsTable";
 import HeaderTitle from "../../shared/HeaderTitle";
+import LockedPage from "../../shared/LockedPage";
 import PagesHomeLayout from "../../shared/PagesHomeLayout";
 
 const Alerts = () => {
+  const locked = true;
+  if (locked) {
+    return <LockedPage />;
+  }
   return (
     <div>
       <div className=" flex justify-between mb-4">

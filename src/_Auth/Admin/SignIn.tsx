@@ -28,17 +28,10 @@ const SignIn = () => {
     // console.log(loginData);
 
     const response = await login(loginData);
-    // console.log(response);
-    // if (response && (response.status === 200 || response.status === 201)) {
-    //   navigate("/");
-    // }
-    // if (response) {
-    //   // Add a small delay to ensure store state is updated
-    //   setTimeout(() => {
-    //     navigate("/");
-    //   }, 100);
-    // }
-    navigate("/");
+
+    if (response) {
+      navigate("/");
+    }
   };
 
   return (
@@ -46,17 +39,19 @@ const SignIn = () => {
       <div className=" w-full h-full">
         {/*  */}
         <div>
-          <h2 className="text-3xl text-[#1B1818] font-bold">Welcome back</h2>
+          <h2 className="text-3xl text-[#1B1818] font-semibold mb-2">
+            Welcome back!
+          </h2>
           <p className=" mb-4 text-[#645D5D] text-sm">
             Don’t have an account?{" "}
             <Link to="/signup">
-              <span className=" text-primary900">Sign up</span>
+              <span className=" text-[#C7C7CC] font-semibold">Sign up</span>
             </Link>
           </p>
         </div>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-[#101928] text-sm">
+            <label className="block text-[#101928] font-medium text-sm">
               Email Address
             </label>
             <input
@@ -81,7 +76,9 @@ const SignIn = () => {
             />
           </div> */}
           <div className="mb-4 relative">
-            <label className="block text-[#101928] text-sm">Password</label>
+            <label className="block text-[#101928] font-medium text-sm">
+              Password
+            </label>
             <input
               type={showPassword ? "text" : "password"}
               name="password"
@@ -115,6 +112,12 @@ const SignIn = () => {
               "Sign In"
             )}
           </button>
+          <p className=" text-center text-sm mt-4 text-[#645D5D]">
+            Forgot Password?{" "}
+            <Link to="/forgot-password">
+              <span className=" text-[#C7C7CC] font-semibold">Recover</span>
+            </Link>
+          </p>
         </form>
       </div>
     </div>
