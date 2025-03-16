@@ -70,7 +70,7 @@ export interface GetCurrentAdminData {
   lName: string;
   email: string;
   pNumber: string;
-  profileImage: string;
+  profileImage: string | null;
   role: string;
   address: string;
   phoneNumber: string;

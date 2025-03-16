@@ -11,8 +11,27 @@ const api = axios.create({
   },
 });
 
-const token = Cookies.get("token");
-console.log("Token:", token);
+// const token = Cookies.get("token");
+// console.log("Token:", token);
+
+api.interceptors.request.use(
+  (config) => {
+    // const { authUser } = useAuthStore.getState();
+    // if (authUser) {
+    //   config.headers.Authorization = `Bearer ${authUser}`;
+    // }
+    const token = Cookies.get("token");
+
+    // If token exists, add it to the headers
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 // --- Data Payload Interfaces ---
 
@@ -60,12 +79,12 @@ export const usePhishingStore = create<PhishingStore>((set) => ({
 
     try {
       const response: AxiosResponse = await api.get(
-        `/template/getPhishingTemplates?page=${page}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        `/template/getPhishingTemplates?page=${page}`
+        // {
+        //   headers: {
+        //     Authorization: `Bearer ${token}`,
+        //   },
+        // }
       );
       set({ phishingTemplates: response.data.templates });
       console.log("Phishing Templates:", response.data.templates);
@@ -89,12 +108,12 @@ export const usePhishingStore = create<PhishingStore>((set) => ({
     try {
       const response: AxiosResponse = await api.post(
         "template/createPhishingTemplate",
-        data,
-        {
-          headers: {
-            Authorization: `Bearer ${authUser}`,
-          },
-        }
+        data
+        // {
+        //   headers: {
+        //     Authorization: `Bearer ${authUser}`,
+        //   },
+        // }
       );
       console.log("Authorization Header:", `Bearer ${authUser.token}`);
 
@@ -123,12 +142,12 @@ export const usePhishingStore = create<PhishingStore>((set) => ({
       console.log("Request Data:", data);
       const response: AxiosResponse = await api.patch(
         `template/updatePhishingTemplate/${id}`,
-        data,
-        {
-          headers: {
-            Authorization: `Bearer ${authUser}`,
-          },
-        }
+        data
+        // {
+        //   headers: {
+        //     Authorization: `Bearer ${authUser}`,
+        //   },
+        // }
       );
       console.log("Request Headers:", {
         Authorization: `Bearer ${authUser}`,
@@ -154,12 +173,12 @@ export const usePhishingStore = create<PhishingStore>((set) => ({
     set({ isDeletingTemplate: true });
     try {
       const response: AxiosResponse = await api.delete(
-        `/template/deletePhishingTemplate/${templateId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${authUser}`,
-          },
-        }
+        `/template/deletePhishingTemplate/${templateId}`
+        // {
+        //   headers: {
+        //     Authorization: `Bearer ${authUser}`,
+        //   },
+        // }
       );
       toast.success("Template deleted successfully!");
       return response;

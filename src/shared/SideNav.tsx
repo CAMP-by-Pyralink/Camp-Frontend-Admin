@@ -17,6 +17,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useCustomization } from "../contexts/CustomizationContext";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { useAuthStore } from "../store/useAuthStore";
+import { useAdminStore } from "../store/useAdminStore";
 
 interface NavMenu {
   name: string;
@@ -49,6 +50,28 @@ const SideNav = () => {
 
   const handleSignOut = async () => {
     await logout();
+  };
+
+  const { currentUser, getCurrentAdmin } = useAdminStore();
+
+  useEffect(() => {
+    getCurrentAdmin();
+  }, []);
+
+  // Get user's initials from first and last name
+  const getUserInitials = () => {
+    let initials = "";
+
+    if (currentUser?.fName) {
+      initials += currentUser.fName.charAt(0).toUpperCase();
+    }
+
+    if (currentUser?.lName) {
+      initials += currentUser.lName.charAt(0).toUpperCase();
+    }
+
+    // If we couldn't get any initials, return "U" as fallback
+    return initials || "";
   };
 
   const navMenus = [
@@ -287,7 +310,7 @@ const SideNav = () => {
       style={{ background: themeColor }}
     >
       {/* Logo */}
-      <div className=" flex items-center justify-center mb-8">
+      <div className=" flex items-cente justify-center mb-8">
         <div
           className={`flex relative items-center ${
             isCollapsed ? "gap-0" : "gap-8"
@@ -332,10 +355,15 @@ const SideNav = () => {
       {/* Menu */}
       <div className="flex flex-col gap-2">
         {navMenus.map((navMenu, index) => (
-          <div key={index}>
+          <div
+            key={index}
+            className={`${
+              isCollapsed ? "flex items-center justify-center" : ""
+            }`}
+          >
             <Link to={navMenu.subMenu ? "#" : navMenu.path || "#"}>
               <div
-                className={`flex items-center gap-4 p-2 cursor-pointer py-3 px-4`}
+                className={`flex items-center gap-4 p-2 cursor-pointer py-3 px-4 `}
                 style={{
                   // background: navMenu.subMenu
                   //   ? // No active color for parent menus with submenus
@@ -472,14 +500,24 @@ const SideNav = () => {
           }`}
         >
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-full">
-              <img
-                src={profilePic}
-                alt="User"
-                className=" w-full h-full object-cover"
-              />
+            <div className="w-10 h-10 bg-[#D4CFCF] aspect-square rounded-full">
+              {currentUser?.profileImage ? (
+                <img
+                  src={currentUser.profileImage}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span className="text-gray-800 font-semibold text-lg">
+                  {getUserInitials()}
+                </span>
+              )}
             </div>
-            {!isCollapsed && <span className="text-sm">John Doe</span>}
+            {!isCollapsed && (
+              <span className="text-sm">
+                {currentUser?.fName} {currentUser?.lName}
+              </span>
+            )}
           </div>
           {/*  */}
           <div

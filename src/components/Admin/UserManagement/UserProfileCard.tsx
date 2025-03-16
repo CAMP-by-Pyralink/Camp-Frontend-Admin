@@ -79,21 +79,21 @@ const UserProfileCard = () => {
       </div>
       <h1 className=" py-4 text-xl font-semibold text-greyText">Details</h1>
       <div className="border-t pt-4 text-greyText flex flex-col gap-4">
-        <p>
+        <div>
           <h1>User ID: {userId}</h1>
-        </p>
-        <p>
+        </div>
+        <div>
           <h1>Department: {department}</h1>
-        </p>
-        <p>
+        </div>
+        <div>
           <h1>Email Address: {email}</h1>
-        </p>
-        <p>
+        </div>
+        <div>
           <h1>Phone Number: {phone}</h1>
-        </p>
-        <p>
+        </div>
+        <div>
           <h1>Home Address: {address}</h1>
-        </p>
+        </div>
       </div>
 
       <div className="mt-6 flex space-x-4">

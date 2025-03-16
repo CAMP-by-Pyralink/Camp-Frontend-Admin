@@ -60,7 +60,7 @@ const SignIn = () => {
               value={formData.email}
               onChange={handleChange}
               className="w-full mt-1 p-2 border rounded-lg outline-none focus:outline-none focus:ring-2 focus:ring-primary500/20 focus:border-primary500"
-              // required
+              required
             />
           </div>
 
@@ -85,7 +85,7 @@ const SignIn = () => {
               value={formData.password}
               onChange={handleChange}
               className="w-full mt-1 p-2 border rounded-lg outline-none focus:outline-none focus:ring-2 focus:ring-primary500/20 focus:border-primary500"
-              // required
+              required
             />
             <div
               className="absolute right-3 top-[70%] transform -translate-y-1/2 cursor-pointer"
@@ -100,8 +100,10 @@ const SignIn = () => {
           </div>
 
           <button
+            disabled={!!isLoggingIn}
             type="submit"
-            className="w-full bg-primary500 text-white py-3 rounded-lg font-bold flex items-center justify-center"
+            className={`w-full bg-primary500 text-white py-3 rounded-lg font-bold flex items-center justify-center 
+              ${isLoggingIn ? "opacity-50 cursor-not-allowed" : ""}`}
           >
             {isLoggingIn ? (
               <>

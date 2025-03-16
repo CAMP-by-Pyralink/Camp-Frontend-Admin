@@ -26,6 +26,22 @@ const Settings = () => {
     getCurrentAdmin();
   }, [getCurrentAdmin]);
 
+  // Get user's initials from first and last name
+  const getUserInitials = () => {
+    let initials = "";
+
+    if (currentUser?.fName) {
+      initials += currentUser.fName.charAt(0).toUpperCase();
+    }
+
+    if (currentUser?.lName) {
+      initials += currentUser.lName.charAt(0).toUpperCase();
+    }
+
+    // If we couldn't get any initials, return "U" as fallback
+    return initials || "";
+  };
+
   return (
     <div className=" ">
       {/* Tabs */}
@@ -56,23 +72,36 @@ const Settings = () => {
       {/* Profile section  */}
       <div>
         <div className="flex items-center gap-4 mb-8">
-          <div className=" bg-[#FFECE5] border-[3px] border-white w-28 h-28 rounded-full overflow-hidden">
+          <div className=" bg-[#D4CFCF] border-[3px] border-white w-28 h-28 rounded-full overflow-hidden">
             {activeTab === "profile" ? (
-              <img
-                src={profilePic}
-                alt="Profile"
-                className="w-full h-full object-cover"
-              />
+              <>
+                {currentUser?.profileImage ? (
+                  <img
+                    src={currentUser.profileImage}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span className="text-gray-800 font-semibold text-4xl">
+                    {getUserInitials()}
+                  </span>
+                )}
+              </>
             ) : (
+              // />
               <h1 className="text-red">C</h1>
             )}
           </div>
           <div>
             <h2 className="text-xl font-medium">
-              {activeTab === "profile" ? "Sarah Brown" : "Camp by Pyralink"}
+              {activeTab === "profile"
+                ? `${currentUser?.fName} ${currentUser?.lName} `
+                : "Camp by Pyralink"}
             </h2>
             <p className="">
-              {activeTab === "profile" ? "Accountant" : "campbypyralink.com"}
+              {activeTab === "profile"
+                ? currentUser?.department
+                : "campbypyralink.com"}
             </p>
           </div>
           <div></div>

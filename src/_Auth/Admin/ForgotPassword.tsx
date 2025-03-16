@@ -28,7 +28,7 @@ const ForgotPassword = () => {
     console.log("New password:", formData.email);
   };
 
-  console.log("isLoading state:", isLoading);
+  // console.log("isLoading state:", isLoading);
 
   return (
     <div className=" w-full">

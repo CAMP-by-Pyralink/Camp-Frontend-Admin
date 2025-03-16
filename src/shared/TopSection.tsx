@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import profilePic from "../assets/profilepic.png";
 import settings from "../assets/svgs/settings.svg";
 import searchIcon from "../assets/svgs/search.svg";
+import { useAdminStore } from "../store/useAdminStore";
+import { useEffect } from "react";
 
 // import CustomizationSetting from "./CustomizationSetting";
 const TopSection = ({
@@ -9,6 +11,27 @@ const TopSection = ({
 }: {
   handleCustomizationClick: () => void;
 }) => {
+  const { currentUser, getCurrentAdmin } = useAdminStore();
+
+  useEffect(() => {
+    getCurrentAdmin();
+  }, []);
+
+  // Get user's initials from first and last name
+  const getUserInitials = () => {
+    let initials = "";
+
+    if (currentUser?.fName) {
+      initials += currentUser.fName.charAt(0).toUpperCase();
+    }
+
+    if (currentUser?.lName) {
+      initials += currentUser.lName.charAt(0).toUpperCase();
+    }
+
+    // If we couldn't get any initials, return "U" as fallback
+    return initials || "";
+  };
   return (
     <div className=" flex justify-between relative">
       {/* searchbox */}
@@ -27,7 +50,21 @@ const TopSection = ({
       {/* profile */}
       <div className=" flex gap-4 items-center">
         <Link to="/settings">
-          <img src={profilePic} alt="" className="  w-[36px] h-[36px]" />
+          <div className="cursor-pointer">
+            <div className="w-[40px] border-[3px] border-[#FFFFFF] bg-[#D4CFCF] aspect-square rounded-full flex items-center justify-center overflow-hidden">
+              {currentUser?.profileImage ? (
+                <img
+                  src={currentUser.profileImage}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span className="text-gray-800 font-semibold text-lg">
+                  {getUserInitials()}
+                </span>
+              )}
+            </div>
+          </div>
         </Link>
         <img
           src={settings}

@@ -128,8 +128,9 @@ const ResetPasswordLink = () => {
             </button>
             <button
               type="submit"
-              // disabled={isVerifyingEmail}
-              className="bg-primary500 text-white py-2 px-4 rounded-lg font-medium w-[174px] flex items-center justify-center"
+              disabled={isLoading}
+              className={`bg-primary500 text-white py-2 px-4 rounded-lg font-medium w-[174px] flex items-center justify-center
+                ${isLoading ? "opacity-70 cursor-not-allowed" : ""}`}
             >
               {isLoading ? (
                 <>
