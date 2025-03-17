@@ -5,9 +5,20 @@ import TrainningsList from "../../components/Admin/AwarenessTrainning/Trainnings
 import { useState } from "react";
 import CreateTrainningModal from "../../components/Admin/AwarenessTrainning/CreateTrainningModal";
 import HeaderTitle from "../../shared/HeaderTitle";
+import { useNavigate } from "react-router-dom";
+import AssignTrainingModal from "../../components/Admin/AwarenessTrainning/AssignTrainingModal";
 const AwarenessTraining = () => {
+  const [selectionMode, setSelectionMode] = useState<boolean>(false);
   const [createTraining, setCreateTraining] = useState<boolean>(false);
+  const [assignModal, setAssignModal] = useState<boolean>(false);
+  const navigate = useNavigate();
 
+  const handleCreateNew = () => {
+    navigate("/create-training");
+  };
+  const handleAssignClick = () => {
+    setAssignModal(true);
+  };
   return (
     <div>
       <div className=" flex justify-between items-center mb-">
@@ -27,7 +38,8 @@ const AwarenessTraining = () => {
         ></HeaderTitle>
         <button
           className=" bg-primary500 rounded-lg text-white py-2 px-8"
-          onClick={() => setCreateTraining(true)}
+          // onClick={() => setCreateTraining(true)}
+          onClick={handleCreateNew}
         >
           Create New
         </button>
@@ -57,10 +69,26 @@ const AwarenessTraining = () => {
                 Filter
               </div> */}
             </div>
+            {selectionMode && (
+              <div className="flex items-center gap-4">
+                <button
+                  className="border border-[#D0D5DD] py-2.5 px-12 rounded-lg text-greyText font-semibold"
+                  onClick={handleAssignClick}
+                >
+                  Assign
+                </button>
+                <button className=" border border-[#B30100] py-2.5 px-12 rounded-lg  text-[#FF0301] font-semibold">
+                  Delete
+                </button>
+              </div>
+            )}
           </div>
         </div>
         <div className="mt-8">
-          <TrainningsList />
+          <TrainningsList
+            setSelectionMode={setSelectionMode}
+            setAssignModal={setAssignModal}
+          />
         </div>
       </div>
       {/*  */}
@@ -69,6 +97,8 @@ const AwarenessTraining = () => {
           <CreateTrainningModal setCreateTraining={setCreateTraining} />
         </>
       )}
+      {/* assign modal */}
+      {assignModal && <AssignTrainingModal setAssignModal={setAssignModal} />}
     </div>
   );
 };

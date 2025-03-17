@@ -46,6 +46,7 @@ const Settings = lazy(() => import("./pages/Admin/Settings"));
 const Alerts = lazy(() => import("./pages/Admin/Alerts"));
 import Cookies from "js-cookie";
 import ResetPassword from "./_Auth/Admin/ResetPassword";
+import CreateTrainingModules from "./components/Admin/AwarenessTrainning/CreateTrainingModules";
 
 function App() {
   const { setIsAuthenticated } = useAuthStore();
@@ -140,6 +141,10 @@ function App() {
               <Route
                 path="awareness-training"
                 element={<AwarenessTraining />}
+              />
+              <Route
+                path="/create-training"
+                element={<CreateTrainingModules />}
               />
               <Route
                 path="/training-details/:trainingId"

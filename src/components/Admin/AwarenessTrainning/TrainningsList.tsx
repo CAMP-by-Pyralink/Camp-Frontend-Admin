@@ -3,10 +3,28 @@ import { TabContent, TabItem } from "./data";
 import { useNavigate } from "react-router-dom";
 import profilepic from "../../../assets/avatar.png";
 import { useTrainingStore } from "../../../store/useAwarenessTrainingStore";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+import { MoreVertical } from "lucide-react";
 
-const TrainningsList: React.FC = () => {
+interface TrainningsListProps {
+  setSelectionMode: React.Dispatch<React.SetStateAction<boolean>>;
+  setAssignModal: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const TrainningsList: React.FC<TrainningsListProps> = ({
+  setSelectionMode,
+  setAssignModal,
+}) => {
   const [activeTab, setActiveTab] = useState<keyof TabContent>("browse");
   const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedCard, setSelectedCard] = useState(null);
+  const [optionsIndex, setOptionsIndex] = useState<number | null>(null);
+  const [showCheckbox, setShowCheckbox] = useState(false);
+
+  const { deleteSingleTraining } = useTrainingStore();
+
   const totalPages = 2500;
   const navigate = useNavigate();
   const { fetchTrainings, trainings } = useTrainingStore();
@@ -14,31 +32,57 @@ const TrainningsList: React.FC = () => {
   const avatars = [profilepic, profilepic, profilepic, profilepic];
 
   useEffect(() => {
-    fetchTrainings(activeTab, currentPage);
+    setIsLoading(true);
+    fetchTrainings(activeTab, currentPage).finally(() => setIsLoading(false));
   }, [activeTab, currentPage, fetchTrainings]);
 
-  // Navigate to training details
-  // For card click
+  const handleOptionsClick = (index: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedCard(trainings[index]);
+    setOptionsIndex(optionsIndex === index ? null : index);
+  };
+
+  const handleCloseOptionsModal = () => {
+    setOptionsIndex(null);
+    setSelectedCard(null);
+  };
+
+  const handleSelectClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectionMode(true);
+    setShowCheckbox(true);
+    handleCloseOptionsModal();
+  };
+
   const handleCardClick = (training: TabItem) => {
     // Navigate to the normal TrainingDetails layout
     navigate(`/training-details/${training._id}`, {
       state: {
         ...training,
-        isViewMode: false, // Ensure it's not the table layout
+        isViewMode: false,
       },
     });
   };
 
-  //navigate to assigned training details
-  // For View button click
   const handleViewClick = (training: TabItem) => {
     // Navigate to the TrainingDetails layout with the table
     navigate(`/training-details/${training._id}`, {
       state: {
         ...training,
-        isViewMode: true, // Ensure it shows the table layout
+        isViewMode: true,
       },
     });
+  };
+
+  const handleDelete = async (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    await deleteSingleTraining(id);
+    handleCloseOptionsModal();
+    fetchTrainings(activeTab.toString(), currentPage);
+  };
+
+  const handleAssignClick = () => {
+    setAssignModal(true);
   };
 
   // Calculate progress percentage
@@ -77,19 +121,61 @@ const TrainningsList: React.FC = () => {
 
       {/* Tab Content */}
       <div className="grid grid-cols-3 gap-6">
-        {Array.isArray(trainings) && trainings.length > 0 ? (
+        {isLoading ? (
+          Array.from({ length: 6 }).map((_, index) => (
+            <div
+              key={index}
+              className="bg-white border border-[#D3D3D3] rounded-lg p-3 cursor-pointer pb-6"
+            >
+              <Skeleton height={220} className="mb-8" />
+              <Skeleton height={30} width="80%" className="mb-2" />
+              <Skeleton height={20} width="60%" />
+            </div>
+          ))
+        ) : Array.isArray(trainings) && trainings.length > 0 ? (
           trainings.map((item, index) => (
             <div
               key={index}
-              className="bg-white border border-[#D3D3D3] rounded-lg p-3  cursor-pointer pb-6"
+              className="bg-white border border-[#D3D3D3] rounded-lg p-3 cursor-pointer pb-6"
               onClick={() => handleCardClick(item)}
             >
-              <div className=" w-full h-[220px] mb-8">
+              <div className="relative w-full h-[220px] mb-8">
                 <img
                   src={item.bannerImage}
                   alt={item.title}
-                  className="w-full object-cover rounded  h-full  mb-8"
+                  className="w-full object-cover rounded h-full mb-8"
                 />
+                <MoreVertical
+                  className="absolute size-6 top-2 right-2 text-white z-[999]"
+                  onClick={(e) => handleOptionsClick(index, e)}
+                />
+                {optionsIndex === index && (
+                  <div className="absolute top-8 right-0 mt-2 w-fit bg-white border border-gray-200 rounded-lg shadow-lg z-10 flex flex-col">
+                    <button
+                      className="w- text-left px-4 py-2 border-b text-textColor hover:bg-blue50"
+                      onClick={handleSelectClick}
+                    >
+                      Select
+                    </button>
+                    <button
+                      className="w- text-left px-4 py-2 text-textColor hover:bg-blue50"
+                      onClick={(e) => handleDelete(item._id, e)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                )}
+                {/* checkboxes */}
+                {showCheckbox && (
+                  <div className="absolute left-4 top-2">
+                    <input
+                      type="checkbox"
+                      name=""
+                      id=""
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  </div>
+                )}
               </div>
               <h3 className="text-2xl font-medium text-[#333333]">
                 {item.title.slice(0, 30)}...
@@ -101,7 +187,7 @@ const TrainningsList: React.FC = () => {
               {activeTab === "assigned" && (
                 <div>
                   {/* Progress bar */}
-                  <div className="flex items-center gap-2 mt-4">
+                  {/* <div className="flex items-center gap-2 mt-4">
                     <div className="w-full bg-secondary100 rounded-md h-[9px]">
                       <div
                         className="bg-secondary600 h-[9px] rounded-md"
@@ -116,7 +202,7 @@ const TrainningsList: React.FC = () => {
                     <span className="text-sm font-medium">
                       {item.current || 0}%
                     </span>
-                  </div>
+                  </div> */}
 
                   {/* Profile avatars and View All */}
                   <div className="flex items-center justify-between mt-4">

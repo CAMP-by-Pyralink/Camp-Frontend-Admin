@@ -120,7 +120,7 @@ const CreateTrainningModal = ({ setCreateTraining }: any) => {
             Back
           </button>
           <button
-            onClick={currentStep === 3 ? handleSave : handleNext}
+            onClick={currentStep === 1 ? handleSave : handleNext}
             className={`basis-[50%] bg-primary500 rounded-md py-4 px-6 text-white`}
             disabled={isCreatingTraining}
           >

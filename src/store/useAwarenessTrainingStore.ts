@@ -41,6 +41,7 @@ export interface Lesson {
 interface Module {
   moduleTitle: string;
   lessons: Lesson[];
+  questions: Question[];
 }
 
 interface Question {
@@ -52,17 +53,22 @@ interface Question {
 }
 
 export interface CreateTrainingData {
+  _id: string;
   bannerImage: string;
   title: string;
   description: string;
   startDate: string;
   endDate: string;
   modules: Module[];
-  questions: Question[];
+}
+
+interface DeleteTraining {
+  id: string;
 }
 
 interface TrainingState {
   isCreatingTraining: boolean;
+  isLoading: boolean;
   trainings: CreateTrainingData[];
   singleTraining: CreateTrainingData | null;
   modules: Module[];
@@ -74,10 +80,12 @@ interface TrainingState {
   addModule: (module: Module) => void;
   addQuestion: (question: Question) => void;
   resetTraining: () => void;
+  deleteSingleTraining: (trainingId: string) => Promise<any>;
 }
 
 export const useTrainingStore = create<TrainingState>((set) => ({
   isCreatingTraining: false,
+  isLoading: false,
   trainings: [],
   singleTraining: null,
   modules: [
@@ -140,7 +148,23 @@ export const useTrainingStore = create<TrainingState>((set) => ({
       toast.error(error.response?.data?.message || "Failed to fetch training.");
     }
   },
-
+  deleteSingleTraining: async (trainingId: string) => {
+    set({ isLoading: true });
+    try {
+      const response = await api.delete(
+        `/training/deleteTraining/${trainingId}`
+      );
+      toast.success(response.data.message);
+      return response;
+    } catch (error: any) {
+      console.log(error);
+      toast.error(
+        error.response?.data?.message || "Failed to delete training."
+      );
+    } finally {
+      set({ isLoading: false });
+    }
+  },
   // updateTraining: async (
   //   trainingId: string,
   //   data: Partial<CreateTrainingData>
@@ -179,24 +203,24 @@ export const useTrainingStore = create<TrainingState>((set) => ({
   addQuestion: (question) =>
     set((state) => ({ questions: [...state.questions, question] })),
 
-  resetTraining: () =>
-    set(() => ({
-      bannerImage: "",
-      title: "",
-      description: "",
-      startDate: "",
-      endDate: "",
-      modules: [
-        { moduleTitle: "", lessons: [{ lessonType: "video", content: "" }] },
-      ],
-      questions: [
-        {
-          question: "",
-          questionType: "multiple-choice",
-          options: ["", ""],
-          correctAnswer: "",
-          answerMethod: "multiple-choice",
-        },
-      ],
-    })),
+  // resetTraining: () =>
+  //   set(() => ({
+  //     bannerImage: "",
+  //     title: "",
+  //     description: "",
+  //     startDate: "",
+  //     endDate: "",
+  //     modules: [
+  //       { moduleTitle: "", lessons: [{ lessonType: "video", content: "" }] },
+  //     ],
+  //     questions: [
+  //       {
+  //         question: "",
+  //         questionType: "multiple-choice",
+  //         options: ["", ""],
+  //         correctAnswer: "",
+  //         answerMethod: "multiple-choice",
+  //       },
+  //     ],
+  //   })),
 }));

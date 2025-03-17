@@ -25,8 +25,18 @@ interface FormData {
   questions: Question[];
 }
 
-const CreateTrainingStep3: React.FC<{ onChange: (data: any) => void }> = ({
+interface CreateTrainingStep3Props {
+  onChange: (data: any) => void;
+  quizId: number;
+  moduleId: number;
+  lessonId: number;
+}
+
+const CreateTrainingStep3: React.FC<CreateTrainingStep3Props> = ({
   onChange,
+  quizId,
+  moduleId,
+  lessonId,
 }) => {
   const { control, watch, setValue } = useForm<FormData>({
     defaultValues: {
