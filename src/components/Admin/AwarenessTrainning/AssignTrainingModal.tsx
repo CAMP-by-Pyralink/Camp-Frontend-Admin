@@ -65,7 +65,7 @@ const AssignTrainingModal = ({
       className="fixed inset-0 bg-[#344054B2] bg-opacity-40 flex justify-center items-center z-[999]"
       style={{ backdropFilter: "blur(7.06999969482422px)" }}
     >
-      <div className="bg-white rounded-lg">
+      <div className="bg-white rounded-lg max-w-[500px] w-full">
         {/* Modal Header */}
         <div className="bg-[#DEEFFC] py-6 px-12 flex items-center justify-between">
           <h1 className="text-[#454545] font-medium text-xl">
