@@ -80,8 +80,10 @@ export interface GetCurrentAdminData {
 
 interface AdminStore {
   isRegisteringAdmin: boolean;
+  isLoading: boolean;
   departments: string[];
   admins: any[];
+  users: any[];
   currentUser: GetCurrentAdminData | null;
   fetchDepartments: () => Promise<void>;
   getAdmins: () => Promise<void>;
@@ -93,8 +95,10 @@ interface AdminStore {
 
 export const useAdminStore = create<AdminStore>((set) => ({
   isRegisteringAdmin: false,
+  isLoading: false,
   departments: [],
   admins: [],
+  users: [],
   currentUser: null,
 
   registerAdmin: async (data: registerAdminData) => {
@@ -118,6 +122,7 @@ export const useAdminStore = create<AdminStore>((set) => ({
   },
 
   getAdmins: async () => {
+    set({ isLoading: true });
     try {
       const response: AxiosResponse = await api.get(
         "/admin/getAllAdmins?page=1"
@@ -126,6 +131,8 @@ export const useAdminStore = create<AdminStore>((set) => ({
       console.log("getAdmins", response.data.allAdmins);
     } catch (error) {
       console.error("getAdmins", error);
+    } finally {
+      set({ isLoading: false });
     }
   },
   registerUser: async (data: registerUserData) => {
@@ -148,25 +155,32 @@ export const useAdminStore = create<AdminStore>((set) => ({
     }
   },
   getUsers: async () => {
+    set({ isLoading: true });
     try {
       const response: AxiosResponse = await api.get("/user/getAllUsers?page=1");
-      set({ admins: response.data.users });
+      set({ users: response.data.users });
       console.log("getUsers", response.data.users);
     } catch (error) {
       console.error("getUsers", error);
+    } finally {
+      set({ isLoading: false });
     }
   },
   getCurrentAdmin: async () => {
+    set({ isLoading: true });
     try {
       const response: AxiosResponse = await api.get("/admin/currentAdmin");
       set({ currentUser: response.data.admin });
       console.log("getAdmins", response.data.admin);
     } catch (error) {
       console.error("getAdmins", error);
+    } finally {
+      set({ isLoading: false });
     }
   },
 
   fetchDepartments: async () => {
+    set({ isLoading: true });
     try {
       const response: AxiosResponse = await api.get(
         "/admin/getCompanyDepartments"
@@ -176,6 +190,8 @@ export const useAdminStore = create<AdminStore>((set) => ({
     } catch (error) {
       console.error(error);
       toast.error("Failed to fetch departments.");
+    } finally {
+      set({ isLoading: false });
     }
   },
 }));

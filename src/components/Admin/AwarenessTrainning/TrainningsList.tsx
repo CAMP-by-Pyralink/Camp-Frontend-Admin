@@ -10,11 +10,15 @@ import { MoreVertical } from "lucide-react";
 interface TrainningsListProps {
   setSelectionMode: React.Dispatch<React.SetStateAction<boolean>>;
   setAssignModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setSelectedTraining: React.Dispatch<React.SetStateAction<string | null>>;
+  selectedTraining: string | null;
 }
 
 const TrainningsList: React.FC<TrainningsListProps> = ({
   setSelectionMode,
   setAssignModal,
+  setSelectedTraining,
+  selectedTraining,
 }) => {
   const [activeTab, setActiveTab] = useState<keyof TabContent>("browse");
   const [currentPage, setCurrentPage] = useState(1);
@@ -22,6 +26,7 @@ const TrainningsList: React.FC<TrainningsListProps> = ({
   const [selectedCard, setSelectedCard] = useState(null);
   const [optionsIndex, setOptionsIndex] = useState<number | null>(null);
   const [showCheckbox, setShowCheckbox] = useState(false);
+  // const [selectedTraining, setSelectedTraining] = useState<string | null>(null);
 
   const { deleteSingleTraining } = useTrainingStore();
 
@@ -81,13 +86,10 @@ const TrainningsList: React.FC<TrainningsListProps> = ({
     fetchTrainings(activeTab.toString(), currentPage);
   };
 
-  const handleAssignClick = () => {
-    setAssignModal(true);
-  };
-
-  // Calculate progress percentage
-  const getProgressPercentage = (current: number, total: number) => {
-    return (current / total) * 100;
+  const handleSelectTraining = (trainingId: string) => {
+    setSelectedTraining((prev) => (prev === trainingId ? null : trainingId));
+    // setSelectionMode(true);
+    // setShowCheckbox(true);
   };
 
   return (
@@ -167,13 +169,17 @@ const TrainningsList: React.FC<TrainningsListProps> = ({
                 )}
                 {/* checkboxes */}
                 {showCheckbox && (
-                  <div className="absolute left-4 top-2">
-                    <input
-                      type="checkbox"
-                      name=""
-                      id=""
-                      onClick={(e) => e.stopPropagation()}
-                    />
+                  <div
+                    className="absolute left-4 top-2 z-[999]"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={selectedTraining === item._id}
+                        onChange={() => handleSelectTraining(item._id)}
+                      />
+                    </label>
                   </div>
                 )}
               </div>
@@ -186,24 +192,6 @@ const TrainningsList: React.FC<TrainningsListProps> = ({
 
               {activeTab === "assigned" && (
                 <div>
-                  {/* Progress bar */}
-                  {/* <div className="flex items-center gap-2 mt-4">
-                    <div className="w-full bg-secondary100 rounded-md h-[9px]">
-                      <div
-                        className="bg-secondary600 h-[9px] rounded-md"
-                        style={{
-                          width: `${getProgressPercentage(
-                            item.current || 0,
-                            item.total || 100
-                          )}%`,
-                        }}
-                      ></div>
-                    </div>
-                    <span className="text-sm font-medium">
-                      {item.current || 0}%
-                    </span>
-                  </div> */}
-
                   {/* Profile avatars and View All */}
                   <div className="flex items-center justify-between mt-4">
                     <div className="flex -space-x-4 overflow-hidden">
@@ -237,34 +225,6 @@ const TrainningsList: React.FC<TrainningsListProps> = ({
             No trainings available.
           </div>
         )}
-      </div>
-
-      {/* Pagination */}
-      <div className="flex justify-between items-center mt-6">
-        <span className="text-sm text-gray-500">
-          Page {currentPage} of {totalPages}
-        </span>
-        <div className="flex gap-4">
-          <button
-            className={`px-4 py-2 ${
-              currentPage === 1
-                ? "bg-gray-100 text-gray-600 cursor-not-allowed"
-                : "bg-blue-600 text-white hover:bg-blue-700"
-            } rounded-md`}
-            disabled={currentPage === 1}
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          >
-            Prev
-          </button>
-          <button
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-            onClick={() =>
-              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-            }
-          >
-            Next
-          </button>
-        </div>
       </div>
     </div>
   );

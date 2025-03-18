@@ -62,9 +62,7 @@ export interface CreateTrainingData {
   modules: Module[];
 }
 
-interface DeleteTraining {
-  id: string;
-}
+interface AssignTrainingData {}
 
 interface TrainingState {
   isCreatingTraining: boolean;
@@ -194,6 +192,21 @@ export const useTrainingStore = create<TrainingState>((set) => ({
   //     set({ isUpdatingTraining: false });
   //   }
   // },
+  assignTraining: async (trainingId: string, data: any) => {
+    set({ isLoading: true });
+    try {
+      const response: AxiosResponse = await api.patch(
+        `/training/assignToTraining/${trainingId}`,
+        data
+      );
+      console.log(response);
+    } catch (error: any) {
+      console.error(error);
+      toast.error("Failed to assign training.");
+    } finally {
+      set({ isLoading: false });
+    }
+  },
 
   setCreateTrainingData: (data) => set((state) => ({ ...state, ...data })),
 

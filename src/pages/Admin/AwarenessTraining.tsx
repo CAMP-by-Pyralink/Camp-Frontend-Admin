@@ -12,6 +12,7 @@ const AwarenessTraining = () => {
   const [createTraining, setCreateTraining] = useState<boolean>(false);
   const [assignModal, setAssignModal] = useState<boolean>(false);
   const navigate = useNavigate();
+  const [selectedTraining, setSelectedTraining] = useState<string | null>(null);
 
   const handleCreateNew = () => {
     navigate("/create-training");
@@ -88,6 +89,8 @@ const AwarenessTraining = () => {
           <TrainningsList
             setSelectionMode={setSelectionMode}
             setAssignModal={setAssignModal}
+            setSelectedTraining={setSelectedTraining}
+            selectedTraining={selectedTraining}
           />
         </div>
       </div>
@@ -98,7 +101,12 @@ const AwarenessTraining = () => {
         </>
       )}
       {/* assign modal */}
-      {assignModal && <AssignTrainingModal setAssignModal={setAssignModal} />}
+      {assignModal && (
+        <AssignTrainingModal
+          setAssignModal={setAssignModal}
+          selectedTraining={selectedTraining}
+        />
+      )}
     </div>
   );
 };
