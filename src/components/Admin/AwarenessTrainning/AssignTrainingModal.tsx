@@ -137,7 +137,7 @@ const AssignTrainingModal = ({
               >
                 <option value="">Select department</option>
                 {departments.map((dept, index) => (
-                  <option key={index} value={dept} className=" text-red-600">
+                  <option key={index} value={dept} className=" ">
                     {dept}
                   </option>
                 ))}
