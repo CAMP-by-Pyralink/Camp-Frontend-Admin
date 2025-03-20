@@ -52,10 +52,11 @@ const TrainningsList: React.FC<TrainningsListProps> = ({
     setSelectedCard(null);
   };
 
-  const handleSelectClick = (e: React.MouseEvent) => {
+  const handleSelectClick = (trainingId: string, e: React.MouseEvent) => {
     e.stopPropagation();
     setSelectionMode(true);
     setShowCheckbox(true);
+    setSelectedTraining(trainingId);
     handleCloseOptionsModal();
   };
 
@@ -154,13 +155,13 @@ const TrainningsList: React.FC<TrainningsListProps> = ({
                 {optionsIndex === index && (
                   <div className="absolute top-8 right-0 mt-2 w-fit bg-white border border-gray-200 rounded-lg shadow-lg z-10 flex flex-col">
                     <button
-                      className="w- text-left px-4 py-2 border-b text-textColor hover:bg-blue50"
-                      onClick={handleSelectClick}
+                      className="w-full text-left px-4 py-2 border-b text-textColor hover:bg-blue50"
+                      onClick={(e) => handleSelectClick(item._id, e)} // Pass the training ID
                     >
                       Select
                     </button>
                     <button
-                      className="w- text-left px-4 py-2 text-textColor hover:bg-blue50"
+                      className="w-full text-left px-4 py-2 text-textColor hover:bg-blue50"
                       onClick={(e) => handleDelete(item._id, e)}
                     >
                       Delete
@@ -176,7 +177,7 @@ const TrainningsList: React.FC<TrainningsListProps> = ({
                     <label>
                       <input
                         type="checkbox"
-                        checked={selectedTraining === item._id}
+                        checked={selectedTraining === item._id} // Check if this card is selected
                         onChange={() => handleSelectTraining(item._id)}
                       />
                     </label>

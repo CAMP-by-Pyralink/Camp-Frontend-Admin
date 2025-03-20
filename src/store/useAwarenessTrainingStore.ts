@@ -199,10 +199,15 @@ export const useTrainingStore = create<TrainingState>((set) => ({
         `/training/assignToTraining/${trainingId}`,
         data
       );
-      console.log(response);
+      if (response.status === 200) {
+        toast.success(response.data.msg);
+      }
+      console.log(response.data);
+      return response;
     } catch (error: any) {
       console.error(error);
-      toast.error("Failed to assign training.");
+      toast.error(error.response?.data?.msg || "Failed to assign training.");
+      return null;
     } finally {
       set({ isLoading: false });
     }
