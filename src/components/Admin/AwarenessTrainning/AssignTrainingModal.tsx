@@ -28,20 +28,6 @@ const AssignTrainingModal = ({
   }, [fetchDepartments, getUsers]);
 
   const handleAssignTraining = async () => {
-    if (!selectedTraining) {
-      console.error("No training selected.");
-      return;
-    }
-
-    // const payload = {
-    //   trainingId: selectedTraining, // Ensure only the ID is passed
-    //   addingType: selectedOption,
-    //   ...(selectedOption === "employee" && { userId: selectedEmployee }),
-    //   ...(selectedOption === "department" && {
-    //     departmentName: selectedDepartment,
-    //   }),
-    // };
-
     const dataToSend = {
       addingType: selectedOption,
       ...(selectedOption === "employee" && { userId: selectedEmployee }),
@@ -50,11 +36,9 @@ const AssignTrainingModal = ({
       }),
     };
 
-    try {
-      await assignTraining(selectedTraining, dataToSend);
+    const response = await assignTraining(selectedTraining, dataToSend);
+    if (response) {
       setAssignModal(false);
-    } catch (error) {
-      console.log("Error assigning training:", error);
     }
   };
 
