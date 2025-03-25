@@ -6,31 +6,36 @@ import { useTrainingStore } from "../../../store/useAwarenessTrainingStore";
 
 interface AssignTrainingModalProps {
   setAssignModal: (value: boolean) => void;
+  setSelectionMode: (value: boolean) => void;
   selectedTraining: string | null;
 }
 
 const AssignTrainingModal = ({
   setAssignModal,
   selectedTraining,
+  setSelectionMode,
+  setShowCheckbox,
 }: AssignTrainingModalProps) => {
   const [selectedOption, setSelectedOption] = useState<
-    "employee" | "department"
-  >("employee"); // Default to 'employee'
+    "individual" | "department"
+  >("individual"); // Default to 'employee'
   const [selectedEmployee, setSelectedEmployee] = useState<string>(""); // Selected employee ID
   const [selectedDepartment, setSelectedDepartment] = useState<string>(""); // Selected department name
 
   const { fetchDepartments, getUsers, departments, users, isLoading } =
     useAdminStore();
-  const { assignTraining } = useTrainingStore();
+  const { assignTraining, fetchTrainings } = useTrainingStore();
   useEffect(() => {
     fetchDepartments();
     getUsers();
   }, [fetchDepartments, getUsers]);
 
+  console.log("jjjjd", users);
+
   const handleAssignTraining = async () => {
     const dataToSend = {
       addingType: selectedOption,
-      ...(selectedOption === "employee" && { userId: selectedEmployee }),
+      ...(selectedOption === "individual" && { userId: selectedEmployee }),
       ...(selectedOption === "department" && {
         departmentName: selectedDepartment,
       }),
@@ -39,9 +44,11 @@ const AssignTrainingModal = ({
     const response = await assignTraining(selectedTraining, dataToSend);
     if (response) {
       setAssignModal(false);
+      setSelectionMode(false);
+      fetchTrainings("browse", 1);
+      setShowCheckbox(false);
     }
   };
-
   console.log(departments, "depts");
 
   return (
@@ -72,8 +79,8 @@ const AssignTrainingModal = ({
               <input
                 type="radio"
                 name="assignType"
-                checked={selectedOption === "employee"}
-                onChange={() => setSelectedOption("employee")}
+                checked={selectedOption === "individual"}
+                onChange={() => setSelectedOption("individual")}
               />
               <h2>Employee</h2>
             </div>
@@ -92,7 +99,7 @@ const AssignTrainingModal = ({
           <div className="w-full h-[1px] bg-[#B5B3B3] my-8"></div>
 
           {/* Employee Selection */}
-          {selectedOption === "employee" && (
+          {selectedOption === "individual" && (
             <div className="space-y-6">
               <h1 className="text-[#454545] font-medium">Select Employee</h1>
               <select
@@ -102,8 +109,8 @@ const AssignTrainingModal = ({
               >
                 <option value="">Select employee</option>
                 {users.map((user) => (
-                  <option key={user.id} value={user.id}>
-                    {user.name}
+                  <option key={user._id} value={user._id} className=" ">
+                    {`${user.lName} ${user.fName}`}
                   </option>
                 ))}
               </select>
@@ -135,7 +142,7 @@ const AssignTrainingModal = ({
             onClick={handleAssignTraining}
             disabled={
               isLoading ||
-              (selectedOption === "employee" && !selectedEmployee) ||
+              (selectedOption === "individual" && !selectedEmployee) ||
               (selectedOption === "department" && !selectedDepartment)
             }
           >

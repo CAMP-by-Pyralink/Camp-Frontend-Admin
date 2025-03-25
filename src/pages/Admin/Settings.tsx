@@ -1,30 +1,37 @@
 import React, { useEffect, useState } from "react";
-// import profilePic from "../../assets/profilepic.png";
 import CompanyProfileTab from "../../components/Admin/Settings/CompanyProfileTab";
 import AdminProfileTab from "../../components/Admin/Settings/AdminProfileTab";
-import profilePic from "../../assets/avatar.png";
 import { useAdminStore } from "../../store/useAdminStore";
+import editIcon from "../../assets/svgs/editPPImg.svg";
 
 interface CompanyData {
-  name: string;
-  website: string;
-  departments: string[];
+  _id: string;
+  companyName: string;
+  companyUrl: string;
+  companyDepartments: string[];
+  profileImage: string;
 }
 
 const Settings = () => {
   const [activeTab, setActiveTab] = useState<"profile" | "company">("profile");
+  const [companyData, setCompanyData] = useState<CompanyData | null>(null);
 
-  const [companyData, setCompanyData] = useState<CompanyData>({
-    name: "Jydex ventures",
-    website: "campbypyralink.com",
-    departments: ["Finance", "ICT", "Marketing"],
-  });
-
-  const { getCurrentAdmin, currentUser } = useAdminStore();
+  const { getCurrentAdmin, currentUser, getCompanyDetails } = useAdminStore();
 
   useEffect(() => {
+    // Fetch current admin details
     getCurrentAdmin();
-  }, [getCurrentAdmin]);
+
+    // Fetch company details
+    const fetchCompanyDetails = async () => {
+      const data = await getCompanyDetails();
+      if (data) {
+        setCompanyData(data); // Store the fetched company data in state
+      }
+    };
+
+    fetchCompanyDetails();
+  }, [getCurrentAdmin, getCompanyDetails]);
 
   // Get user's initials from first and last name
   const getUserInitials = () => {
@@ -69,10 +76,10 @@ const Settings = () => {
           </button>
         </div>
       </div>
-      {/* Profile section  */}
+      {/* Profile section */}
       <div>
-        <div className="flex items-center gap-4 mb-8">
-          <div className=" bg-[#D4CFCF] border-[3px] border-white w-28 h-28 rounded-full overflow-hidden">
+        <div className="relative flex items-center gap-4 mb-8 w-fit">
+          <div className="relative bg-[#D4CFCF] border-[3px] border-white w-28 h-28 rounded-full overflow-hidden">
             {activeTab === "profile" ? (
               <>
                 {currentUser?.profileImage ? (
@@ -88,23 +95,22 @@ const Settings = () => {
                 )}
               </>
             ) : (
-              // />
-              <h1 className="text-red">C</h1>
+              <h1 className="text-red"></h1>
             )}
+            <img src={editIcon} className=" absolute bottom-4 right-2" alt="" />
           </div>
           <div>
             <h2 className="text-xl font-medium">
               {activeTab === "profile"
                 ? `${currentUser?.fName} ${currentUser?.lName} `
-                : "Camp by Pyralink"}
+                : companyData?.companyName || "Company Name"}
             </h2>
             <p className="">
               {activeTab === "profile"
                 ? currentUser?.department
-                : "campbypyralink.com"}
+                : companyData?.companyUrl || "Company URL"}
             </p>
           </div>
-          <div></div>
         </div>
         {/* Save button */}
         <div className=" flex items-center justify-between mb-4">
@@ -113,7 +119,6 @@ const Settings = () => {
               {activeTab === "profile" ? "Profile" : "Company Profile"}
             </h1>
             <p className=" text-sm">
-              {" "}
               Update your {activeTab === "company" ? "company" : ""} profile
             </p>
           </div>
@@ -130,42 +135,7 @@ const Settings = () => {
       {activeTab === "profile" ? (
         <AdminProfileTab currentUser={currentUser} />
       ) : (
-        /* Company profile section */
-        // <div className="mb-8">
-        //   <div className="flex items-center gap-4 mb-8">
-        //     <div className="w-16 h-16 rounded-full bg-pink-100 flex items-center justify-center text-2xl font-semibold">
-        //       C
-        //     </div>
-        //     <div>
-        //       <h2 className="text-lg font-medium">Camp by Pyralink</h2>
-        //       <p className="text-gray-500">{companyData.website}</p>
-        //     </div>
-        //   </div>
-
-        //   <div>
-        //     <h3 className="text-lg font-medium mb-2">Company profile</h3>
-        //     <p className="text-gray-500 text-sm mb-6">
-        //       Update your company profile
-        //     </p>
-
-        //     <div className="max-w-md">
-        //       <div className="mb-4">
-        //         <label className="block text-sm text-gray-600 mb-1">
-        //           Company name
-        //         </label>
-        //         <input
-        //           type="text"
-        //           value={companyData.name}
-        //           onChange={(e) =>
-        //             setCompanyData({ ...companyData, name: e.target.value })
-        //           }
-        //           className="w-full p-2 border rounded-md"
-        //         />
-        //       </div>
-        //     </div>
-        //   </div>
-        // </div>
-        <CompanyProfileTab />
+        <CompanyProfileTab companyData={companyData} />
       )}
     </div>
   );

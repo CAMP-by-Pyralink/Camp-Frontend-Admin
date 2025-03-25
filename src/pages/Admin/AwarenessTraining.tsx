@@ -11,6 +11,8 @@ const AwarenessTraining = () => {
   const [selectionMode, setSelectionMode] = useState<boolean>(false);
   const [createTraining, setCreateTraining] = useState<boolean>(false);
   const [assignModal, setAssignModal] = useState<boolean>(false);
+  const [showCheckbox, setShowCheckbox] = useState(false);
+
   const navigate = useNavigate();
   const [selectedTraining, setSelectedTraining] = useState<string | null>(null);
 
@@ -91,6 +93,8 @@ const AwarenessTraining = () => {
             setAssignModal={setAssignModal}
             setSelectedTraining={setSelectedTraining}
             selectedTraining={selectedTraining}
+            showCheckbox={showCheckbox}
+            setShowCheckbox={setShowCheckbox}
           />
         </div>
       </div>
@@ -105,6 +109,8 @@ const AwarenessTraining = () => {
         <AssignTrainingModal
           setAssignModal={setAssignModal}
           selectedTraining={selectedTraining}
+          setSelectionMode={setSelectionMode}
+          setShowCheckbox={setShowCheckbox}
         />
       )}
     </div>

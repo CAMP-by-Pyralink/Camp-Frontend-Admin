@@ -85,12 +85,14 @@ interface AdminStore {
   admins: any[];
   users: any[];
   currentUser: GetCurrentAdminData | null;
+  companyDetails: CompanyDetails | null;
   fetchDepartments: () => Promise<void>;
   getAdmins: () => Promise<void>;
   getUsers: () => Promise<void>;
   getCurrentAdmin: () => Promise<any>;
   registerAdmin: (data: registerAdminData) => Promise<AxiosResponse | void>;
   registerUser: (data: registerUserData) => Promise<AxiosResponse | void>;
+  getCompanyDetails: () => Promise<any>;
 }
 
 export const useAdminStore = create<AdminStore>((set) => ({
@@ -100,6 +102,7 @@ export const useAdminStore = create<AdminStore>((set) => ({
   admins: [],
   users: [],
   currentUser: null,
+  companyDetails: null,
 
   registerAdmin: async (data: registerAdminData) => {
     set({ isRegisteringAdmin: true });
@@ -160,6 +163,8 @@ export const useAdminStore = create<AdminStore>((set) => ({
       const response: AxiosResponse = await api.get("/user/getAllUsers?page=1");
       set({ users: response.data.users });
       console.log("getUsers", response.data.users);
+      // console.log("users", users);
+      set({ users: response.data.users });
     } catch (error) {
       console.error("getUsers", error);
     } finally {
@@ -178,6 +183,47 @@ export const useAdminStore = create<AdminStore>((set) => ({
       set({ isLoading: false });
     }
   },
+  updateAdminDetails: async (data: any) => {
+    set({ isLoading: true });
+
+    try {
+      const isBase64Image =
+        data.profileImage && data.profileImage.startsWith("data:image");
+      const payload = {
+        fName: data.fName,
+        lName: data.lName,
+        homeAddress: data.homeAddress,
+        phoneNumber: data.phoneNumber,
+        ...(isBase64Image ? { profileImage: data.profileImage } : {}),
+      };
+
+      const response: AxiosResponse = await api.patch(
+        "/admin/updateAdminDetails",
+        payload
+      );
+
+      if (response.status === 200) {
+        toast.success(response.data.msg);
+
+        // Update user state efficiently
+        set((state) => ({
+          currentUser: {
+            ...state.currentUser!,
+            ...payload, // Reuse the same payload instead of repeating fields
+          },
+        }));
+
+        return true;
+      }
+      return false;
+    } catch (error: any) {
+      console.error("Update profile error:", error);
+      toast.error(error.response?.data?.msg ?? "Failed to update profile");
+      return false;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
 
   fetchDepartments: async () => {
     set({ isLoading: true });
@@ -192,6 +238,22 @@ export const useAdminStore = create<AdminStore>((set) => ({
       toast.error("Failed to fetch departments.");
     } finally {
       set({ isLoading: false });
+    }
+  },
+  getCompanyDetails: async () => {
+    set({ isLoading: true });
+    try {
+      const response = await api.get("/admin/getCompanyDetails");
+      if (response.status === 200) {
+        set({ companyDetails: response.data });
+        console.log("State updated:", response.data);
+        return response.data.data;
+        toast.success(response.data.msg);
+      }
+      console.log(response.data, "company details");
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error.response.data.msg);
     }
   },
 }));

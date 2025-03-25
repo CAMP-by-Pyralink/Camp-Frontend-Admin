@@ -19,13 +19,15 @@ const TrainningsList: React.FC<TrainningsListProps> = ({
   setAssignModal,
   setSelectedTraining,
   selectedTraining,
+  showCheckbox,
+  setShowCheckbox,
 }) => {
   const [activeTab, setActiveTab] = useState<keyof TabContent>("browse");
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedCard, setSelectedCard] = useState(null);
   const [optionsIndex, setOptionsIndex] = useState<number | null>(null);
-  const [showCheckbox, setShowCheckbox] = useState(false);
+  // const [showCheckbox, setShowCheckbox] = useState(false);
   // const [selectedTraining, setSelectedTraining] = useState<string | null>(null);
 
   const { deleteSingleTraining } = useTrainingStore();

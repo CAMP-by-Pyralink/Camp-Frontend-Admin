@@ -126,7 +126,7 @@ const UserManagement = () => {
 
   return (
     <div>
-      {hasData ? (
+      {!hasData ? (
         <div className="flex justify-center items-center h-screen">
           <div className="flex flex-col items-center gap-4">
             <img
@@ -137,9 +137,51 @@ const UserManagement = () => {
             <p className="text-[#464646]">
               Nothing here, add/upload your employees
             </p>
-            <Button label="Add User" width="180px" onClick={handleManual} />
+            {/* <Button label="Add User" width="180px" onClick={handleManual} /> */}
+            <div className="relative">
+              <div
+                className="bg-primary500 py-[10px] text-center rounded-lg text-white w-[180px] cursor-pointer flex items-center justify-center gap-2 "
+                onClick={toggleDropdown}
+              >
+                Add {type === "Admin" ? "Admin" : "User"}
+                <img src={downArrowIcon} alt="" />
+              </div>
+
+              {/* Dropdown Menu */}
+              {isOpen && (
+                <div className="absolute top-[82%] right-0 mt-2 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                  <button
+                    className="w-full text-left px-4 py-2 border-b text-textColor hover:bg-blue50"
+                    onClick={() => {
+                      setIsOpen(false);
+                      handleManual();
+                    }}
+                  >
+                    Manual
+                  </button>
+                  <button
+                    className="w-full text-left px-4 py-2 border-b text-textColor hover:bg-blue50"
+                    onClick={() => {
+                      setIsOpen(false);
+                      setUploadCsv(true);
+                    }}
+                  >
+                    Upload CSV
+                  </button>
+                  <button
+                    className="w-full text-left px-4 py-2 border-b text-textColor hover:bg-blue50"
+                    onClick={() => {
+                      setIsOpen(false);
+                      setScanNetwork(true);
+                    }}
+                  >
+                    Scan network
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
-          {isModalOpen && <CreateUserModal onClose={handleCloseModal} />}
+          {isModalOpen && <CreateUserManual onClose={handleCloseModal} />}
         </div>
       ) : (
         <div>

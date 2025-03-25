@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
-import { GetCurrentAdminData } from "../../../store/useAdminStore";
+import {
+  GetCurrentAdminData,
+  useAdminStore,
+} from "../../../store/useAdminStore";
 
 interface ProfileData {
-  userId: string;
+  // userId: string;
   role: string;
   lastName: string;
   firstName: string;
@@ -18,8 +21,9 @@ interface AdminProfileTabProps {
 }
 
 const AdminProfileTab: React.FC<AdminProfileTabProps> = ({ currentUser }) => {
+  const { upda } = useAdminStore();
   const [profileData, setProfileData] = useState<ProfileData>({
-    userId: "",
+    // userId: "",
     role: "",
     lastName: "",
     firstName: "",
@@ -32,7 +36,7 @@ const AdminProfileTab: React.FC<AdminProfileTabProps> = ({ currentUser }) => {
   useEffect(() => {
     if (currentUser) {
       setProfileData({
-        userId: currentUser.adminId,
+        // userId: currentUser.adminId,
         role: currentUser.role,
         lastName: currentUser.lName,
         firstName: currentUser.fName,
@@ -50,128 +54,113 @@ const AdminProfileTab: React.FC<AdminProfileTabProps> = ({ currentUser }) => {
     return <div>Loading...</div>;
   }
 
+  // const handleUpdateProfile= async()=>{
+  //   await
+  // }
   return (
     <div className="mb-8">
-      <div className="grid grid-cols-2 gap-6 border-[0.5px] rounded-lg border-[#333333] border-dotted p-10">
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm text-[#101928] font-medium mb-1">
-              User ID
-            </label>
-            <input
-              type="text"
-              value={profileData.userId}
-              disabled
-              onChange={(e) =>
-                setProfileData({ ...profileData, userId: e.target.value })
-              }
-              className="w-full p-4 border border-[#D0D5DD] rounded-md bg-[#F0F2F5]"
-            />
-          </div>
-          <div>
-            <label className="block text-sm text-[#101928] font-medium mb-1">
-              Role
-            </label>
-            <input
-              type="text"
-              value={profileData.role}
-              disabled
-              onChange={(e) =>
-                setProfileData({ ...profileData, role: e.target.value })
-              }
-              className="w-full p-4 border border-[#D0D5DD] rounded-md"
-            />
-          </div>
-          <div>
-            <label className="block text-sm text-[#101928] font-medium mb-1">
-              Last name
-            </label>
-            <input
-              type="text"
-              value={profileData.lastName}
-              onChange={(e) =>
-                setProfileData({ ...profileData, lastName: e.target.value })
-              }
-              className="w-full p-4 border border-[#D0D5DD] rounded-md"
-            />
-          </div>
-          <div>
-            <label className="block text-sm text-[#101928] font-medium mb-1">
-              First name
-            </label>
-            <input
-              type="text"
-              value={profileData.firstName}
-              onChange={(e) =>
-                setProfileData({
-                  ...profileData,
-                  firstName: e.target.value,
-                })
-              }
-              className="w-full p-4 border border-[#D0D5DD] rounded-md"
-            />
-          </div>
+      <div className="grid grid-cols-2 gap-6 border-[0.5px] rounded-lg border-[#333333] border-dotted p-10 space-y-">
+        <div>
+          <label className="block text-sm text-[#101928] font-medium mb-1">
+            Role
+          </label>
+          <input
+            type="text"
+            value={profileData.role}
+            disabled
+            onChange={(e) =>
+              setProfileData({ ...profileData, role: e.target.value })
+            }
+            className="w-full p-4 border border-[#D0D5DD] rounded-md"
+          />
+        </div>
+        <div>
+          <label className="block text-sm text-[#101928] font-medium mb-1">
+            Last name
+          </label>
+          <input
+            type="text"
+            value={profileData.lastName}
+            onChange={(e) =>
+              setProfileData({ ...profileData, lastName: e.target.value })
+            }
+            className="w-full p-4 border border-[#D0D5DD] rounded-md"
+          />
+        </div>
+        <div>
+          <label className="block text-sm text-[#101928] font-medium mb-1">
+            First name
+          </label>
+          <input
+            type="text"
+            value={profileData.firstName}
+            onChange={(e) =>
+              setProfileData({
+                ...profileData,
+                firstName: e.target.value,
+              })
+            }
+            className="w-full p-4 border border-[#D0D5DD] rounded-md"
+          />
         </div>
 
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm text-[#101928] font-medium mb-1">
-              Department
-            </label>
-            <input
-              type="text"
-              value={profileData.department}
-              onChange={(e) =>
-                setProfileData({
-                  ...profileData,
-                  department: e.target.value,
-                })
-              }
-              className="w-full p-4 border border-[#D0D5DD] rounded-md"
-            />
-          </div>
-          <div>
-            <label className="block text-sm text-[#101928] font-medium mb-1">
-              Email address
-            </label>
-            <input
-              type="email"
-              value={profileData.email}
-              disabled
-              onChange={(e) =>
-                setProfileData({ ...profileData, email: e.target.value })
-              }
-              className="w-full p-4 border border-[#D0D5DD] rounded-md placeholder:text-[#98A2B3] placeholder:text-sm"
-            />
-          </div>
-          <div>
-            <label className="block text-sm text-[#101928] font-medium mb-1">
-              Phone
-            </label>
-            <input
-              type="tel"
-              value={profileData.phone}
-              disabled
-              onChange={(e) =>
-                setProfileData({ ...profileData, phone: e.target.value })
-              }
-              className="w-full p-4 border border-[#D0D5DD] rounded-md placeholder:text-[#98A2B3] placeholder:text-sm"
-            />
-          </div>
-          <div>
-            <label className="block text-sm text-[#101928] font-medium mb-1">
-              Home Address
-            </label>
-            <input
-              type="text"
-              value={profileData.address}
-              disabled
-              onChange={(e) =>
-                setProfileData({ ...profileData, address: e.target.value })
-              }
-              className="w-full p-4 border border-[#D0D5DD] rounded-md placeholder:text-[#98A2B3] placeholder:text-sm"
-            />
-          </div>
+        <div>
+          <label className="block text-sm text-[#101928] font-medium mb-1">
+            Department
+          </label>
+          <input
+            type="text"
+            value={profileData.department}
+            onChange={(e) =>
+              setProfileData({
+                ...profileData,
+                department: e.target.value,
+              })
+            }
+            className="w-full p-4 border border-[#D0D5DD] rounded-md"
+          />
+        </div>
+        <div>
+          <label className="block text-sm text-[#101928] font-medium mb-1">
+            Email address
+          </label>
+          <input
+            type="email"
+            value={profileData.email}
+            disabled
+            onChange={(e) =>
+              setProfileData({ ...profileData, email: e.target.value })
+            }
+            className="w-full p-4 border border-[#D0D5DD] rounded-md placeholder:text-[#98A2B3] placeholder:text-sm"
+          />
+        </div>
+        <div>
+          <label className="block text-sm text-[#101928] font-medium mb-1">
+            Home Address
+          </label>
+          <input
+            type="text"
+            value={profileData.address}
+            disabled
+            onChange={(e) =>
+              setProfileData({ ...profileData, address: e.target.value })
+            }
+            className="w-full p-4 border border-[#D0D5DD] rounded-md placeholder:text-[#98A2B3] placeholder:text-sm"
+          />
+        </div>
+        <div>
+          <label className="block text-sm text-[#101928] font-medium mb-1">
+            Phone
+          </label>
+          <input
+            type="tel"
+            value={profileData.phone}
+            disabled
+            onChange={(e) =>
+              setProfileData({ ...profileData, phone: e.target.value })
+            }
+            className="w-full p-4 border border-[#D0D5DD] rounded-md placeholder:text-[#98A2B3] placeholder:text-sm"
+          />
         </div>
       </div>
     </div>

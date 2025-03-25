@@ -1,17 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import addIcon from "../../../assets/svgs/add-halfcircle-icon.svg";
-import { GetCurrentAdminData } from "../../../store/useAdminStore";
+import { useAdminStore } from "../../../store/useAdminStore";
 
-interface AdminProfileTabProps {
-  currentUser: GetCurrentAdminData | null;
+interface CompanyProfileTabProps {
+  companyData: {
+    companyName: string;
+    companyUrl: string;
+    companyDepartments: string[];
+  } | null;
 }
 
-const CompanyProfileTab: React.FC = () => {
-  const [companyName, setCompanyName] = useState("Camp by Pyralink");
-  const [companyUrl, setCompanyUrl] = useState("pyralink.com/Camp by Pyralink");
+const CompanyProfileTab: React.FC<CompanyProfileTabProps> = ({
+  companyData,
+}) => {
+  const [companyName, setCompanyName] = useState<string>("");
+  const [companyUrl, setCompanyUrl] = useState<string>("");
   const [departments, setDepartments] = useState<string[]>([]);
   const [newDepartment, setNewDepartment] = useState<string>("");
   const [addNewClicked, setAddNewClicked] = useState<boolean>(false);
+
+  const { getCompanyDetails } = useAdminStore();
+  useEffect(() => {
+    if (companyData) {
+      setCompanyName(companyData.companyName || "");
+      setCompanyUrl(companyData.companyUrl || "");
+      setDepartments(companyData.companyDepartments || []);
+    }
+  }, [companyData]);
 
   const handleAddDepartment = () => {
     if (newDepartment.trim() && !departments.includes(newDepartment)) {
@@ -29,10 +44,6 @@ const CompanyProfileTab: React.FC = () => {
       setAddNewClicked(false);
     }
   };
-
-  // const handleRemoveDepartment = (deptToRemove: string) => {
-  //   setDepartments(departments.filter((dept) => dept !== deptToRemove));
-  // };
 
   return (
     <div className="border-[0.5px] rounded-lg border-[#333333] border-dotted p-10">
@@ -95,7 +106,7 @@ const CompanyProfileTab: React.FC = () => {
           {/* Add new input */}
           {addNewClicked && (
             <div
-              className="absolute top-0 right-[25%]  bg-white z-10 p-12 shadow-lg border border-[#D0D5DD] rounded-md"
+              className="absolute top-0 right-[25%] bg-white z-10 p-12 shadow-lg border border-[#D0D5DD] rounded-md"
               onKeyDown={handleKeyDown}
             >
               <label
