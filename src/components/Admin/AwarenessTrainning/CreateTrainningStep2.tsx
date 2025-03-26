@@ -68,29 +68,39 @@ const CreateTrainningStep2 = ({
     }
   };
 
-  // Convert files to Base64
+  // Convert files to Base64 correctly
   const handleFileChange =
     (type: LessonType) => (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (!file) return;
 
       const reader = new FileReader();
-      reader.onload = () => {
-        const base64 = reader.result as string;
+
+      reader.onloadend = () => {
+        const base64String = reader.result as string; // Full Base64 String
+        console.log("Base64 Content:", base64String); // Debugging log
+
         onChange({
           modules: [
             {
               lessons: [
                 {
                   lessonType: type,
-                  content: base64,
+                  content: base64String, // Send the full base64 string
+                  fileName: file.name,
+                  fileType: file.type,
                 },
               ],
             },
           ],
         });
       };
-      reader.readAsDataURL(file);
+
+      reader.onerror = (error) => {
+        console.error("File reading error:", error);
+      };
+
+      reader.readAsDataURL(file); // Read file as Data URL
     };
 
   return (
@@ -139,7 +149,7 @@ const CreateTrainningStep2 = ({
             <input
               type="file"
               accept="video/*"
-              className=" border border-primary100 py-4 px-3 w-full rounded-md"
+              className="border border-primary100 py-4 px-3 w-full rounded-md"
               onChange={handleFileChange("video")}
             />
           </div>
@@ -156,7 +166,7 @@ const CreateTrainningStep2 = ({
             <input
               type="file"
               accept=".pdf,.doc,.docx"
-              className=" border border-primary100 py-4 px-3 w-full rounded-md"
+              className="border border-primary100 py-4 px-3 w-full rounded-md"
               onChange={handleFileChange("document")}
             />
           </div>

@@ -11,7 +11,10 @@ interface TrainningsListProps {
   setSelectionMode: React.Dispatch<React.SetStateAction<boolean>>;
   setAssignModal: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedTraining: React.Dispatch<React.SetStateAction<string | null>>;
+  setShowCheckbox: (value: boolean) => void;
   selectedTraining: string | null;
+  showCheckbox: boolean;
+  // showCheckbox: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const TrainningsList: React.FC<TrainningsListProps> = ({
@@ -150,6 +153,7 @@ const TrainningsList: React.FC<TrainningsListProps> = ({
                   alt={item.title}
                   className="w-full object-cover rounded h-full mb-8"
                 />
+                <div className=" absolute w-full h-full top-0 left-0 bg-black opacity-15"></div>
                 <MoreVertical
                   className="absolute size-6 top-2 right-2 text-white z-[999]"
                   onClick={(e) => handleOptionsClick(index, e)}

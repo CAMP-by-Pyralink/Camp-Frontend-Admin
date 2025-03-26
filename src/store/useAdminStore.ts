@@ -84,6 +84,7 @@ interface AdminStore {
   departments: string[];
   admins: any[];
   users: any[];
+  companyData: any[];
   currentUser: GetCurrentAdminData | null;
   companyDetails: CompanyDetails | null;
   fetchDepartments: () => Promise<void>;
@@ -93,6 +94,8 @@ interface AdminStore {
   registerAdmin: (data: registerAdminData) => Promise<AxiosResponse | void>;
   registerUser: (data: registerUserData) => Promise<AxiosResponse | void>;
   getCompanyDetails: () => Promise<any>;
+  updateAdminDetails: (data: any) => Promise<any>;
+  updateCompanyDetails: (data: any) => Promise<any>;
 }
 
 export const useAdminStore = create<AdminStore>((set) => ({
@@ -102,7 +105,8 @@ export const useAdminStore = create<AdminStore>((set) => ({
   admins: [],
   users: [],
   currentUser: null,
-  companyDetails: null,
+  companyDetails: [],
+  companyData: [],
 
   registerAdmin: async (data: registerAdminData) => {
     set({ isRegisteringAdmin: true });
@@ -187,14 +191,12 @@ export const useAdminStore = create<AdminStore>((set) => ({
     set({ isLoading: true });
 
     try {
-      const isBase64Image =
-        data.profileImage && data.profileImage.startsWith("data:image");
       const payload = {
         fName: data.fName,
         lName: data.lName,
         homeAddress: data.homeAddress,
         phoneNumber: data.phoneNumber,
-        ...(isBase64Image ? { profileImage: data.profileImage } : {}),
+        profileImage: data.profileImage,
       };
 
       const response: AxiosResponse = await api.patch(
@@ -245,15 +247,49 @@ export const useAdminStore = create<AdminStore>((set) => ({
     try {
       const response = await api.get("/admin/getCompanyDetails");
       if (response.status === 200) {
-        set({ companyDetails: response.data });
-        console.log("State updated:", response.data);
-        return response.data.data;
-        toast.success(response.data.msg);
+        const companyDetails = response.data.data; // Extract the company details
+        set({ companyData: companyDetails }); // Update the state with the fetched data
+        console.log(
+          "Company details fetched and state updated:",
+          companyDetails
+        );
+        // toast.success(response.data.msg);
+        // console.log("Dfad", companyData);
+        return companyDetails; // Return the data for further use if needed
       }
-      console.log(response.data, "company details");
     } catch (error: any) {
-      console.error(error);
-      toast.error(error.response.data.msg);
+      console.error("Error fetching company details:", error);
+      toast.error(
+        error.response?.data?.msg || "Failed to fetch company details."
+      );
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  updateCompanyDetails: async (data: any) => {
+    set({ isLoading: true });
+    try {
+      const payload = {
+        companyName: data.companyName || "",
+        companyUrl: data.companyUrl || "",
+        companyDepartments: data.companyDepartments || [],
+        profileImage: data.profileImage || "", // This should already be Bas
+      };
+
+      const response: AxiosResponse = await api.patch(
+        "/admin/updateCompanyDetails",
+        payload
+      );
+
+      if (response.status === 200) {
+        toast.success(response.data.msg);
+        return response;
+      }
+    } catch (error: any) {
+      console.error("Error updating company details:", error);
+      toast.error(error.response?.data?.msg);
+    } finally {
+      set({ isLoading: false });
     }
   },
 }));

@@ -11,6 +11,7 @@ import {
   useTrainingStore,
 } from "../../../store/useAwarenessTrainingStore";
 import CreateTrainingStep3 from "./CreateTrainingStep3";
+import { useNavigate } from "react-router-dom";
 
 interface QuestionData {
   question: string;
@@ -56,6 +57,11 @@ interface FormState {
 }
 
 const CreateTrainingModules = () => {
+  const navigate = useNavigate();
+  const [isUploading, setIsUploading] = useState<{
+    moduleId: number | null;
+    lessonId: number | null;
+  }>({ moduleId: null, lessonId: null });
   // Get createTraining function from store
   const { createTraining } = useTrainingStore();
 
@@ -131,22 +137,47 @@ const CreateTrainingModules = () => {
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     if (e.target.files && e.target.files[0]) {
-      const updatedModules = formState.modules.map((module) => {
-        if (module.id === moduleId) {
-          const updatedLessons = module.lessons.map((lesson) => {
-            if (lesson.id === lessonId) {
-              return { ...lesson, content: e.target.files?.[0] || null };
-            }
-            return lesson;
-          });
-          return { ...module, lessons: updatedLessons };
-        }
-        return module;
-      });
-      setFormState({
-        ...formState,
-        modules: updatedModules,
-      });
+      const file = e.target.files[0];
+      const reader = new FileReader();
+
+      // Set uploading state
+      setIsUploading({ moduleId, lessonId });
+
+      reader.onload = () => {
+        const base64String = reader.result as string;
+        const updatedModules = formState.modules.map((module) => {
+          if (module.id === moduleId) {
+            const updatedLessons = module.lessons.map((lesson) => {
+              if (lesson.id === lessonId) {
+                return {
+                  ...lesson,
+                  content: base64String,
+                };
+              }
+              return lesson;
+            });
+            return { ...module, lessons: updatedLessons };
+          }
+          return module;
+        });
+
+        setFormState({
+          ...formState,
+          modules: updatedModules,
+        });
+
+        // Clear uploading state
+        setIsUploading({ moduleId: null, lessonId: null });
+      };
+
+      reader.onerror = () => {
+        // Handle read error
+        console.error("Error reading file");
+        setIsUploading({ moduleId: null, lessonId: null });
+      };
+
+      // Always read as base64 for all file types
+      reader.readAsDataURL(file);
     }
   };
 
@@ -415,10 +446,8 @@ const CreateTrainingModules = () => {
         // Get content based on lesson type
         let formattedContent = "";
         if (typeof lesson.content === "string") {
+          // If it's already a base64 string or a link
           formattedContent = lesson.content;
-        } else if (lesson.content instanceof File) {
-          // In a real app, you would upload the file and store the URL
-          formattedContent = lesson.content.name; // Just the filename for this example
         } else if (
           lesson.content !== null &&
           typeof lesson.content === "object"
@@ -453,6 +482,12 @@ const CreateTrainingModules = () => {
 
   // Save training module
   const saveTrainingModule = async () => {
+    // Check if any file is currently uploading
+    if (isUploading.moduleId !== null && isUploading.lessonId !== null) {
+      alert("Please wait, file is still uploading");
+      return;
+    }
+
     try {
       const formattedData = prepareDataForBackend();
       console.log("Sending data to backend:", formattedData);
@@ -461,7 +496,8 @@ const CreateTrainingModules = () => {
       const response = await createTraining(formattedData);
 
       if (response) {
-        console.log("Training created successfully:", response);
+        // console.log("Training created successfully:", response);
+        navigate("/awareness-training");
       }
     } catch (error) {
       console.error("Error creating training:", error);
@@ -670,22 +706,31 @@ const CreateTrainingModules = () => {
                                 >
                                   Upload video
                                 </label>
-                                <input
-                                  type="file"
-                                  id={`videoContent-${module.id}-${lesson.id}`}
-                                  accept="video/*"
-                                  className="border border-primary100 py-4 px-3 w-full rounded-md"
-                                  onChange={(e) =>
-                                    handleLessonFileUpload(
-                                      module.id,
-                                      lesson.id,
-                                      e
-                                    )
-                                  }
-                                />
+                                <div className="relative">
+                                  <input
+                                    type="file"
+                                    id={`videoContent-${module.id}-${lesson.id}`}
+                                    accept="video/*"
+                                    className="border border-primary100 py-4 px-3 w-full rounded-md"
+                                    onChange={(e) =>
+                                      handleLessonFileUpload(
+                                        module.id,
+                                        lesson.id,
+                                        e
+                                      )
+                                    }
+                                  />
+                                  {isUploading.moduleId === module.id &&
+                                    isUploading.lessonId === lesson.id && (
+                                      <div className="absolute inset-0 bg-gray-200 bg-opacity-50 flex items-center justify-center">
+                                        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-blue-500"></div>
+                                      </div>
+                                    )}
+                                </div>
                               </div>
                             )}
 
+                            {/* Similar modification for document upload */}
                             {activeLessonTab.tabIndex === 1 && (
                               <div>
                                 <label
@@ -694,19 +739,27 @@ const CreateTrainingModules = () => {
                                 >
                                   Upload Document
                                 </label>
-                                <input
-                                  type="file"
-                                  id={`documentContent-${module.id}-${lesson.id}`}
-                                  accept=".pdf,.doc,.docx"
-                                  className="border border-primary100 py-4 px-3 w-full rounded-md"
-                                  onChange={(e) =>
-                                    handleLessonFileUpload(
-                                      module.id,
-                                      lesson.id,
-                                      e
-                                    )
-                                  }
-                                />
+                                <div className="relative">
+                                  <input
+                                    type="file"
+                                    id={`documentContent-${module.id}-${lesson.id}`}
+                                    accept=".pdf,.doc,.docx"
+                                    className="border border-primary100 py-4 px-3 w-full rounded-md"
+                                    onChange={(e) =>
+                                      handleLessonFileUpload(
+                                        module.id,
+                                        lesson.id,
+                                        e
+                                      )
+                                    }
+                                  />
+                                  {isUploading.moduleId === module.id &&
+                                    isUploading.lessonId === lesson.id && (
+                                      <div className="absolute inset-0 bg-gray-200 bg-opacity-50 flex items-center justify-center">
+                                        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-blue-500"></div>
+                                      </div>
+                                    )}
+                                </div>
                               </div>
                             )}
 

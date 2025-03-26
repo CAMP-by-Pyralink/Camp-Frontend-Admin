@@ -4,16 +4,16 @@ import {
   GetCurrentAdminData,
   useAdminStore,
 } from "../../../store/useAdminStore";
+import editIcon from "../../../assets/svgs/editPPImg.svg";
+import Loader from "../../../shared/Loader";
+import { ClipLoader } from "react-spinners";
 
 interface ProfileData {
-  // userId: string;
-  role: string;
-  lastName: string;
-  firstName: string;
-  department: string;
-  email: string;
-  phone: string;
-  address: string;
+  fName: string;
+  lName: string;
+  homeAddress: string;
+  phoneNumber: string;
+  profileImage?: string | null;
 }
 
 interface AdminProfileTabProps {
@@ -21,44 +21,132 @@ interface AdminProfileTabProps {
 }
 
 const AdminProfileTab: React.FC<AdminProfileTabProps> = ({ currentUser }) => {
-  const { upda } = useAdminStore();
+  const { updateAdminDetails, getCurrentAdmin, isLoading } = useAdminStore();
   const [profileData, setProfileData] = useState<ProfileData>({
-    // userId: "",
-    role: "",
-    lastName: "",
-    firstName: "",
-    department: "",
-    email: "",
-    phone: "",
-    address: "",
+    fName: "",
+    lName: "",
+    homeAddress: "",
+    phoneNumber: "",
+    profileImage: "",
   });
 
   useEffect(() => {
     if (currentUser) {
       setProfileData({
-        // userId: currentUser.adminId,
-        role: currentUser.role,
-        lastName: currentUser.lName,
-        firstName: currentUser.fName,
-        department: currentUser.department,
-        email: currentUser.email,
-        phone: currentUser.phoneNumber,
-        address: currentUser.address,
+        fName: currentUser.fName,
+        lName: currentUser.lName,
+        homeAddress: currentUser.address,
+        phoneNumber: currentUser.phoneNumber,
+        profileImage: currentUser.profileImage || "",
       });
     }
   }, [currentUser]);
 
-  console.log(currentUser?.department);
-
   if (!currentUser) {
-    return <div>Loading...</div>;
+    return (
+      <div className=" flex items-center justify-center">
+        <div className="loading-container">
+          <ClipLoader size={50} color="#123abc" />
+        </div>
+      </div>
+    );
   }
 
-  // const handleUpdateProfile= async()=>{
-  //   await
-  // }
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        const base64String = reader.result as string;
+        setProfileData({ ...profileData, profileImage: base64String });
+      };
+
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // const handleSaveChanges = async () => {
+  //   // Prepare payload with all existing data
+  //   const payload: ProfileData = {
+  //     fName: profileData.fName,
+  //     lName: profileData.lName,
+  //     homeAddress: profileData.homeAddress,
+  //     phoneNumber: profileData.phoneNumber,
+  //     ...(profileData.profileImage?.startsWith("data:image")
+  //       ? { profileImage: profileData.profileImage }
+  //       : {}),
+  //   };
+
+  //   const success = await updateAdminDetails(payload);
+  //   return success;
+  // };
+  const handleSaveChanges = async () => {
+    const payload: ProfileData = {
+      fName: profileData.fName || currentUser?.fName || "",
+      lName: profileData.lName || currentUser?.lName || "",
+      homeAddress: profileData.homeAddress || currentUser?.address || "",
+      phoneNumber: profileData.phoneNumber || currentUser?.phoneNumber || "",
+      profileImage:
+        profileData.profileImage !== undefined
+          ? profileData.profileImage
+          : currentUser?.profileImage || "", // Always include profileImage
+    };
+
+    console.log("Payload being sent:", payload); // Debugging log
+    const success = await updateAdminDetails(payload);
+    // return success;
+    if (success) {
+      getCurrentAdmin();
+    }
+  };
+
   return (
     <div className="mb-8">
+      <div className="relative flex items-center gap-4 mb-8 w-fit">
+        <div className="relative bg-[#D4CFCF] border-[3px] border-white w-28 h-28 rounded-full overflow-hidden">
+          <img
+            src={profileData.profileImage || ""}
+            alt=""
+            className="w-full h-full object-cover"
+          />
+
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+          />
+          <img
+            src={editIcon}
+            className="absolute bottom-4 right-2"
+            alt="Edit"
+          />
+        </div>
+      </div>
+
+      {/* Save Button */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="text-greyText">
+          <h1 className="text-greyText font-bold mb-2">Profile</h1>
+          <p className="text-sm">Update your profile information</p>
+        </div>
+        <div className="flex gap-4">
+          <button className="w-fit border border-[#898384] py-2 px-8 text-textColor text-sm rounded-lg font-semibold">
+            Cancel
+          </button>
+          <button
+            disabled={!!isLoading}
+            className={`w-fit bg-primary500 rounded-lg py-2 px-5 text-white font-semibold text-sm ${
+              isLoading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            onClick={handleSaveChanges}
+          >
+            Save changes
+          </button>
+        </div>
+      </div>
+
       <div className="grid grid-cols-2 gap-6 border-[0.5px] rounded-lg border-[#333333] border-dotted p-10 space-y-">
         <div>
           <label className="block text-sm text-[#101928] font-medium mb-1">
@@ -66,11 +154,8 @@ const AdminProfileTab: React.FC<AdminProfileTabProps> = ({ currentUser }) => {
           </label>
           <input
             type="text"
-            value={profileData.role}
+            value={currentUser.role}
             disabled
-            onChange={(e) =>
-              setProfileData({ ...profileData, role: e.target.value })
-            }
             className="w-full p-4 border border-[#D0D5DD] rounded-md"
           />
         </div>
@@ -80,9 +165,9 @@ const AdminProfileTab: React.FC<AdminProfileTabProps> = ({ currentUser }) => {
           </label>
           <input
             type="text"
-            value={profileData.lastName}
+            value={profileData.lName}
             onChange={(e) =>
-              setProfileData({ ...profileData, lastName: e.target.value })
+              setProfileData({ ...profileData, lName: e.target.value })
             }
             className="w-full p-4 border border-[#D0D5DD] rounded-md"
           />
@@ -93,11 +178,11 @@ const AdminProfileTab: React.FC<AdminProfileTabProps> = ({ currentUser }) => {
           </label>
           <input
             type="text"
-            value={profileData.firstName}
+            value={profileData.fName}
             onChange={(e) =>
               setProfileData({
                 ...profileData,
-                firstName: e.target.value,
+                fName: e.target.value,
               })
             }
             className="w-full p-4 border border-[#D0D5DD] rounded-md"
@@ -110,13 +195,9 @@ const AdminProfileTab: React.FC<AdminProfileTabProps> = ({ currentUser }) => {
           </label>
           <input
             type="text"
-            value={profileData.department}
-            onChange={(e) =>
-              setProfileData({
-                ...profileData,
-                department: e.target.value,
-              })
-            }
+            value={currentUser.department}
+            readOnly
+            disabled
             className="w-full p-4 border border-[#D0D5DD] rounded-md"
           />
         </div>
@@ -126,11 +207,8 @@ const AdminProfileTab: React.FC<AdminProfileTabProps> = ({ currentUser }) => {
           </label>
           <input
             type="email"
-            value={profileData.email}
+            value={currentUser.email}
             disabled
-            onChange={(e) =>
-              setProfileData({ ...profileData, email: e.target.value })
-            }
             className="w-full p-4 border border-[#D0D5DD] rounded-md placeholder:text-[#98A2B3] placeholder:text-sm"
           />
         </div>
@@ -140,10 +218,9 @@ const AdminProfileTab: React.FC<AdminProfileTabProps> = ({ currentUser }) => {
           </label>
           <input
             type="text"
-            value={profileData.address}
-            disabled
+            value={profileData.homeAddress}
             onChange={(e) =>
-              setProfileData({ ...profileData, address: e.target.value })
+              setProfileData({ ...profileData, homeAddress: e.target.value })
             }
             className="w-full p-4 border border-[#D0D5DD] rounded-md placeholder:text-[#98A2B3] placeholder:text-sm"
           />
@@ -154,10 +231,9 @@ const AdminProfileTab: React.FC<AdminProfileTabProps> = ({ currentUser }) => {
           </label>
           <input
             type="tel"
-            value={profileData.phone}
-            disabled
+            value={profileData.phoneNumber}
             onChange={(e) =>
-              setProfileData({ ...profileData, phone: e.target.value })
+              setProfileData({ ...profileData, phoneNumber: e.target.value })
             }
             className="w-full p-4 border border-[#D0D5DD] rounded-md placeholder:text-[#98A2B3] placeholder:text-sm"
           />

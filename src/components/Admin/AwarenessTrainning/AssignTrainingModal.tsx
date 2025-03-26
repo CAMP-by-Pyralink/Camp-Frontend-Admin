@@ -7,6 +7,7 @@ import { useTrainingStore } from "../../../store/useAwarenessTrainingStore";
 interface AssignTrainingModalProps {
   setAssignModal: (value: boolean) => void;
   setSelectionMode: (value: boolean) => void;
+  setShowCheckbox: (value: boolean) => void;
   selectedTraining: string | null;
 }
 

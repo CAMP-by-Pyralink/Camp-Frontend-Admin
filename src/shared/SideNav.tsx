@@ -499,13 +499,13 @@ const SideNav = () => {
             isCollapsed ? "flex-col " : "flex-col"
           }`}
         >
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 ">
             <div className="w-10 h-10 bg-[#D4CFCF] aspect-square rounded-full">
               {currentUser?.profileImage ? (
                 <img
                   src={currentUser.profileImage}
                   alt="Profile"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover rounded-full"
                 />
               ) : (
                 <span className="text-gray-800 font-semibold text-lg">

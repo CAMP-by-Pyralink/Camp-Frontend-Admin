@@ -14,43 +14,57 @@ interface CompanyData {
 
 const Settings = () => {
   const [activeTab, setActiveTab] = useState<"profile" | "company">("profile");
-  const [companyData, setCompanyData] = useState<CompanyData | null>(null);
+  // const [companyData, setCompanyData] = useState<CompanyData | null>(null);
+  const [adminImage, setAdminImage] = useState<string | null>(null);
+  const [companyImage, setCompanyImage] = useState<string | null>(null);
 
-  const { getCurrentAdmin, currentUser, getCompanyDetails } = useAdminStore();
+  const { getCurrentAdmin, currentUser, getCompanyDetails, companyData } =
+    useAdminStore();
 
   useEffect(() => {
-    // Fetch current admin details
     getCurrentAdmin();
+    console.log(companyData, "eghjiugf");
 
-    // Fetch company details
     const fetchCompanyDetails = async () => {
       const data = await getCompanyDetails();
       if (data) {
-        setCompanyData(data); // Store the fetched company data in state
+        // setCompanyData(data);
       }
     };
 
     fetchCompanyDetails();
   }, [getCurrentAdmin, getCompanyDetails]);
 
-  // Get user's initials from first and last name
-  const getUserInitials = () => {
-    let initials = "";
-
-    if (currentUser?.fName) {
-      initials += currentUser.fName.charAt(0).toUpperCase();
+  // Handle file selection for Admin Image
+  const handleAdminImageChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAdminImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
     }
+  };
 
-    if (currentUser?.lName) {
-      initials += currentUser.lName.charAt(0).toUpperCase();
+  // Handle file selection for Company Image
+  const handleCompanyImageChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCompanyImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
     }
-
-    // If we couldn't get any initials, return "U" as fallback
-    return initials || "";
   };
 
   return (
-    <div className=" ">
+    <div>
       {/* Tabs */}
       <div className="relative mb-6">
         <div className="flex gap-6 w-fit relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[4px] after:bg-[#D9D9D9]">
@@ -76,66 +90,15 @@ const Settings = () => {
           </button>
         </div>
       </div>
-      {/* Profile section */}
-      <div>
-        <div className="relative flex items-center gap-4 mb-8 w-fit">
-          <div className="relative bg-[#D4CFCF] border-[3px] border-white w-28 h-28 rounded-full overflow-hidden">
-            {activeTab === "profile" ? (
-              <>
-                {currentUser?.profileImage ? (
-                  <img
-                    src={currentUser.profileImage}
-                    alt="Profile"
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <span className="text-gray-800 font-semibold text-4xl">
-                    {getUserInitials()}
-                  </span>
-                )}
-              </>
-            ) : (
-              <h1 className="text-red"></h1>
-            )}
-            <img src={editIcon} className=" absolute bottom-4 right-2" alt="" />
-          </div>
-          <div>
-            <h2 className="text-xl font-medium">
-              {activeTab === "profile"
-                ? `${currentUser?.fName} ${currentUser?.lName} `
-                : companyData?.companyName || "Company Name"}
-            </h2>
-            <p className="">
-              {activeTab === "profile"
-                ? currentUser?.department
-                : companyData?.companyUrl || "Company URL"}
-            </p>
-          </div>
-        </div>
-        {/* Save button */}
-        <div className=" flex items-center justify-between mb-4">
-          <div className=" text-greyText">
-            <h1 className=" text-greyText font-bold mb-2">
-              {activeTab === "profile" ? "Profile" : "Company Profile"}
-            </h1>
-            <p className=" text-sm">
-              Update your {activeTab === "company" ? "company" : ""} profile
-            </p>
-          </div>
-          <div className=" flex gap-4">
-            <button className="w-fit border border-[#898384] py-2 px-8 text-textColor text-sm rounded-lg font-semibold  ">
-              Cancel
-            </button>
-            <button className="w-fit bg-primary500 rounded-lg py-2 px-5 text-white font-semibold text-sm ">
-              Save changes
-            </button>
-          </div>
-        </div>
-      </div>
+
+      {/* Tabs */}
       {activeTab === "profile" ? (
-        <AdminProfileTab currentUser={currentUser} />
+        <AdminProfileTab currentUser={currentUser} adminImage={adminImage} />
       ) : (
-        <CompanyProfileTab companyData={companyData} />
+        <CompanyProfileTab
+          companyData={companyData}
+          companyImage={companyImage}
+        />
       )}
     </div>
   );
