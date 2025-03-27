@@ -6,7 +6,7 @@ interface UserListProps {
   setHasData: (hasData: boolean) => void;
 }
 
-const UserList: React.FC<UserListProps> = ({ setHasData }) => {
+const UserList: React.FC<UserListProps> = ({ setHasData, data }) => {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const { type } = useParams<{ type: string }>();
   const { admins, users, getAdmins, getUsers } = useAdminStore();
@@ -19,10 +19,16 @@ const UserList: React.FC<UserListProps> = ({ setHasData }) => {
     }
   }, [getAdmins, getUsers, type]);
 
-  useEffect(() => {
-    const data = type === "Admin" ? admins : users;
-    setHasData(data && data.length > 0);
-  }, [admins, users, type, setHasData]);
+  console.log("users", users);
+
+  // useEffect(() => {
+  //   const data = type === "Admin" ? admins : users;
+  //   // setHasData(data && data.length > 0);
+  //   if (data && data.length > 0) {
+  //     setHasData(false);
+  //     console.log(data.length);
+  //   }
+  // }, [admins, users, type, setHasData]);
 
   const handleButtonClick = (userId: string) => {
     setSelectedUserId((prevUserId) => (prevUserId === userId ? null : userId));
@@ -41,11 +47,11 @@ const UserList: React.FC<UserListProps> = ({ setHasData }) => {
     return `${day}/${month}/${year} ${formattedHours}:${minutes}${ampm}`;
   };
 
-  const data = type === "Admin" ? admins : users;
+  // const data = type === "Admin" ? admins : users;
 
-  if (!data || data.length === 0) {
-    return null;
-  }
+  // if (!data || data.length === 0) {
+  //   return null;
+  // }
 
   return (
     <div className="relative">
@@ -55,7 +61,7 @@ const UserList: React.FC<UserListProps> = ({ setHasData }) => {
             <th className="p-4 border-b border-gray-200">
               <input type="checkbox" />
             </th>
-            <th className="p-4 border-b border-gray-200">ID</th>
+            {/* <th className="p-4 border-b border-gray-200">ID</th> */}
             <th className="p-4 border-b border-gray-200">Name</th>
             <th className="p-4 border-b border-gray-200">Department</th>
             <th className="p-4 border-b border-gray-200">Date Added</th>
@@ -63,7 +69,7 @@ const UserList: React.FC<UserListProps> = ({ setHasData }) => {
           </tr>
         </thead>
         <tbody className="bg-white">
-          {data.map((user) => (
+          {data?.map((user) => (
             <tr
               key={user._id}
               className="text-[#101928] hover:bg-gray-50 relative"
@@ -71,13 +77,14 @@ const UserList: React.FC<UserListProps> = ({ setHasData }) => {
               <td className="p-4 border-b border-gray-200">
                 <input type="checkbox" />
               </td>
-              <td className="p-4 border-b border-gray-200">{user._id}</td>
+              {/* <td className="p-4 border-b border-gray-200">{user._id}</td> */}
               <td className="p-4 border-b border-gray-200">{`${user.lName} ${user.fName}`}</td>
               <td className="p-4 text-[#737373] text-[14px] border-b border-gray-200">
                 {user.department || "N/A"}
               </td>
               <td className="p-4 border-b border-gray-200">
-                {formatDate(user.createdAt) || "N/A"}
+                {console.log(user.createdAt)}
+                {user.createdAt || "N/A"}
               </td>
               <td className="p-4 border-b border-gray-200 text-center relative">
                 <div
@@ -111,7 +118,7 @@ const UserList: React.FC<UserListProps> = ({ setHasData }) => {
           ))}
         </tbody>
       </table>
-
+      {/* 
       <div className="flex justify-between items-center mt-4">
         <span className="text-sm text-[#070707]">Page 1 of 7</span>
         <div className="flex gap-2">
@@ -122,7 +129,7 @@ const UserList: React.FC<UserListProps> = ({ setHasData }) => {
             Next
           </button>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

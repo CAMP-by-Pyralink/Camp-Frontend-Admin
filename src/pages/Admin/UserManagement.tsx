@@ -16,6 +16,9 @@ import NetworkScanFlow from "../../components/Admin/UserManagement/NetworkScanFl
 import HeaderTitle from "../../shared/HeaderTitle";
 import searchIcon from "../../assets/svgs/search.svg";
 import PagesHomeLayout from "../../shared/PagesHomeLayout";
+import { useEffect } from "react";
+// import { useAdminStore } from "../../../store/useAdminStore";
+import { useAdminStore } from "../../store/useAdminStore";
 
 // Define FilterConfig interface
 interface FilterConfig {
@@ -46,6 +49,19 @@ const UserManagement = () => {
     department: "",
     status: "",
   });
+  const { admins, users, getAdmins, getUsers } = useAdminStore();
+  const data = type === "Admin" ? admins : users;
+
+  useEffect(() => {
+    // setHasData(data && data.length > 0);
+    if (data && data.length > 0) {
+      setHasData(true);
+      console.log(data.length);
+      console.log(data, "dataa");
+    } else {
+      setHasData(false);
+    }
+  }, [admins, users, type, setHasData]);
 
   const toggleDropdown = () => setIsOpen(!isOpen);
 
@@ -123,6 +139,7 @@ const UserManagement = () => {
       ],
     },
   ];
+  console.log(hasData);
 
   return (
     <div>
@@ -244,7 +261,7 @@ const UserManagement = () => {
             showFilter={true}
             showExport={true}
           >
-            <UserList setHasData={setHasData} />
+            <UserList setHasData={setHasData} data={data} />
 
             {/* Your content */}
           </PagesHomeLayout>
