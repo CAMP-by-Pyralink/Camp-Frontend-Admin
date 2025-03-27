@@ -35,7 +35,7 @@ const AdminProfileTab: React.FC<AdminProfileTabProps> = ({ currentUser }) => {
       setProfileData({
         fName: currentUser.fName,
         lName: currentUser.lName,
-        homeAddress: currentUser.address,
+        homeAddress: currentUser.homeAddress || "",
         phoneNumber: currentUser.phoneNumber,
         profileImage: currentUser.profileImage || "",
       });
@@ -85,7 +85,7 @@ const AdminProfileTab: React.FC<AdminProfileTabProps> = ({ currentUser }) => {
     const payload: ProfileData = {
       fName: profileData.fName || currentUser?.fName || "",
       lName: profileData.lName || currentUser?.lName || "",
-      homeAddress: profileData.homeAddress || currentUser?.address || "",
+      homeAddress: profileData.homeAddress || currentUser?.homeAddress || "",
       phoneNumber: profileData.phoneNumber || currentUser?.phoneNumber || "",
       profileImage:
         profileData.profileImage !== undefined

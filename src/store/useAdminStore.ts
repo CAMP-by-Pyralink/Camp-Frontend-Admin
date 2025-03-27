@@ -72,7 +72,7 @@ export interface GetCurrentAdminData {
   pNumber: string;
   profileImage: string | null;
   role: string;
-  address: string;
+  homeAddress: string;
   phoneNumber: string;
 }
 
@@ -98,7 +98,7 @@ interface AdminStore {
   updateCompanyDetails: (data: any) => Promise<any>;
 }
 
-export const useAdminStore = create<AdminStore>((set) => ({
+export const useAdminStore = create<AdminStore>((set, get) => ({
   isRegisteringAdmin: false,
   isLoading: false,
   departments: [],
@@ -117,6 +117,7 @@ export const useAdminStore = create<AdminStore>((set) => ({
       );
       console.log(response);
       toast.success("Admin registered successfully!");
+      await get().getAdmins();
       return response;
     } catch (error: any) {
       console.error(error);
@@ -150,7 +151,8 @@ export const useAdminStore = create<AdminStore>((set) => ({
         data
       );
       console.log(response);
-      toast.success("User registered successfully!");
+      toast.success(response.data.msg);
+      await get().getUsers();
       return response;
     } catch (error: any) {
       console.error(error);
