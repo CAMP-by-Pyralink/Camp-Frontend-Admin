@@ -158,20 +158,20 @@ const TrainingDetails: React.FC = () => {
         </h1>
         <span className="text-neutrals500 text-sm font-medium">{">"}</span>
         <h1 className="text-neutrals500 text-sm font-medium">
-          Add/edit modules
+          View Training Details
         </h1>
       </div>
 
       <div className="bg-[#EBECFF] p-4 space-y-4">
         <div className="bg-white p-12 rounded-3xl flex items-center gap-12 justify-between">
-          <div className="w-full space-y-1 basis-[60%]">
-            <h1 className="text-sm font-bold">{singleTraining.title}</h1>
+          <div className="w-full space-y-3 basis-[60%]">
+            <h1 className="text-[56px] font-bold">{singleTraining.title}</h1>
             <h1>Training description:</h1>
             <p className="text-greyText text-[12px]">
-              {singleTraining.description}
+              {singleTraining.modules.length} modules
             </p>
           </div>
-          <div className="h-full basis-1/2">
+          <div className="h-[228px] basis-[60%]">
             <img
               src={singleTraining.bannerImage}
               alt={singleTraining.title}
@@ -179,90 +179,6 @@ const TrainingDetails: React.FC = () => {
             />
           </div>
         </div>
-
-        {/* Modules Section */}
-        <div className="bg-white p-12">
-          <div className="flex items-center justify-end mb-8">
-            <button
-              className="bg-primary500 text-white rounded-md p-3"
-              onClick={handleAddModule}
-            >
-              Add module
-            </button>
-          </div>
-
-          {/* Modules List */}
-          <div className="space-y-4">
-            {singleTraining.modules.map((module, moduleIndex) => (
-              <div
-                key={moduleIndex}
-                className="p-4 border border-neutral-300 rounded-md"
-              >
-                <div>
-                  {/* Module Header */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <img src={dragIcon} alt="Drag" />
-                      <h1 className="font-medium">{module.moduleTitle}</h1>
-                    </div>
-
-                    {/* Module Actions */}
-                    <div className="flex items-center gap-6">
-                      <div
-                        className="flex items-center gap-1 cursor-pointer"
-                        onClick={() => handleEditModule(moduleIndex)}
-                      >
-                        <h1>Edit</h1>
-                        <PencilLine size={16} />
-                      </div>
-
-                      <div
-                        className="flex items-center gap-1 text-[#B30100] cursor-pointer"
-                        onClick={() => handleDeleteModule(moduleIndex)}
-                      >
-                        <h1>Delete</h1>
-                        <Trash2 size={16} />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Module Lessons */}
-                  <div className="ml-6 mt-3 space-y-2">
-                    {module.lessons.map((lesson, lessonIndex) => (
-                      <div
-                        key={lessonIndex}
-                        className="flex items-center gap-2 py-1"
-                      >
-                        <img src={dragIcon} alt="Drag" className="h-5" />
-                        <div>{renderLessonIcon(lesson.lessonType)}</div>
-                        <h1>
-                          {lesson.lessonTitle || `Lesson ${lessonIndex + 1}`}
-                        </h1>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Add Lesson Button */}
-                  <div
-                    className="ml-8 mt-3 flex items-center gap-1 text-primary500 cursor-pointer"
-                    onClick={() => handleAddLesson(moduleIndex)}
-                  >
-                    <SquarePlus size={18} />
-                    <span className="text-sm">Add Lesson</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Save Button */}
-        <button
-          className="w-full bg-primary500 text-white p-4 rounded-lg"
-          onClick={handleSaveChanges}
-        >
-          Save and Continue
-        </button>
       </div>
 
       {/* Modals */}

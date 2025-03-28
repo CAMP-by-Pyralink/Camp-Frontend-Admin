@@ -197,34 +197,42 @@ const TrainningsList: React.FC<TrainningsListProps> = ({
                 {item.description.slice(0, 100)}...
               </p>
 
-              {activeTab === "assigned" && (
-                <div>
-                  {/* Profile avatars and View All */}
-                  <div className="flex items-center justify-between mt-4">
-                    <div className="flex -space-x-4 overflow-hidden">
-                      {avatars.map((avatar, index) => (
-                        <img
-                          key={index}
-                          src={avatar}
-                          alt={`Avatar ${index + 1}`}
-                          className={`inline-block h-8 w-8 rounded-full ${
-                            index === 0 ? "z-30" : `z-${20 - index}`
-                          } object-cover`}
-                        />
-                      ))}
+              {activeTab === "assigned" &&
+                item.assignedTo?.individuals?.length > 0 && (
+                  <div>
+                    {/* Profile avatars and View All */}
+                    <div className="flex items-center justify-between mt-4">
+                      <div className="flex -space-x-4 overflow-hidden">
+                        {item.assignedTo.individuals
+                          .slice(0, 3)
+                          .map((person, index) => (
+                            <img
+                              key={person._id}
+                              src={person.profileImage || profilepic} // Use profileImage or fallback to default
+                              alt={`${person.fName} ${person.lName}`}
+                              className={`inline-block h-8 w-8 rounded-full object-cover border-2 border-white ${
+                                index === 0 ? "z-30" : `z-${20 - index}`
+                              }`}
+                            />
+                          ))}
+                        {item.assignedTo.individuals.length > 3 && (
+                          <span className="inline-block h-8 w-8 rounded-full bg-gray-200 text-sm text-gray-700 flex items-center justify-center">
+                            +{item.assignedTo.individuals.length - 3}
+                          </span>
+                        )}
+                      </div>
+                      <button
+                        className="text-primary500 text-xs underline"
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent card click event
+                          handleViewClick(item); // View button click for table layout
+                        }}
+                      >
+                        View &gt;
+                      </button>
                     </div>
-                    <button
-                      className="text-primary500 text-xs underline"
-                      onClick={(e) => {
-                        e.stopPropagation(); // Prevent card click event
-                        handleViewClick(item); // View button click for table layout
-                      }}
-                    >
-                      View &gt;
-                    </button>
                   </div>
-                </div>
-              )}
+                )}
             </div>
           ))
         ) : (

@@ -89,7 +89,8 @@ interface AdminStore {
   companyDetails: CompanyDetails | null;
   fetchDepartments: () => Promise<void>;
   getAdmins: () => Promise<void>;
-  getUsers: () => Promise<void>;
+  // getUsers: () => Promise<void>;
+  getUsers: (search?: string, filter?: string) => Promise<void>;
   getCurrentAdmin: () => Promise<any>;
   registerAdmin: (data: registerAdminData) => Promise<AxiosResponse | void>;
   registerUser: (data: registerUserData) => Promise<AxiosResponse | void>;
@@ -163,10 +164,15 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
       set({ isRegisteringAdmin: false });
     }
   },
-  getUsers: async () => {
+  getUsers: async (search = "", filter = "") => {
     set({ isLoading: true });
     try {
-      const response: AxiosResponse = await api.get("/user/getAllUsers?page=1");
+      const response: AxiosResponse = await api.get(
+        "/user/getAllUsers?page=1",
+        {
+          params: { search, filter }, // Send query params
+        }
+      );
       set({ users: response.data.users });
       console.log("getUsers", response.data.users);
       // console.log("users", users);

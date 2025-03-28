@@ -135,6 +135,7 @@
 // };
 
 // export default UserList;
+
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useAdminStore } from "../../../store/useAdminStore";
@@ -171,10 +172,10 @@ const UserList: React.FC<UserListProps> = ({ setHasData, data }) => {
     return `${day}/${month}/${year} ${formattedHours}:${minutes}${ampm}`;
   };
 
-  // If no data, return null or a message
-  if (!data || data.length === 0) {
-    return <div>No data available</div>;
-  }
+  // // If no data, return null or a message
+  // if (!data || data.length === 0) {
+  //   return <div>No data available</div>;
+  // }
 
   return (
     <div className="relative">
@@ -191,7 +192,7 @@ const UserList: React.FC<UserListProps> = ({ setHasData, data }) => {
           </tr>
         </thead>
         <tbody className="bg-white">
-          {data.map((user: any) => (
+          {data?.map((user: any) => (
             <tr
               key={user._id}
               className="text-[#101928] hover:bg-gray-50 relative"

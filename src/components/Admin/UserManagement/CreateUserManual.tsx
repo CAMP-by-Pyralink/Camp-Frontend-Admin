@@ -28,11 +28,11 @@ const CreateUserManual: React.FC<CreateUserManualProps> = ({
     fetchDepartments();
   }, [fetchDepartments]);
 
-  useEffect(() => {
-    if (departments && departments.length > 0) {
-      setDepartment(departments[0]);
-    }
-  }, [departments]);
+  // useEffect(() => {
+  //   if (departments && departments.length > 0) {
+  //     setDepartment(departments[0]);
+  //   }
+  // }, [departments]);
 
   // const handleCreateClick = async () => {
   //   // const password = generatePassword();
@@ -150,10 +150,13 @@ const CreateUserManual: React.FC<CreateUserManualProps> = ({
                   Department
                 </label>
                 <select
-                  value={department}
+                  value={department || ""}
                   onChange={(e) => setDepartment(e.target.value)}
                   className="w-full px-4 py-2 border rounded-lg outline-none focus:outline-none"
                 >
+                  <option value="" disabled>
+                    Select Department
+                  </option>
                   {departments?.map((dept) => (
                     <option key={dept} value={dept}>
                       {dept}

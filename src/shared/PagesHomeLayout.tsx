@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import filterIcon from "../assets/svgs/filtericon.svg";
 import searchIcon from "../assets/svgs/search.svg";
-// import downArricon from "../assets/svgs/downarrAnchor.svg";
 import exportArr from "../assets/svgs/export-arr.svg";
 
 interface PagesHomeLayoutProps {
   onFilterClick?: () => void;
-  onExportClick?: (format: "pdf" | "csv" | "xls") => void; // Callback with the selected format
+  onExportClick?: (format: "pdf" | "csv" | "xls") => void;
+  onSearch?: (searchTerm: string) => void;
+  searchTerm: string;
   showFilter?: boolean;
   showExport?: boolean;
   children?: React.ReactNode;
@@ -15,6 +16,8 @@ interface PagesHomeLayoutProps {
 const PagesHomeLayout: React.FC<PagesHomeLayoutProps> = ({
   onFilterClick,
   onExportClick,
+  onSearch,
+  searchTerm = "",
   showFilter = false,
   showExport = false,
   children,
@@ -22,9 +25,9 @@ const PagesHomeLayout: React.FC<PagesHomeLayoutProps> = ({
   const [isExportDropdownOpen, setIsExportDropdownOpen] = useState(false);
 
   const handleExport = (format: "pdf" | "csv" | "xls") => {
-    setIsExportDropdownOpen(false); // Close the dropdown
+    setIsExportDropdownOpen(false);
     if (onExportClick) {
-      onExportClick(format); // Pass the selected format to the parent
+      onExportClick(format);
     }
   };
 
@@ -37,6 +40,8 @@ const PagesHomeLayout: React.FC<PagesHomeLayoutProps> = ({
             <input
               type="text"
               placeholder="Search"
+              value={searchTerm}
+              onChange={(e) => onSearch && onSearch(e.target.value)}
               className="border-b-[0.5px] border-black outline-none px-12 py-2 w-full focus:outline-none"
             />
             <img
