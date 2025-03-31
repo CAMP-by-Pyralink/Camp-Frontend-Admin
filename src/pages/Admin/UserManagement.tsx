@@ -147,7 +147,7 @@ const UserManagement = () => {
     </div>
   );
 
-  if (!hasInitialData && currentData.length === 0) {
+  if (!hasInitialData && currentData?.length === 0) {
     return (
       <>
         <EmptyState />

@@ -862,6 +862,13 @@ const CreateTrainingModules = () => {
           Add new module
         </button>
       </div>
+      {/*  */}
+      <button
+        className="w-full bg-primary500 text-white py-3 px-12 rounded-lg font-semibold"
+        onClick={saveTrainingModule}
+      >
+        Save
+      </button>
     </div>
   );
 };

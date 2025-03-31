@@ -6,149 +6,57 @@ import ModalLayout from "../../../shared/ModalLayout";
 import AssignTrainingModal from "./AssignTrainingModal";
 import { useTrainingStore } from "../../../store/useAwarenessTrainingStore";
 import dragIcon from "../../../assets/svgs/dragIcon.svg";
-import {
-  Delete,
-  DeleteIcon,
-  Edit,
-  PencilLine,
-  Trash2,
-  SquarePlus,
-} from "lucide-react";
+import { ArrowDownIcon, ChevronDown, ChevronUp } from "lucide-react";
 import { Video, FileText, Link, Image } from "lucide-react";
 import ModuleManagementModal from "./ModuleManagementModal";
-import axios from "axios";
-import toast from "react-hot-toast";
-import { useAuthStore } from "../../../store/useAuthStore";
+// import { useAuthStore } from "../../../store/useAuthStore";
 
 const TrainingDetails: React.FC = () => {
   const [isAssigned, setIsAssigned] = useState(false);
+  const [expandedModule, setExpandedModule] = useState<number | null>(null);
+  const [showModuleModal, setShowModuleModal] = useState(false);
+  const [currentModuleIndex, setCurrentModuleIndex] = useState<number | null>(
+    null
+  );
+  const [isEditMode, setIsEditMode] = useState(false);
   const { trainingId } = useParams<{ trainingId: string }>();
   const { fetchSingleTraining, singleTraining } = useTrainingStore();
-  const [expandedModule, setExpandedModule] = useState<number | null>(null);
   const navigate = useNavigate();
-
-  // State for module management
-  const [showModuleModal, setShowModuleModal] = useState(false);
-  const [currentModuleIndex, setCurrentModuleIndex] = useState<
-    number | undefined
-  >(undefined);
-  const [isEditMode, setIsEditMode] = useState(false);
-
-  // API setup for direct calls
-  const api = axios.create({
-    baseURL: import.meta.env.VITE_APP_BASE_URL,
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-
-  // Add auth token to requests
-  api.interceptors.request.use(
-    (config) => {
-      const { authUser } = useAuthStore.getState();
-      if (authUser) {
-        config.headers.Authorization = `Bearer ${authUser}`;
-      }
-      return config;
-    },
-    (error) => {
-      return Promise.reject(error);
-    }
-  );
+  const location = useLocation();
+  const { assignedView } = location.state || { assignedView: false };
 
   useEffect(() => {
-    if (trainingId) {
-      fetchSingleTraining(trainingId);
-    }
+    if (trainingId) fetchSingleTraining(trainingId);
   }, [trainingId, fetchSingleTraining]);
 
-  if (!singleTraining) {
-    return <div>Loading...</div>;
-  }
+  if (!singleTraining)
+    return <div className="text-center py-10">Loading...</div>;
 
-  const toggleModule = (id: number) => {
-    setExpandedModule((prev) => (prev === id ? null : id));
-  };
-
-  const handleAddModule = () => {
-    setIsEditMode(false);
-    setCurrentModuleIndex(undefined);
-    setShowModuleModal(true);
-  };
-
-  const handleEditModule = (moduleIndex: number) => {
-    setIsEditMode(true);
-    setCurrentModuleIndex(moduleIndex);
-    setShowModuleModal(true);
-  };
-
-  const handleDeleteModule = async (moduleIndex: number) => {
-    if (!window.confirm("Are you sure you want to delete this module?")) {
-      return;
-    }
-
-    try {
-      // Create a copy of the training data without the module to delete
-      const updatedTraining = { ...singleTraining };
-      updatedTraining.modules = updatedTraining.modules.filter(
-        (_, index) => index !== moduleIndex
-      );
-
-      // Call API to update training
-      await api.patch(
-        `/training/updateTraining/${trainingId}`,
-        updatedTraining
-      );
-
-      // Refresh training data
-      fetchSingleTraining(trainingId!);
-
-      toast.success("Module deleted successfully");
-    } catch (error) {
-      console.error("Failed to delete module:", error);
-      toast.error("Failed to delete module. Please try again.");
-    }
-  };
-
-  const handleAddLesson = (moduleIndex: number) => {
-    // Set up to edit the module with focus on adding a new lesson
-    setIsEditMode(true);
-    setCurrentModuleIndex(moduleIndex);
-    setShowModuleModal(true);
-  };
-
-  const handleSaveChanges = async () => {
-    try {
-      // Call API to save all changes to the training
-      await api.patch(`/training/updateTraining/${trainingId}`, singleTraining);
-
-      toast.success("Training updated successfully");
-      navigate(-1); // Go back to previous page
-    } catch (error) {
-      console.error("Failed to save changes:", error);
-      // toast.error("Failed to save changes. Please try again.");
-    }
+  const toggleModule = (index: number) => {
+    setExpandedModule(expandedModule === index ? null : index);
   };
 
   const renderLessonIcon = (lessonType: string) => {
-    switch (lessonType) {
-      case "video":
-        return <Video className="h-5 w-5" />;
-      case "document":
-        return <FileText className="h-5 w-5" />;
-      case "link":
-        return <Link className="h-5 w-5" />;
-      case "text & image":
-        return <Image className="h-5 w-5" />;
-      default:
-        return null;
-    }
+    const icons: Record<string, JSX.Element> = {
+      video: <Video className=" size-[14px] text-blue-500" />,
+      document: <FileText className=" size-[14px] text-green-500" />,
+      link: <Link className=" size-[14px] text-yellow-500" />,
+      "text & image": <Image className=" size-[14px] text-purple-500" />,
+    };
+    return icons[lessonType] || null;
   };
-
+  // Function to get progress percentage from progress array
+  const getProgressPercentage = (email: string) => {
+    if (!singleTraining.progress) return 0;
+    const userProgress = singleTraining.progress.find(
+      (p: any) => p.email === email
+    );
+    return userProgress ? userProgress.percentage : 0;
+  };
   return (
     <div>
       {/* Header Section */}
-      <h1 className="text-greyText font-medium text-2xl mb-2">Modules</h1>
+      {/* <h1 className="text-greyText font-medium text-2xl mb-2">Modules</h1> */}
       <div className="flex items-center gap-2 mb-4">
         <h1
           className="text-primary500 text-sm font-medium cursor-pointer"
@@ -158,15 +66,14 @@ const TrainingDetails: React.FC = () => {
         </h1>
         <span className="text-neutrals500 text-sm font-medium">{">"}</span>
         <h1 className="text-neutrals500 text-sm font-medium">
-          View Training Details
+          View {assignedView && "Assigned"} Training Details
         </h1>
       </div>
 
-      <div className="bg-[#EBECFF] p-4 space-y-4">
-        <div className="bg-white p-12 rounded-3xl flex items-center gap-12 justify-between">
+      <div className="bg-[#EBECFF] p-4 space-y-4 rounded-3xl">
+        <div className=" p-12  flex items-center gap-12 justify-between">
           <div className="w-full space-y-3 basis-[60%]">
             <h1 className="text-[56px] font-bold">{singleTraining.title}</h1>
-            <h1>Training description:</h1>
             <p className="text-greyText text-[12px]">
               {singleTraining.modules.length} modules
             </p>
@@ -180,6 +87,117 @@ const TrainingDetails: React.FC = () => {
           </div>
         </div>
       </div>
+      {/* DEtails  */}
+      {!assignedView ? (
+        <div className=" flex gap-32 mt-12">
+          {/* description */}
+          <div className=" flex-1">
+            <h1 className=" text-2xl font-semibold">Training description</h1>
+            <p className=" mt-4 text-base text-[#1B1B1B99] leading-[152%] w-[100%]">
+              {singleTraining.description}
+            </p>
+          </div>
+          {/* modules */}
+          <div className=" basis-[30%]">
+            <h1 className=" text-2xl font-semibold mb-6">Modules</h1>
+            <div className=" space-y-4">
+              {singleTraining.modules.map((module, index) => (
+                <div
+                  key={index}
+                  className="module-item border border-neutral-300 py-4 px-4"
+                >
+                  <div className=" flex items-center justify-between">
+                    <h1
+                      className={`${
+                        expandedModule === index ? " font-semibold" : ""
+                      }`}
+                    >
+                      Module {index + 1}
+                    </h1>
+                    {/* <h2 className="text-xs font-medium">{module.moduleTitle}</h2> */}
+                    <button onClick={() => toggleModule(index)}>
+                      {expandedModule === index ? (
+                        <img src={upArrow} alt="" />
+                      ) : (
+                        <ChevronDown />
+                      )}
+                    </button>
+                  </div>
+                  {/*  */}
+                  {expandedModule === index && (
+                    <div className="mt-3 space-y-2">
+                      {module.lessons.map((lesson, lessonIndex) => (
+                        <div
+                          key={lessonIndex}
+                          className="flex items-center gap- pt-2"
+                        >
+                          {renderLessonIcon(lesson.lessonType)}
+                          <span className=" ml-2 text-[10px]">
+                            {lesson.lessonTitle}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      ) : (
+        // Assigned table
+        <div className="mt-8">
+          {/* <h1 className="text-2xl font-semibold mb-4">Assigned Employees</h1> */}
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="bg-[#EAECF0] text-greyText">
+                  {/* <th className="p-4 text-left">
+                    EMPLOYEE ID
+                  </th> */}
+                  <th className="p-6 text-left">EMPLOYEE</th>
+                  <th className="p-6 text-left">PROGRESS</th>
+                </tr>
+              </thead>
+              <tbody>
+                {singleTraining.assignedTo &&
+                  singleTraining.assignedTo.individuals &&
+                  singleTraining.assignedTo.individuals.map(
+                    (individual: any, index: number) => {
+                      const progressPercentage = getProgressPercentage(
+                        individual.email
+                      );
+                      return (
+                        <tr
+                          key={individual._id}
+                          className="border-b border-[#E8E8E8]"
+                        >
+                          {/* <td className=" p-4">
+                            Py 2234
+                          </td> */}
+                          <td className=" p-4 text-[#101928]">
+                            {individual.email}
+                          </td>
+                          <td className=" p-6">
+                            <div className="flex items-center gap-2">
+                              <div className="w-full bg-secondary100 rounded-full h-3">
+                                <div
+                                  className="bg-secondary600 h-3 rounded-full"
+                                  style={{ width: `${progressPercentage}%` }}
+                                ></div>
+                              </div>
+                              <span>{progressPercentage}%</span>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    }
+                  )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       {/* Modals */}
       {isAssigned && (

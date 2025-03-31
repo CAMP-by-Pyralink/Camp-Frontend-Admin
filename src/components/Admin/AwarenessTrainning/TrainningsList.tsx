@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { TabContent, TabItem } from "./data";
+// import { TabContent, TabItem } from "./data";
 import { useNavigate } from "react-router-dom";
 import profilepic from "../../../assets/avatar.png";
 import { useTrainingStore } from "../../../store/useAwarenessTrainingStore";
@@ -25,7 +25,7 @@ const TrainningsList: React.FC<TrainningsListProps> = ({
   showCheckbox,
   setShowCheckbox,
 }) => {
-  const [activeTab, setActiveTab] = useState<keyof TabContent>("browse");
+  const [activeTab, setActiveTab] = useState("browse");
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedCard, setSelectedCard] = useState(null);
@@ -35,11 +35,8 @@ const TrainningsList: React.FC<TrainningsListProps> = ({
 
   const { deleteSingleTraining } = useTrainingStore();
 
-  const totalPages = 2500;
   const navigate = useNavigate();
   const { fetchTrainings, trainings } = useTrainingStore();
-
-  const avatars = [profilepic, profilepic, profilepic, profilepic];
 
   useEffect(() => {
     setIsLoading(true);
@@ -65,22 +62,22 @@ const TrainningsList: React.FC<TrainningsListProps> = ({
     handleCloseOptionsModal();
   };
 
-  const handleCardClick = (training: TabItem) => {
+  const handleCardClick = (training: any) => {
     // Navigate to the normal TrainingDetails layout
     navigate(`/training-details/${training._id}`, {
       state: {
         ...training,
-        isViewMode: false,
+        assignedView: false,
       },
     });
   };
 
-  const handleViewClick = (training: TabItem) => {
+  const handleViewClick = (training: any) => {
     // Navigate to the TrainingDetails layout with the table
     navigate(`/training-details/${training._id}`, {
       state: {
         ...training,
-        isViewMode: true,
+        assignedView: true,
       },
     });
   };
@@ -109,7 +106,7 @@ const TrainningsList: React.FC<TrainningsListProps> = ({
                 activeTab === tab ? "text-primary900" : "text-[#5A5555]"
               }`}
               onClick={() => {
-                setActiveTab(tab as keyof TabContent);
+                setActiveTab(tab);
                 setCurrentPage(1); // Reset to first page when tab changes
               }}
             >
@@ -216,7 +213,7 @@ const TrainningsList: React.FC<TrainningsListProps> = ({
                             />
                           ))}
                         {item.assignedTo.individuals.length > 3 && (
-                          <span className="inline-block h-8 w-8 rounded-full bg-gray-200 text-sm text-gray-700 flex items-center justify-center">
+                          <span className=" h-8 w-8 rounded-full bg-gray-200 text-sm text-gray-700 flex items-center justify-center">
                             +{item.assignedTo.individuals.length - 3}
                           </span>
                         )}
@@ -224,7 +221,7 @@ const TrainningsList: React.FC<TrainningsListProps> = ({
                       <button
                         className="text-primary500 text-xs underline"
                         onClick={(e) => {
-                          e.stopPropagation(); // Prevent card click event
+                          e.stopPropagation();
                           handleViewClick(item); // View button click for table layout
                         }}
                       >
