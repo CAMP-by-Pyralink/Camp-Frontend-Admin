@@ -139,6 +139,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useAdminStore } from "../../../store/useAdminStore";
+import EditUserForm from "./EditUserInfo";
 
 interface UserListProps {
   setHasData: (hasData: boolean) => void;
@@ -148,6 +149,7 @@ interface UserListProps {
 const UserList: React.FC<UserListProps> = ({ setHasData, data }) => {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const { type } = useParams<{ type: string }>();
+  const [editModalOpen, setEditModalOpen] = useState(false);
 
   // Debug logging
   useEffect(() => {
@@ -172,10 +174,14 @@ const UserList: React.FC<UserListProps> = ({ setHasData, data }) => {
     return `${day}/${month}/${year} ${formattedHours}:${minutes}${ampm}`;
   };
 
-  // // If no data, return null or a message
-  // if (!data || data.length === 0) {
-  //   return <div>No data available</div>;
-  // }
+  // If no data, return null or a message
+  if (!data || data.length === 0) {
+    return (
+      <div className=" text-center">
+        Not found Add {type === "Admin" ? "Admin" : "User"}
+      </div>
+    );
+  }
 
   return (
     <div className="relative">
@@ -224,7 +230,10 @@ const UserList: React.FC<UserListProps> = ({ setHasData, data }) => {
                         </li>
                       </Link>
                       <hr />
-                      <li className="px-4 py-2 text-[#333333] hover:bg-blue50 cursor-pointer">
+                      <li
+                        className="px-4 py-2 text-[#333333] hover:bg-blue50 cursor-pointer"
+                        onClick={() => setEditModalOpen((prev) => !prev)}
+                      >
                         Edit
                       </li>
                       <hr />
@@ -239,6 +248,7 @@ const UserList: React.FC<UserListProps> = ({ setHasData, data }) => {
           ))}
         </tbody>
       </table>
+      {editModalOpen && <EditUserForm setEditModalOpen={setEditModalOpen} />}
     </div>
   );
 };

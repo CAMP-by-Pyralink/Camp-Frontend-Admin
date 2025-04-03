@@ -86,7 +86,7 @@ interface AdminStore {
   users: any[];
   companyData: any[];
   currentUser: GetCurrentAdminData | null;
-  companyDetails: CompanyDetails | null;
+  companyDetails: any | null;
   fetchDepartments: () => Promise<void>;
   getAdmins: () => Promise<void>;
   // getUsers: () => Promise<void>;
