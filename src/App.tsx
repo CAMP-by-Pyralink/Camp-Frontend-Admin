@@ -67,7 +67,7 @@ function App() {
 
   if (loading) {
     return (
-      <div className="loading-container">
+      <div className="loading-container hdh">
         <ClipLoader size={50} color="#123abc" />
       </div>
     );
