@@ -79,6 +79,7 @@ interface TrainingState {
   addQuestion: (question: Question) => void;
   resetTraining: () => void;
   deleteSingleTraining: (trainingId: string) => Promise<any>;
+  updateTraining: (data: any, trainingId: string) => Promise<any>;
 }
 
 export const useTrainingStore = create<TrainingState>((set) => ({
@@ -241,4 +242,15 @@ export const useTrainingStore = create<TrainingState>((set) => ({
   //       },
   //     ],
   //   })),
+  updateTraining: async (trainingId: string, data: any) => {
+    set({ isLoading: true });
+    try {
+      const response = await api.patch(
+        `/training/updateTraining/${trainingId}`
+      );
+      console.log(response.data.msg);
+    } catch (error: any) {
+      console.log(error.response.data.msg);
+    }
+  },
 }));

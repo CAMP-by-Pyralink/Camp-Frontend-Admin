@@ -47,6 +47,7 @@ const Alerts = lazy(() => import("./pages/Admin/Alerts"));
 import Cookies from "js-cookie";
 import ResetPassword from "./_Auth/Admin/ResetPassword";
 import CreateTrainingModules from "./components/Admin/AwarenessTrainning/CreateTrainingModules";
+import EditTrainingModules from "./components/Admin/AwarenessTrainning/EditTrainingModules";
 
 function App() {
   const { setIsAuthenticated } = useAuthStore();
@@ -105,7 +106,6 @@ function App() {
           <Route element={<ProtectedRoutes />}>
             <Route path="/" element={<AdminLayout />}>
               <Route index element={<Overview />} />
-
               {/* USER MANAGEMENT ROUTES */}
               {/* <Route path="user-management" element={<UserManagement />}> */}
               {/* <Route path="user" element={<User />} />
@@ -115,9 +115,7 @@ function App() {
                 element={<UserManagement />}
               />
               <Route path="profile" element={<EmployeeProfile />} />
-
               {/* </Route> */}
-
               {/* PHISHING SIMULATION ROUTES */}
               <Route path="phishing-simulation">
                 <Route
@@ -149,6 +147,11 @@ function App() {
               <Route
                 path="/training-details/:trainingId"
                 element={<TrainingDetails />}
+              />
+              // In your router configuration
+              <Route
+                path="/edit-training/:trainingId"
+                element={<EditTrainingModules />}
               />
               <Route path="asset-management" element={<AssetManagement />} />
               <Route path="/asset-detail/:id" element={<AssetsDetails />} />

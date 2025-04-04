@@ -9,6 +9,7 @@ import dragIcon from "../../../assets/svgs/dragIcon.svg";
 import { ArrowDownIcon, ChevronDown, ChevronUp } from "lucide-react";
 import { Video, FileText, Link, Image } from "lucide-react";
 import ModuleManagementModal from "./ModuleManagementModal";
+import Button from "../../../shared/Button";
 // import { useAuthStore } from "../../../store/useAuthStore";
 
 const TrainingDetails: React.FC = () => {
@@ -57,17 +58,26 @@ const TrainingDetails: React.FC = () => {
     <div>
       {/* Header Section */}
       {/* <h1 className="text-greyText font-medium text-2xl mb-2">Modules</h1> */}
-      <div className="flex items-center gap-2 mb-4">
-        <h1
-          className="text-primary500 text-sm font-medium cursor-pointer"
-          onClick={() => navigate(-1)}
+      <div className=" flex items-center justify-between mb-6">
+        <div className="flex items-center gap-2 mb-4">
+          <h1
+            className="text-primary500 text-sm font-medium cursor-pointer"
+            onClick={() => navigate(-1)}
+          >
+            Awareness training
+          </h1>
+          <span className="text-neutrals500 text-sm font-medium">{">"}</span>
+          <h1 className="text-neutrals500 text-sm font-medium">
+            View {assignedView && "Assigned"} Training Details
+          </h1>
+        </div>
+        {/*  */}
+        <button
+          onClick={() => navigate(`/edit-training/${singleTraining._id}`)}
+          className="border border-[#D0D5DD] py-2.5 px-5 rounded-lg text-[#344054]"
         >
-          Awareness training
-        </h1>
-        <span className="text-neutrals500 text-sm font-medium">{">"}</span>
-        <h1 className="text-neutrals500 text-sm font-medium">
-          View {assignedView && "Assigned"} Training Details
-        </h1>
+          Edit Training
+        </button>
       </div>
 
       <div className="bg-[#EBECFF] p-4 space-y-4 rounded-3xl">

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { ChevronDown, ChevronUp, PlusCircle } from "lucide-react";
+import { ChevronDown, ChevronUp, PlusCircle, Trash } from "lucide-react";
 import uploadVideoIcon from "../../../assets/svgs/upload-video-icon.svg";
 import uploadDocumentIcon from "../../../assets/svgs/upload-document-icon.svg";
 import uploadLinkicon from "../../../assets/svgs/link-icon.svg";
 import uploadTexticon from "../../../assets/svgs/upload-text-img-icon.svg";
+import delIcon from "../../../assets/svgs/delete-icon.svg";
 import Editor from "./Editor";
 import {
   LessonType,
@@ -12,6 +13,12 @@ import {
 } from "../../../store/useAwarenessTrainingStore";
 import CreateTrainingStep3 from "./CreateTrainingStep3";
 import { useNavigate } from "react-router-dom";
+
+interface CreateTrainingModulesProps {
+  initialData?: FormState;
+  onSave?: (data: any) => Promise<void>;
+  isEditMode?: boolean;
+}
 
 interface QuestionData {
   question: string;
@@ -56,7 +63,11 @@ interface FormState {
   }[];
 }
 
-const CreateTrainingModules = () => {
+const CreateTrainingModules = ({
+  initialData,
+  onSave,
+  isEditMode = false,
+}: CreateTrainingModulesProps) => {
   const navigate = useNavigate();
   const [isUploading, setIsUploading] = useState<{
     moduleId: number | null;
@@ -66,29 +77,31 @@ const CreateTrainingModules = () => {
   const { createTraining } = useTrainingStore();
 
   // Form state
-  const [formState, setFormState] = useState<FormState>({
-    bannerImage: "" | File | null,
-    title: "",
-    description: "",
-    startDate: "",
-    endDate: "",
-    modules: [
-      {
-        id: 1,
-        title: "New Module",
-        isCollapsed: false,
-        lessons: [
-          {
-            id: 1,
-            title: "New Lesson",
-            type: "video",
-            content: null,
-            quizzes: [],
-          },
-        ],
-      },
-    ],
-  });
+  const [formState, setFormState] = useState<FormState>(
+    initialData || {
+      bannerImage: "" | File | null,
+      title: "",
+      description: "",
+      startDate: "",
+      endDate: "",
+      modules: [
+        {
+          id: 1,
+          title: "New Module",
+          isCollapsed: false,
+          lessons: [
+            {
+              id: 1,
+              title: "New Lesson",
+              type: "video",
+              content: null,
+              quizzes: [],
+            },
+          ],
+        },
+      ],
+    }
+  );
 
   // Active lesson state for content type tabs
   const [activeLessonTab, setActiveLessonTab] = useState<{
@@ -431,6 +444,30 @@ const CreateTrainingModules = () => {
     });
   };
 
+  // Delete module
+  const deleteModule = (moduleId: number) => {
+    setFormState((prev) => ({
+      ...prev,
+      modules: prev.modules.filter((module) => module.id !== moduleId),
+    }));
+  };
+
+  // Delete lesson
+  const deleteLesson = (moduleId: number, lessonId: number) => {
+    setFormState((prev) => ({
+      ...prev,
+      modules: prev.modules.map((module) => {
+        if (module.id === moduleId) {
+          return {
+            ...module,
+            lessons: module.lessons.filter((lesson) => lesson.id !== lessonId),
+          };
+        }
+        return module;
+      }),
+    }));
+  };
+
   const prepareDataForBackend = () => {
     // Format modules according to the backend's expected structure
     const formattedModules: ModuleData[] = formState.modules.map((module) => {
@@ -607,12 +644,21 @@ const CreateTrainingModules = () => {
           <div>
             <div className="flex items-center justify-between mb-4">
               <h1 className="text-2xl">Module {module.id}</h1>
-              <button
-                className="p-2 hover:bg-gray-100 rounded-full"
-                onClick={() => toggleModuleCollapse(module.id)}
-              >
-                {module.isCollapsed ? <ChevronDown /> : <ChevronUp />}
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  className="p-2 hover:bg-gray-100 rounded-full"
+                  onClick={() => toggleModuleCollapse(module.id)}
+                >
+                  {module.isCollapsed ? <ChevronDown /> : <ChevronUp />}
+                </button>
+                <button
+                  onClick={() => deleteModule(module.id)}
+                  className="text-red-500 hover:text-red-700"
+                >
+                  {/* <Trash size={20} /> */}
+                  <img src={delIcon} className=" size-5" alt="" />
+                </button>
+              </div>
             </div>
 
             {/* Module Title Input */}
@@ -641,7 +687,16 @@ const CreateTrainingModules = () => {
                     key={lesson.id}
                     className="mt-6 border border-primary100 rounded-2xl p-8 space-y-6"
                   >
-                    <h1 className="text-2xl">Lesson {lesson.id}</h1>
+                    <div className="flex justify-between items-center mb-4">
+                      <h1 className="text-2xl">Lesson {lesson.id}</h1>
+                      <button
+                        onClick={() => deleteLesson(module.id, lesson.id)}
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        {/* <Trash size={20} /> */}
+                        <img src={delIcon} className=" size-5" alt="" />
+                      </button>
+                    </div>
 
                     {/* Lesson Title */}
                     <div>
