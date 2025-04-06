@@ -210,11 +210,11 @@ const TrainingDetails: React.FC = () => {
       )}
 
       {/* Modals */}
-      {isAssigned && (
+      {/* {isAssigned && (
         <ModalLayout>
           <AssignTrainingModal />
         </ModalLayout>
-      )}
+      )} */}
 
       {showModuleModal && trainingId && (
         <ModuleManagementModal
@@ -222,10 +222,10 @@ const TrainingDetails: React.FC = () => {
           trainingId={trainingId}
           moduleToEdit={
             currentModuleIndex !== undefined
-              ? singleTraining.modules[currentModuleIndex]
+              ? singleTraining.modules[currentModuleIndex!]
               : null
           }
-          moduleIndex={currentModuleIndex}
+          moduleIndex={currentModuleIndex ?? undefined}
           isEditMode={isEditMode}
         />
       )}

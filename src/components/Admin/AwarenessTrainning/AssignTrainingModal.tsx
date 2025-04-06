@@ -8,12 +8,12 @@ interface AssignTrainingModalProps {
   setAssignModal: (value: boolean) => void;
   setSelectionMode: (value: boolean) => void;
   setShowCheckbox: (value: boolean) => void;
-  selectedTraining: string | null;
+  selectedTrainings: string[];
 }
 
 const AssignTrainingModal = ({
   setAssignModal,
-  selectedTraining,
+  selectedTrainings,
   setSelectionMode,
   setShowCheckbox,
 }: AssignTrainingModalProps) => {
@@ -33,6 +33,23 @@ const AssignTrainingModal = ({
 
   console.log("jjjjd", users);
 
+  // const handleAssignTraining = async () => {
+  //   const dataToSend = {
+  //     addingType: selectedOption,
+  //     ...(selectedOption === "individual" && { userId: selectedEmployee }),
+  //     ...(selectedOption === "department" && {
+  //       departmentName: selectedDepartment,
+  //     }),
+  //   };
+
+  //   const response = await assignTraining(selectedTraining, dataToSend);
+  //   if (response) {
+  //     setAssignModal(false);
+  //     setSelectionMode(false);
+  //     fetchTrainings("browse", 1);
+  //     setShowCheckbox(false);
+  //   }
+  // };
   const handleAssignTraining = async () => {
     const dataToSend = {
       addingType: selectedOption,
@@ -42,14 +59,16 @@ const AssignTrainingModal = ({
       }),
     };
 
-    const response = await assignTraining(selectedTraining, dataToSend);
-    if (response) {
-      setAssignModal(false);
-      setSelectionMode(false);
-      fetchTrainings("browse", 1);
-      setShowCheckbox(false);
+    for (const trainingId of selectedTrainings) {
+      await assignTraining(trainingId, dataToSend);
     }
+
+    setAssignModal(false);
+    setSelectionMode(false);
+    setShowCheckbox(false);
+    fetchTrainings("browse", 1);
   };
+
   console.log(departments, "depts");
 
   return (

@@ -7,6 +7,7 @@ import CreateTrainningModal from "../../components/Admin/AwarenessTrainning/Crea
 import HeaderTitle from "../../shared/HeaderTitle";
 import { useNavigate } from "react-router-dom";
 import AssignTrainingModal from "../../components/Admin/AwarenessTrainning/AssignTrainingModal";
+import { useTrainingStore } from "../../store/useAwarenessTrainingStore";
 const AwarenessTraining = () => {
   const [selectionMode, setSelectionMode] = useState<boolean>(false);
   const [createTraining, setCreateTraining] = useState<boolean>(false);
@@ -14,7 +15,9 @@ const AwarenessTraining = () => {
   const [showCheckbox, setShowCheckbox] = useState(false);
 
   const navigate = useNavigate();
-  const [selectedTraining, setSelectedTraining] = useState<string | null>(null);
+  const [selectedTrainings, setSelectedTrainings] = useState<string[]>([]);
+
+  const { deleteSingleTraining } = useTrainingStore();
 
   const handleCreateNew = () => {
     navigate("/create-training");
@@ -80,7 +83,26 @@ const AwarenessTraining = () => {
                 >
                   Assign
                 </button>
-                <button className=" border border-[#B30100] py-2.5 px-12 rounded-lg  text-[#FF0301] font-semibold">
+                <button
+                  className="border border-[#B30100] py-2.5 px-12 rounded-lg text-[#FF0301] font-semibold"
+                  onClick={async () => {
+                    if (selectedTrainings.length === 0) return;
+
+                    const confirmDelete = window.confirm(
+                      `Are you sure you want to delete ${selectedTrainings.length} training(s)?`
+                    );
+                    if (!confirmDelete) return;
+
+                    for (const trainingId of selectedTrainings) {
+                      await deleteSingleTraining(trainingId); // ✅ reuse your existing function
+                    }
+
+                    // reset UI states
+                    setSelectionMode(false);
+                    setShowCheckbox(false);
+                    setSelectedTrainings([]);
+                  }}
+                >
                   Delete
                 </button>
               </div>
@@ -91,8 +113,8 @@ const AwarenessTraining = () => {
           <TrainningsList
             setSelectionMode={setSelectionMode}
             setAssignModal={setAssignModal}
-            setSelectedTraining={setSelectedTraining}
-            selectedTraining={selectedTraining}
+            setSelectedTrainings={setSelectedTrainings}
+            selectedTrainings={selectedTrainings}
             showCheckbox={showCheckbox}
             setShowCheckbox={setShowCheckbox}
           />
@@ -108,7 +130,7 @@ const AwarenessTraining = () => {
       {assignModal && (
         <AssignTrainingModal
           setAssignModal={setAssignModal}
-          selectedTraining={selectedTraining}
+          selectedTrainings={selectedTrainings}
           setSelectionMode={setSelectionMode}
           setShowCheckbox={setShowCheckbox}
         />

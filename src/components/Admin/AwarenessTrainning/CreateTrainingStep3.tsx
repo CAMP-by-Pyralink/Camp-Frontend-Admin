@@ -30,6 +30,7 @@ interface CreateTrainingStep3Props {
   quizId: number;
   moduleId: number;
   lessonId: number;
+  initialQuestions?: QuestionData[];
 }
 
 const CreateTrainingStep3: React.FC<CreateTrainingStep3Props> = ({
@@ -37,15 +38,17 @@ const CreateTrainingStep3: React.FC<CreateTrainingStep3Props> = ({
   quizId,
   moduleId,
   lessonId,
+  initialQuestions,
 }) => {
   const { control, watch, setValue } = useForm<FormData>({
     defaultValues: {
-      questions: [
+      questions: initialQuestions || [
+        // Use initialQuestions here
         {
           id: "q1",
           text: "",
           type: "multiple-choice",
-          displayType: "Multiple choice", // For UI display
+          displayType: "Multiple choice",
           choices: Array.from({ length: 2 }, (_, i) => ({
             id: `c${i + 1}`,
             text: "",

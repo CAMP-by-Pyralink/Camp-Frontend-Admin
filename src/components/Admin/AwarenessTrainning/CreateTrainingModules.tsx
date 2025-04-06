@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { ChevronDown, ChevronUp, PlusCircle, Trash } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  PlusCircle,
+  Trash,
+  UploadCloud,
+} from "lucide-react";
 import uploadVideoIcon from "../../../assets/svgs/upload-video-icon.svg";
 import uploadDocumentIcon from "../../../assets/svgs/upload-document-icon.svg";
 import uploadLinkicon from "../../../assets/svgs/link-icon.svg";
@@ -41,7 +47,7 @@ interface ModuleData {
 }
 
 interface FormState {
-  bannerImage: File | null;
+  bannerImage: string | null;
   title: string;
   description: string;
   startDate: string;
@@ -79,7 +85,7 @@ const CreateTrainingModules = ({
   // Form state
   const [formState, setFormState] = useState<FormState>(
     initialData || {
-      bannerImage: "" | File | null,
+      bannerImage: null,
       title: "",
       description: "",
       startDate: "",
@@ -125,17 +131,15 @@ const CreateTrainingModules = ({
     });
   };
 
-  // Handle file input for banner image
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       const reader = new FileReader();
 
       reader.onload = () => {
-        const base64String = reader.result as string;
         setFormState({
           ...formState,
-          bannerImage: base64String,
+          bannerImage: reader.result as string,
         });
       };
 
@@ -508,12 +512,15 @@ const CreateTrainingModules = ({
     });
 
     return {
-      bannerImage: formState.bannerImage,
+      bannerImage: formState.bannerImage || "",
       title: formState.title,
       description: formState.description,
       startDate: formState.startDate,
       endDate: formState.endDate,
       modules: formattedModules,
+      progress: 0, // Default value for progress
+      assignedTo: [], // Default value for assignedTo
+      _id: "", // Default value for _id
     };
   };
 
@@ -530,11 +537,11 @@ const CreateTrainingModules = ({
       console.log("Sending data to backend:", formattedData);
 
       // Call the createTraining function from the store
-      const response = await createTraining(formattedData);
-
-      if (response) {
-        // console.log("Training created successfully:", response);
-        navigate("/awareness-training");
+      if (isEditMode && onSave) {
+        await onSave(formattedData);
+      } else {
+        const response = await createTraining(formattedData);
+        if (response) navigate("/awareness-training");
       }
     } catch (error) {
       console.error("Error creating training:", error);
@@ -560,26 +567,72 @@ const CreateTrainingModules = ({
     <div className="px-24 space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
-        <h1 className="text-textColor text-2xl">Create Training Module</h1>
+        <h1 className="text-textColor text-2xl">
+          {isEditMode ? "Edit Training" : "Create Training Module"}
+        </h1>
         <button
           className="bg-primary500 text-white py-3 px-12 rounded-lg font-semibold"
           onClick={saveTrainingModule}
         >
-          Save
+          {isEditMode ? "Update" : "Save"}
         </button>
       </div>
 
       {/* Training Details Section */}
       <div className="space-y-6 w-fit">
-        <div>
+        <div className="space-y-2">
           <label htmlFor="bannerImage" className="block text-sm font-medium">
-            Upload image
+            Banner Image
           </label>
+
+          {/* Preview Container */}
+          {formState.bannerImage && (
+            <div className="relative group w-[634px]">
+              <img
+                src={formState.bannerImage}
+                alt="Banner preview"
+                className="w-full h-64 object-cover rounded-lg border border-primary100"
+              />
+              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all flex items-center justify-center">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setFormState({ ...formState, bannerImage: null })
+                  }
+                  className="text-white opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-white/10 rounded-full"
+                >
+                  <Trash className="w-6 h-6  text-red-600" />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Upload Area */}
+          {!formState.bannerImage && (
+            <label
+              htmlFor="bannerImage"
+              className="flex flex-col items-center justify-center w-[634px] h-48 cursor-pointer border-2 border-dashed border-primary100 rounded-md hover:border-primary500 transition-colors"
+            >
+              <div className="text-center space-y-2">
+                <UploadCloud className="w-8 h-8 text-primary500 mx-auto" />
+                <p className="text-sm font-medium text-primary500">
+                  Click to upload banner image
+                </p>
+                <p className="text-xs text-gray-500">
+                  Recommended: 1200x300px JPG or PNG
+                </p>
+              </div>
+            </label>
+          )}
+
+          {/* Hidden File Input */}
           <input
             type="file"
+            id="bannerImage"
             name="bannerImage"
-            className="border border-primary100 py-4 px-3 w-[634px] rounded-md"
+            className="hidden"
             onChange={handleFileChange}
+            accept="image/png, image/jpeg"
           />
         </div>
         <div>
@@ -697,7 +750,6 @@ const CreateTrainingModules = ({
                         <img src={delIcon} className=" size-5" alt="" />
                       </button>
                     </div>
-
                     {/* Lesson Title */}
                     <div>
                       <label
@@ -717,7 +769,6 @@ const CreateTrainingModules = ({
                         }
                       />
                     </div>
-
                     {/* Lesson Type Tabs */}
                     <h1>Select lesson type</h1>
                     <div className="flex justify-between">
@@ -747,7 +798,6 @@ const CreateTrainingModules = ({
                         </div>
                       ))}
                     </div>
-
                     {/* Content Inputs based on tab selection */}
                     <div>
                       {activeLessonTab.moduleId === module.id &&
@@ -862,7 +912,6 @@ const CreateTrainingModules = ({
                           </>
                         )}
                     </div>
-
                     {/* Add Quiz Button */}
                     <button
                       className="mt-6 bg-[#F9F5FF] border border-primary100 py-2 px-4 rounded-lg flex items-center gap-2"
@@ -871,14 +920,15 @@ const CreateTrainingModules = ({
                       <PlusCircle size={16} />
                       Add new quiz
                     </button>
-
                     {/* Display quizzes if any */}
+
                     {lesson.quizzes.map((quiz) => (
                       <div key={quiz.id} className="mt-4">
                         <CreateTrainingStep3
                           quizId={quiz.id}
                           moduleId={module.id}
                           lessonId={lesson.id}
+                          initialQuestions={quiz.questions} // Pass initial questions
                           onChange={(data) =>
                             handleQuizQuestions(
                               module.id,
@@ -922,7 +972,7 @@ const CreateTrainingModules = ({
         className="w-full bg-primary500 text-white py-3 px-12 rounded-lg font-semibold"
         onClick={saveTrainingModule}
       >
-        Save
+        {isEditMode ? "Update" : "Save"}
       </button>
     </div>
   );

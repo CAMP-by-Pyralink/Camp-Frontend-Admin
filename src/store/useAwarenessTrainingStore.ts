@@ -34,6 +34,7 @@ export type QuestionType = "multiple-choice" | "checkbox" | "input";
 export type LessonType = "video" | "document" | "link" | "text & image";
 
 export interface Lesson {
+  lessonTitle: ReactNode;
   lessonType: LessonType;
   content: string;
 }
@@ -53,6 +54,8 @@ interface Question {
 }
 
 export interface CreateTrainingData {
+  progress: any;
+  assignedTo: any;
   _id: string;
   bannerImage: string;
   title: string;
@@ -82,7 +85,7 @@ interface TrainingState {
   updateTraining: (data: any, trainingId: string) => Promise<any>;
 }
 
-export const useTrainingStore = create<TrainingState>((set) => ({
+export const useTrainingStore = create<TrainingState>((set, get) => ({
   isCreatingTraining: false,
   isLoading: false,
   trainings: [],
@@ -153,46 +156,16 @@ export const useTrainingStore = create<TrainingState>((set) => ({
       const response = await api.delete(
         `/training/deleteTraining/${trainingId}`
       );
-      toast.success(response.data.message);
+      toast.success(response.data.msg);
       return response;
     } catch (error: any) {
       console.log(error);
-      toast.error(
-        error.response?.data?.message || "Failed to delete training."
-      );
+      toast.error(error.response?.data?.msg || "Failed to delete training.");
     } finally {
       set({ isLoading: false });
     }
   },
-  // updateTraining: async (
-  //   trainingId: string,
-  //   data: Partial<CreateTrainingData>
-  // ) => {
-  //   set({ isUpdatingTraining: true });
-  //   try {
-  //     const response: AxiosResponse = await api.patch(
-  //       `/training/updateTraining/${trainingId}`,
-  //       data
-  //     );
-  //     toast.success("Training updated successfully!");
 
-  //     // Refresh the single training if it's the one we're updating
-  //     const { singleTraining } = get();
-  //     if (singleTraining && trainingId) {
-  //       await get().fetchSingleTraining(trainingId);
-  //     }
-
-  //     return response;
-  //   } catch (error: any) {
-  //     console.log(error);
-  //     toast.error(
-  //       error.response?.data?.message || "Failed to update training."
-  //     );
-  //     throw error;
-  //   } finally {
-  //     set({ isUpdatingTraining: false });
-  //   }
-  // },
   assignTraining: async (trainingId: string, data: any) => {
     set({ isLoading: true });
     try {
@@ -222,32 +195,21 @@ export const useTrainingStore = create<TrainingState>((set) => ({
   addQuestion: (question) =>
     set((state) => ({ questions: [...state.questions, question] })),
 
-  // resetTraining: () =>
-  //   set(() => ({
-  //     bannerImage: "",
-  //     title: "",
-  //     description: "",
-  //     startDate: "",
-  //     endDate: "",
-  //     modules: [
-  //       { moduleTitle: "", lessons: [{ lessonType: "video", content: "" }] },
-  //     ],
-  //     questions: [
-  //       {
-  //         question: "",
-  //         questionType: "multiple-choice",
-  //         options: ["", ""],
-  //         correctAnswer: "",
-  //         answerMethod: "multiple-choice",
-  //       },
-  //     ],
-  //   })),
   updateTraining: async (trainingId: string, data: any) => {
     set({ isLoading: true });
     try {
       const response = await api.patch(
         `/training/updateTraining/${trainingId}`
       );
+
+      if (response.status === 200) {
+        // Refresh the single training if it's the one we're updating
+        const { singleTraining } = get();
+        if (singleTraining && trainingId) {
+          await get().fetchSingleTraining(trainingId);
+        }
+        console.log(response.data.msg);
+      }
       console.log(response.data.msg);
     } catch (error: any) {
       console.log(error.response.data.msg);

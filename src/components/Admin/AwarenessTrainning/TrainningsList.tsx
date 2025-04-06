@@ -1,8 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Key } from "react";
 // import { TabContent, TabItem } from "./data";
 import { useNavigate } from "react-router-dom";
 import profilepic from "../../../assets/avatar.png";
-import { useTrainingStore } from "../../../store/useAwarenessTrainingStore";
+import {
+  CreateTrainingData,
+  useTrainingStore,
+} from "../../../store/useAwarenessTrainingStore";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { MoreVertical } from "lucide-react";
@@ -10,25 +13,26 @@ import { MoreVertical } from "lucide-react";
 interface TrainningsListProps {
   setSelectionMode: React.Dispatch<React.SetStateAction<boolean>>;
   setAssignModal: React.Dispatch<React.SetStateAction<boolean>>;
-  setSelectedTraining: React.Dispatch<React.SetStateAction<string | null>>;
-  setShowCheckbox: (value: boolean) => void;
-  selectedTraining: string | null;
+  setSelectedTrainings: React.Dispatch<React.SetStateAction<string[]>>; // ✅ fix here
+  selectedTrainings: string[]; // ✅ fix here
   showCheckbox: boolean;
-  // showCheckbox: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowCheckbox: (value: boolean) => void;
 }
 
 const TrainningsList: React.FC<TrainningsListProps> = ({
   setSelectionMode,
   setAssignModal,
-  setSelectedTraining,
-  selectedTraining,
+  setSelectedTrainings,
+  selectedTrainings,
   showCheckbox,
   setShowCheckbox,
 }) => {
   const [activeTab, setActiveTab] = useState("browse");
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedCard, setSelectedCard] = useState(null);
+  const [selectedCard, setSelectedCard] = useState<CreateTrainingData | null>(
+    null
+  );
   const [optionsIndex, setOptionsIndex] = useState<number | null>(null);
   // const [showCheckbox, setShowCheckbox] = useState(false);
   // const [selectedTraining, setSelectedTraining] = useState<string | null>(null);
@@ -58,7 +62,7 @@ const TrainningsList: React.FC<TrainningsListProps> = ({
     e.stopPropagation();
     setSelectionMode(true);
     setShowCheckbox(true);
-    setSelectedTraining(trainingId);
+    setSelectedTrainings([trainingId]);
     handleCloseOptionsModal();
   };
 
@@ -89,10 +93,18 @@ const TrainningsList: React.FC<TrainningsListProps> = ({
     fetchTrainings(activeTab.toString(), currentPage);
   };
 
+  // const handleSelectTraining = (trainingId: string) => {
+  //   setSelectedTraining((prev) => (prev === trainingId ? null : trainingId));
+  //   // setSelectionMode(true);
+  //   // setShowCheckbox(true);
+  // };
   const handleSelectTraining = (trainingId: string) => {
-    setSelectedTraining((prev) => (prev === trainingId ? null : trainingId));
-    // setSelectionMode(true);
-    // setShowCheckbox(true);
+    setSelectedTrainings(
+      (prev) =>
+        prev.includes(trainingId)
+          ? prev.filter((id) => id !== trainingId) // Deselect
+          : [...prev, trainingId] // Select
+    );
   };
 
   return (
@@ -180,7 +192,7 @@ const TrainningsList: React.FC<TrainningsListProps> = ({
                     <label>
                       <input
                         type="checkbox"
-                        checked={selectedTraining === item._id} // Check if this card is selected
+                        checked={selectedTrainings.includes(item._id)}
                         onChange={() => handleSelectTraining(item._id)}
                       />
                     </label>
@@ -202,16 +214,26 @@ const TrainningsList: React.FC<TrainningsListProps> = ({
                       <div className="flex -space-x-4 overflow-hidden">
                         {item.assignedTo.individuals
                           .slice(0, 3)
-                          .map((person, index) => (
-                            <img
-                              key={person._id}
-                              src={person.profileImage || profilepic} // Use profileImage or fallback to default
-                              alt={`${person.fName} ${person.lName}`}
-                              className={`inline-block h-8 w-8 rounded-full object-cover border-2 border-white ${
-                                index === 0 ? "z-30" : `z-${20 - index}`
-                              }`}
-                            />
-                          ))}
+                          .map(
+                            (
+                              person: {
+                                _id: Key | null | undefined;
+                                profileImage: any;
+                                fName: any;
+                                lName: any;
+                              },
+                              index: number
+                            ) => (
+                              <img
+                                key={person._id}
+                                src={person.profileImage || profilepic} // Use profileImage or fallback to default
+                                alt={`${person.fName} ${person.lName}`}
+                                className={`inline-block h-8 w-8 rounded-full object-cover border-2 border-white ${
+                                  index === 0 ? "z-30" : `z-${20 - index}`
+                                }`}
+                              />
+                            )
+                          )}
                         {item.assignedTo.individuals.length > 3 && (
                           <span className=" h-8 w-8 rounded-full bg-gray-200 text-sm text-gray-700 flex items-center justify-center">
                             +{item.assignedTo.individuals.length - 3}

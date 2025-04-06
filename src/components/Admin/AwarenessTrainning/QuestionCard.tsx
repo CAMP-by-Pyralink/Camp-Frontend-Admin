@@ -157,10 +157,26 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
                       questionType === "multiple-choice" ? "radio" : "checkbox"
                     }
                     className="h-4 w-4"
+                    checked={field.value} // This should be a boolean
+                    onChange={(e) => {
+                      const newValue = e.target.checked;
+
+                      if (questionType === "multiple-choice") {
+                        // For radio buttons, uncheck all other options
+                        fields.forEach((_, idx) => {
+                          setValue(
+                            `questions.${questionIndex}.choices.${idx}.isChecked`,
+                            idx === choiceIndex ? newValue : false
+                          );
+                        });
+                      } else {
+                        // For checkboxes, just update the current field
+                        field.onChange(newValue);
+                      }
+                    }}
                   />
                 )}
               />
-
               <Controller
                 name={`questions.${questionIndex}.choices.${choiceIndex}.text`}
                 control={control}
@@ -174,7 +190,6 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
                   />
                 )}
               />
-
               {fields.length > 1 && (
                 <button
                   type="button"
