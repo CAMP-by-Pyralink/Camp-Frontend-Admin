@@ -85,7 +85,7 @@ const TrainingDetails: React.FC = () => {
           <div className="w-full space-y-3 basis-[60%]">
             <h1 className="text-[56px] font-bold">{singleTraining.title}</h1>
             <p className="text-greyText text-[12px]">
-              {singleTraining.modules.length} modules
+              {singleTraining.modules?.length} modules
             </p>
           </div>
           <div className="h-[228px] basis-[60%]">
@@ -111,7 +111,7 @@ const TrainingDetails: React.FC = () => {
           <div className=" basis-[30%]">
             <h1 className=" text-2xl font-semibold mb-6">Modules</h1>
             <div className=" space-y-4">
-              {singleTraining.modules.map((module, index) => (
+              {singleTraining.modules?.map((module, index) => (
                 <div
                   key={index}
                   className="module-item border border-neutral-300 py-4 px-4"

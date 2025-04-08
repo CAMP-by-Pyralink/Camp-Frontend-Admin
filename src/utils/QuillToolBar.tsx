@@ -1,4 +1,3 @@
-import React from "react";
 import Quill from "quill";
 // import Right from "../assets/arrow-right.svg";
 // import Left from "../assets/arrow-left.svg";
@@ -21,12 +20,12 @@ function redoChange(this: { quill: { history: { redo: () => void } } }) {
 }
 
 // Add sizes to whitelist and register them
-const Size = Quill.import("formats/size");
+const Size = Quill.import("formats/size") as any;
 Size.whitelist = ["extra-small", "small", "medium", "large"];
 Quill.register(Size, true);
 
 // Add fonts to whitelist and register them
-const Font = Quill.import("formats/font");
+const Font = Quill.import("formats/font") as any;
 Font.whitelist = [
   "arial",
   "comic-sans",
