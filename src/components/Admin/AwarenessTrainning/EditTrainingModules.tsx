@@ -17,43 +17,45 @@ const EditTrainingModules = ({ prepareDataForBackend }) => {
   const transformDataToFormState = (trainingData: any) => {
     return {
       ...trainingData,
-      modules: trainingData.modules.map((module: any, moduleIndex: number) => ({
-        id: moduleIndex + 1,
-        title: module.moduleTitle,
-        isCollapsed: false,
-        lessons: module.lessons.map((lesson: any, lessonIndex: number) => ({
-          id: lessonIndex + 1,
-          title: lesson.lessonTitle,
-          type: lesson.lessonType,
-          content: lesson.content,
-          quizzes:
-            lesson.questions.length > 0
-              ? [
-                  {
-                    id: 1,
-                    questions: lesson.questions.map((question: any) => ({
-                      id: `q${Math.random().toString(36).substr(2, 9)}`,
-                      text: question.question,
-                      type: question.questionType,
-                      displayType: getDisplayType(question),
-                      choices:
-                        question.options?.map(
-                          (option: string, index: number) => ({
-                            id: `c${index + 1}`,
-                            text: option,
-                            isChecked: isOptionCorrect(question, option),
-                          })
-                        ) || [],
-                      answer: question.correctAnswer,
-                      isLongText:
-                        question.answerMethod === "input" &&
-                        question.correctAnswer?.length > 100,
-                    })),
-                  },
-                ]
-              : [],
-        })),
-      })),
+      modules: trainingData.modules?.map(
+        (module: any, moduleIndex: number) => ({
+          id: moduleIndex + 1,
+          title: module.moduleTitle,
+          isCollapsed: false,
+          lessons: module.lessons.map((lesson: any, lessonIndex: number) => ({
+            id: lessonIndex + 1,
+            title: lesson.lessonTitle,
+            type: lesson.lessonType,
+            content: lesson.content,
+            quizzes:
+              lesson.questions.length > 0
+                ? [
+                    {
+                      id: 1,
+                      questions: lesson.questions.map((question: any) => ({
+                        id: `q${Math.random().toString(36).substr(2, 9)}`,
+                        text: question.question,
+                        type: question.questionType,
+                        displayType: getDisplayType(question),
+                        choices:
+                          question.options?.map(
+                            (option: string, index: number) => ({
+                              id: `c${index + 1}`,
+                              text: option,
+                              isChecked: isOptionCorrect(question, option),
+                            })
+                          ) || [],
+                        answer: question.correctAnswer,
+                        isLongText:
+                          question.answerMethod === "input" &&
+                          question.correctAnswer?.length > 100,
+                      })),
+                    },
+                  ]
+                : [],
+          })),
+        })
+      ),
     };
   };
 

@@ -1,4 +1,4 @@
-import { useState, useEffect, Key } from "react";
+import { useState, useEffect, Key, useRef } from "react";
 // import { TabContent, TabItem } from "./data";
 import { useNavigate } from "react-router-dom";
 import profilepic from "../../../assets/avatar.png";
@@ -13,8 +13,8 @@ import { MoreVertical } from "lucide-react";
 interface TrainningsListProps {
   setSelectionMode: React.Dispatch<React.SetStateAction<boolean>>;
   setAssignModal: React.Dispatch<React.SetStateAction<boolean>>;
-  setSelectedTrainings: React.Dispatch<React.SetStateAction<string[]>>; // ✅ fix here
-  selectedTrainings: string[]; // ✅ fix here
+  setSelectedTrainings: React.Dispatch<React.SetStateAction<string[]>>;
+  selectedTrainings: string[];
   showCheckbox: boolean;
   setShowCheckbox: (value: boolean) => void;
 }
@@ -34,8 +34,6 @@ const TrainningsList: React.FC<TrainningsListProps> = ({
     null
   );
   const [optionsIndex, setOptionsIndex] = useState<number | null>(null);
-  // const [showCheckbox, setShowCheckbox] = useState(false);
-  // const [selectedTraining, setSelectedTraining] = useState<string | null>(null);
 
   const { deleteSingleTraining } = useTrainingStore();
 
@@ -93,11 +91,6 @@ const TrainningsList: React.FC<TrainningsListProps> = ({
     fetchTrainings(activeTab.toString(), currentPage);
   };
 
-  // const handleSelectTraining = (trainingId: string) => {
-  //   setSelectedTraining((prev) => (prev === trainingId ? null : trainingId));
-  //   // setSelectionMode(true);
-  //   // setShowCheckbox(true);
-  // };
   const handleSelectTraining = (trainingId: string) => {
     setSelectedTrainings(
       (prev) =>
@@ -153,7 +146,7 @@ const TrainningsList: React.FC<TrainningsListProps> = ({
           trainings.map((item, index) => (
             <div
               key={index}
-              className="bg-white border border-[#D3D3D3] rounded-lg p-3 cursor-pointer pb-6"
+              className="bg-white border border-[#D3D3D3] rounded-lg p-3 cursor-pointer pb-6 training-card"
               onClick={() => handleCardClick(item)}
             >
               <div className="relative w-full h-[220px] mb-8">
@@ -162,13 +155,13 @@ const TrainningsList: React.FC<TrainningsListProps> = ({
                   alt={item.title}
                   className="w-full object-cover rounded h-full mb-8"
                 />
-                <div className=" absolute w-full h-full top-0 left-0 bg-black opacity-15"></div>
+                <div className="absolute w-full h-full top-0 left-0 bg-black opacity-15"></div>
                 <MoreVertical
                   className="absolute size-6 top-2 right-2 text-white z-[999]"
                   onClick={(e) => handleOptionsClick(index, e)}
                 />
                 {optionsIndex === index && (
-                  <div className="absolute top-8 right-0 mt-2 w-fit bg-white border border-gray-200 rounded-lg shadow-lg z-10 flex flex-col">
+                  <div className="absolute top-8 right-0 mt-2 w-fit bg-white border border-gray-200 rounded-lg shadow-lg z-10 flex flex-col training-card">
                     <button
                       className="w-full text-left px-4 py-2 border-b text-textColor hover:bg-blue50"
                       onClick={(e) => handleSelectClick(item._id, e)} // Pass the training ID
@@ -186,12 +179,13 @@ const TrainningsList: React.FC<TrainningsListProps> = ({
                 {/* checkboxes */}
                 {showCheckbox && (
                   <div
-                    className="absolute left-4 top-2 z-[999]"
+                    className="absolute left-4 top-2 z-[999] training-checkbox"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <label>
+                    <label className="training-checkbox">
                       <input
                         type="checkbox"
+                        className="training-checkbox"
                         checked={selectedTrainings.includes(item._id)}
                         onChange={() => handleSelectTraining(item._id)}
                       />
@@ -212,36 +206,34 @@ const TrainningsList: React.FC<TrainningsListProps> = ({
                     {/* Profile avatars and View All */}
                     <div className="flex items-center justify-between mt-4">
                       <div className="flex -space-x-4 overflow-hidden">
-                        {item.assignedTo.individuals
-                          .slice(0, 3)
-                          .map(
-                            (
-                              person: {
-                                _id: Key | null | undefined;
-                                profileImage: any;
-                                fName: any;
-                                lName: any;
-                              },
-                              index: number
-                            ) => (
-                              <img
-                                key={person._id}
-                                src={person.profileImage || profilepic} // Use profileImage or fallback to default
-                                alt={`${person.fName} ${person.lName}`}
-                                className={`inline-block h-8 w-8 rounded-full object-cover border-2 border-white ${
-                                  index === 0 ? "z-30" : `z-${20 - index}`
-                                }`}
-                              />
-                            )
-                          )}
+                        {item.assignedTo.individuals.slice(0, 3).map(
+                          (
+                            person: {
+                              _id: Key | null | undefined;
+                              profileImage: any;
+                              fName: any;
+                              lName: any;
+                            },
+                            index: number
+                          ) => (
+                            <img
+                              key={person._id}
+                              src={person.profileImage || profilepic} // Use profileImage or fallback to default
+                              alt={`${person.fName} ${person.lName}`}
+                              className={`inline-block h-8 w-8 rounded-full object-cover border-2 border-white ${
+                                index === 0 ? "z-30" : `z-${20 - index}`
+                              }`}
+                            />
+                          )
+                        )}
                         {item.assignedTo.individuals.length > 3 && (
-                          <span className=" h-8 w-8 rounded-full bg-gray-200 text-sm text-gray-700 flex items-center justify-center">
+                          <span className="h-8 w-8 rounded-full bg-gray-200 text-sm text-gray-700 flex items-center justify-center">
                             +{item.assignedTo.individuals.length - 3}
                           </span>
                         )}
                       </div>
                       <button
-                        className="text-primary500 text-xs underline"
+                        className="text-primary500 text-xs underline training-card"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleViewClick(item); // View button click for table layout

@@ -37,6 +37,9 @@ const TrainingDetails: React.FC = () => {
     setExpandedModule(expandedModule === index ? null : index);
   };
 
+  // console.log(singleTraining, "single training");
+  console.log(singleTraining.modules, "modules array");
+
   const renderLessonIcon = (lessonType: string) => {
     const icons: Record<string, JSX.Element> = {
       video: <Video className=" size-[14px] text-blue-500" />,
@@ -73,7 +76,9 @@ const TrainingDetails: React.FC = () => {
         </div>
         {/*  */}
         <button
-          onClick={() => navigate(`/edit-training/${singleTraining._id}`)}
+          onClick={() =>
+            navigate(`/edit-training/${singleTraining.training._id}`)
+          }
           className="border border-[#D0D5DD] py-2.5 px-5 rounded-lg text-[#344054]"
         >
           Edit Training
@@ -83,15 +88,17 @@ const TrainingDetails: React.FC = () => {
       <div className="bg-[#EBECFF] p-4 space-y-4 rounded-3xl">
         <div className=" p-12  flex items-center gap-12 justify-between">
           <div className="w-full space-y-3 basis-[60%]">
-            <h1 className="text-[56px] font-bold">{singleTraining.title}</h1>
+            <h1 className="text-[56px] font-bold">
+              {singleTraining.training.title}
+            </h1>
             <p className="text-greyText text-[12px]">
               {singleTraining.modules?.length} modules
             </p>
           </div>
           <div className="h-[228px] basis-[60%]">
             <img
-              src={singleTraining.bannerImage}
-              alt={singleTraining.title}
+              src={singleTraining.training.bannerImage}
+              alt={singleTraining.training.title}
               className="w-full h-full object-cover rounded-[30px]"
             />
           </div>
@@ -104,7 +111,7 @@ const TrainingDetails: React.FC = () => {
           <div className=" flex-1">
             <h1 className=" text-2xl font-semibold">Training description</h1>
             <p className=" mt-4 text-base text-[#1B1B1B99] leading-[152%] w-[100%]">
-              {singleTraining.description}
+              {singleTraining.training.description}
             </p>
           </div>
           {/* modules */}

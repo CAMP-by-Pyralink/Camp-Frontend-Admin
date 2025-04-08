@@ -74,6 +74,7 @@ interface TrainingState {
   singleTraining: CreateTrainingData | null;
   modules: Module[];
   questions: Question[];
+  moduless: any[];
   createTraining: (data: CreateTrainingData) => Promise<any>;
   fetchTrainings: (fetchType: string, page: number) => Promise<void>;
   fetchSingleTraining: (trainingId: string) => Promise<void>;
@@ -130,6 +131,7 @@ export const useTrainingStore = create<TrainingState>((set, get) => ({
       );
       console.log(response.data.trainings);
       set({ trainings: response.data.trainings || [] });
+      // set({ moduless: response.data.modules || [] });
     } catch (error: any) {
       console.log(error);
       toast.error(
@@ -143,8 +145,8 @@ export const useTrainingStore = create<TrainingState>((set, get) => ({
       const response: AxiosResponse = await api.get(
         `/training/getSingleTrainingAdmin/${trainingId}`
       );
-      set({ singleTraining: response.data.training });
-      console.log(response.data.training);
+      set({ singleTraining: response.data });
+      console.log(response.data, "hgfds");
     } catch (error: any) {
       console.log(error);
       toast.error(error.response?.data?.message || "Failed to fetch training.");
