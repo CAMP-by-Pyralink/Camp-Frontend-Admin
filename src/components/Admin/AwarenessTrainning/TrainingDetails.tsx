@@ -37,7 +37,7 @@ const TrainingDetails: React.FC = () => {
     setExpandedModule(expandedModule === index ? null : index);
   };
 
-  // console.log(singleTraining, "single training");
+  console.log(singleTraining.assignedUsers, "users");
   console.log(singleTraining.modules, "modules array");
 
   const renderLessonIcon = (lessonType: string) => {
@@ -177,9 +177,9 @@ const TrainingDetails: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {singleTraining.assignedTo &&
-                  singleTraining.assignedTo.individuals &&
-                  singleTraining.assignedTo.individuals.map(
+                {singleTraining.assignedUsers &&
+                  singleTraining.assignedUsers.individuals &&
+                  singleTraining.assignedUsers.individuals.map(
                     (individual: any, index: number) => {
                       const progressPercentage = getProgressPercentage(
                         individual.email

@@ -201,12 +201,12 @@ const TrainningsList: React.FC<TrainningsListProps> = ({
               </p>
 
               {activeTab === "assigned" &&
-                item.assignedTo?.individuals?.length > 0 && (
+                item.assignedUsers?.individuals?.length > 0 && (
                   <div>
                     {/* Profile avatars and View All */}
                     <div className="flex items-center justify-between mt-4">
                       <div className="flex -space-x-4 overflow-hidden">
-                        {item.assignedTo.individuals.slice(0, 3).map(
+                        {item.assignedUsers.individuals.slice(0, 3).map(
                           (
                             person: {
                               _id: Key | null | undefined;

@@ -152,7 +152,7 @@ const SideNav = () => {
 
     setIsUserManagementOpen(savedUserManagementOpen);
     setIsPhishingOpen(savedPhishingOpen);
-  }, []);
+  }, [activeMenu]);
   //
 
   // Handle active menu persistence
@@ -162,7 +162,7 @@ const SideNav = () => {
     if (savedPath && savedPath !== location.pathname) {
       navigate(savedPath);
     }
-  }, []);
+  }, [activeMenu]);
 
   useEffect(() => {
     const currentPath = location.pathname;
