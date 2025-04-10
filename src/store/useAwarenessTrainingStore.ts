@@ -3,6 +3,7 @@ import axios, { AxiosResponse } from "axios";
 import toast from "react-hot-toast";
 import { useAuthStore } from "./useAuthStore";
 import Cookies from "js-cookie";
+import { ReactNode } from "react";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_APP_BASE_URL,
@@ -55,7 +56,7 @@ interface Question {
 
 export interface CreateTrainingData {
   progress: any;
-  assignedTo: any;
+  assignedUsers: any;
   _id: string;
   bannerImage: string;
   title: string;
@@ -92,7 +93,10 @@ export const useTrainingStore = create<TrainingState>((set, get) => ({
   trainings: [],
   singleTraining: null,
   modules: [
-    { moduleTitle: "", lessons: [{ lessonType: "video", content: "" }] },
+    {
+      moduleTitle: "",
+      lessons: [{ lessonType: "video", content: "" }],
+    },
   ],
   questions: [
     {
