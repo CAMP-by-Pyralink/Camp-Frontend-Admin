@@ -472,12 +472,14 @@ const CreateTrainingModules = ({
     }));
   };
 
-  const prepareDataForBackend = () => {
+  // Inside CreateTrainingModules component, update the prepareDataForBackend function:
+
+  const prepareDataForBackend = (formData = formState) => {
     // Format modules according to the backend's expected structure
-    const formattedModules: ModuleData[] = formState.modules.map((module) => {
-      const formattedLessons: LessonData[] = module.lessons.map((lesson) => {
+    const formattedModules = formData.modules.map((module) => {
+      const formattedLessons = module.lessons.map((lesson) => {
         // Collect all questions from all quizzes in this lesson
-        const allQuestions: QuestionData[] = [];
+        const allQuestions = [];
         lesson.quizzes.forEach((quiz) => {
           if (quiz.questions && quiz.questions.length > 0) {
             allQuestions.push(...quiz.questions);
@@ -512,14 +514,13 @@ const CreateTrainingModules = ({
     });
 
     return {
-      bannerImage: formState.bannerImage || "",
-      title: formState.title,
-      description: formState.description,
-      startDate: formState.startDate,
-      endDate: formState.endDate,
+      bannerImage: formData.bannerImage || "",
+      title: formData.title,
+      description: formData.description,
+      startDate: formData.startDate,
+      endDate: formData.endDate,
       modules: formattedModules,
-      progress: 0, // Default value for progress
-      assignedTo: [], // Default value for assignedTo
+
       _id: "", // Default value for _id
     };
   };
@@ -562,6 +563,7 @@ const CreateTrainingModules = ({
       type: "text & image" as LessonType,
     },
   ];
+  // console.log(initialData, "dfghj");
 
   return (
     <div className="px-24 space-y-6">

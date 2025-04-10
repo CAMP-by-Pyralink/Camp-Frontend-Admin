@@ -152,17 +152,17 @@ const SideNav = () => {
 
     setIsUserManagementOpen(savedUserManagementOpen);
     setIsPhishingOpen(savedPhishingOpen);
-  }, [activeMenu]);
+  }, []);
   //
 
   // Handle active menu persistence
-  useEffect(() => {
-    const savedPath = localStorage.getItem("activeRoute");
+  // useEffect(() => {
+  //   const savedPath = localStorage.getItem("activeRoute");
 
-    if (savedPath && savedPath !== location.pathname) {
-      navigate(savedPath);
-    }
-  }, [activeMenu]);
+  //   if (savedPath && savedPath !== location.pathname) {
+  //     navigate(savedPath);
+  //   }
+  // }, []);
 
   useEffect(() => {
     const currentPath = location.pathname;

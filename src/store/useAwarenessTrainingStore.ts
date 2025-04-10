@@ -199,22 +199,27 @@ export const useTrainingStore = create<TrainingState>((set, get) => ({
 
   updateTraining: async (trainingId: string, data: any) => {
     set({ isLoading: true });
+
+    console.log(data, "sending");
     try {
       const response = await api.patch(
-        `/training/updateTraining/${trainingId}`
+        `/training/updateTraining/${trainingId}`,
+        data
       );
 
       if (response.status === 200) {
-        // Refresh the single training if it's the one we're updating
         const { singleTraining } = get();
         if (singleTraining && trainingId) {
           await get().fetchSingleTraining(trainingId);
         }
         console.log(response.data.msg);
+        return true;
       }
       console.log(response.data.msg);
+      return null;
     } catch (error: any) {
       console.log(error.response.data.msg);
+      return null;
     }
   },
 }));

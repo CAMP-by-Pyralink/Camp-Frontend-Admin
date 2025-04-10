@@ -1,5 +1,4 @@
 import { useState, useEffect, Key, useRef } from "react";
-// import { TabContent, TabItem } from "./data";
 import { useNavigate } from "react-router-dom";
 import profilepic from "../../../assets/avatar.png";
 import {
@@ -74,7 +73,8 @@ const TrainningsList: React.FC<TrainningsListProps> = ({
     });
   };
 
-  const handleViewClick = (training: any) => {
+  const handleViewClick = (training: any, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click
     // Navigate to the TrainingDetails layout with the table
     navigate(`/training-details/${training._id}`, {
       state: {
@@ -201,43 +201,41 @@ const TrainningsList: React.FC<TrainningsListProps> = ({
               </p>
 
               {activeTab === "assigned" &&
-                item.assignedUsers?.individuals?.length > 0 && (
+                item.assignedUsers &&
+                item.assignedUsers.length > 0 && (
                   <div>
                     {/* Profile avatars and View All */}
                     <div className="flex items-center justify-between mt-4">
                       <div className="flex -space-x-4 overflow-hidden">
-                        {item.assignedUsers.individuals.slice(0, 3).map(
+                        {item.assignedUsers.slice(0, 3).map(
                           (
                             person: {
                               _id: Key | null | undefined;
-                              profileImage: any;
-                              fName: any;
-                              lName: any;
+                              profileImage: string;
+                              fName: string;
+                              lName: string;
                             },
-                            index: number
+                            idx: number
                           ) => (
                             <img
                               key={person._id}
-                              src={person.profileImage || profilepic} // Use profileImage or fallback to default
-                              alt={`${person.fName} ${person.lName}`}
+                              src={person.profileImage} // Use profileImage or fallback to default
+                              // alt={`${person.fName} ${person.lName}`}
                               className={`inline-block h-8 w-8 rounded-full object-cover border-2 border-white ${
-                                index === 0 ? "z-30" : `z-${20 - index}`
+                                idx === 0 ? "z-30" : idx === 1 ? "z-20" : "z-10"
                               }`}
                             />
                           )
                         )}
-                        {item.assignedTo.individuals.length > 3 && (
-                          <span className="h-8 w-8 rounded-full bg-gray-200 text-sm text-gray-700 flex items-center justify-center">
-                            +{item.assignedTo.individuals.length - 3}
+                        {item.assignedUsers.length > 3 && (
+                          <span className="flex items-center justify-center h-8 w-8 rounded-full bg-gray-200 text-sm text-gray-700 border-2 border-white z-0">
+                            +{item.assignedUsers.length - 3}
                           </span>
                         )}
                       </div>
                       <button
                         className="text-primary500 text-xs underline training-card"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleViewClick(item); // View button click for table layout
-                        }}
+                        onClick={(e) => handleViewClick(item, e)}
                       >
                         View &gt;
                       </button>

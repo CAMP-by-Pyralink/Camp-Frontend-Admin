@@ -1,10 +1,11 @@
 // EditTrainingModules.tsx
+
 import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import CreateTrainingModules from "./CreateTrainingModules";
 import { useTrainingStore } from "../../../store/useAwarenessTrainingStore";
 
-const EditTrainingModules = ({ prepareDataForBackend }) => {
+const EditTrainingModules = () => {
   const { trainingId } = useParams<{ trainingId: string }>();
   const navigate = useNavigate();
   const { fetchSingleTraining, singleTraining, updateTraining } =
@@ -15,47 +16,171 @@ const EditTrainingModules = ({ prepareDataForBackend }) => {
   }, [trainingId, fetchSingleTraining]);
 
   const transformDataToFormState = (trainingData: any) => {
+    // Format dates correctly
+    const formatDate = (dateString: string) => {
+      if (!dateString) return "";
+
+      try {
+        // Convert to YYYY-MM-DD format for input type="date"
+        const date = new Date(dateString);
+        return date.toISOString().split("T")[0];
+      } catch (error) {
+        console.error("Error formatting date:", error);
+        return "";
+      }
+    };
+
+    const transformQuestions = (questions: any[]) => {
+      if (!questions || !questions.length) return [];
+
+      return questions.map((q) => {
+        // Determine the actual question type - handle different property names
+        const questionType = q.type || q.questionType || "multiple-choice";
+
+        // Determine if it's long text input type
+        const isLongText =
+          questionType === "input" &&
+          (q.correctAnswer?.length > 100 ||
+            q.answer?.length > 100 ||
+            q.isLongText);
+
+        // Handle question choices for multiple-choice and checkbox types
+        let choices = [];
+        if (questionType === "multiple-choice" || questionType === "checkbox") {
+          // First, check if we have existing options in the API response format
+          if (Array.isArray(q.options) && q.options.length > 0) {
+            // Process existing options from backend
+            choices = q.options.map((option: any, index: number) => {
+              const choiceText =
+                typeof option === "object" ? option.text : option;
+              let isChecked = false;
+
+              // For multiple-choice, check if this choice matches the correct answer
+              if (questionType === "multiple-choice") {
+                isChecked = choiceText === (q.correctAnswer || q.answer);
+              }
+              // For checkbox, check if this choice is in the comma-separated correct answers
+              else if (questionType === "checkbox") {
+                const correctAnswers = (q.correctAnswer || q.answer || "")
+                  .split(",")
+                  .map((a: string) => a.trim());
+                isChecked = correctAnswers.includes(choiceText);
+              }
+
+              return {
+                id: `choice-${index}-${Math.random()
+                  .toString(36)
+                  .substr(2, 9)}`,
+                text: choiceText,
+                isChecked,
+              };
+            });
+          }
+          // If we already have choices in the expected format (from form state)
+          else if (Array.isArray(q.choices) && q.choices.length > 0) {
+            choices = q.choices.map((choice: any) => {
+              const choiceText =
+                typeof choice === "object" ? choice.text : choice;
+              let isChecked = false;
+
+              // For multiple-choice, check if this choice matches the correct answer
+              if (questionType === "multiple-choice") {
+                isChecked = choiceText === (q.correctAnswer || q.answer);
+              }
+              // For checkbox, check if this choice is in the comma-separated correct answers
+              else if (questionType === "checkbox") {
+                const correctAnswers = (q.correctAnswer || q.answer || "")
+                  .split(",")
+                  .map((a: string) => a.trim());
+                isChecked = correctAnswers.includes(choiceText);
+              }
+
+              return {
+                id:
+                  typeof choice === "object"
+                    ? choice.id ||
+                      `choice-${Math.random().toString(36).substr(2, 9)}`
+                    : `choice-${Math.random().toString(36).substr(2, 9)}`,
+                text: choiceText,
+                isChecked,
+              };
+            });
+          } else {
+            // Create default choices when none exist
+            choices = [
+              {
+                id: `choice-${Math.random().toString(36).substr(2, 9)}`,
+                text: "Option A",
+                isChecked: false,
+              },
+              {
+                id: `choice-${Math.random().toString(36).substr(2, 9)}`,
+                text: "Option B",
+                isChecked: false,
+              },
+            ];
+
+            // If we have correct answers but no choices, try to map them
+            if (q.correctAnswer || q.answer) {
+              const correctValues =
+                questionType === "checkbox"
+                  ? (q.correctAnswer || q.answer || "")
+                      .split(",")
+                      .map((a: string) => a.trim())
+                  : [q.correctAnswer || q.answer];
+
+              choices = choices.map((choice: any) => ({
+                ...choice,
+                isChecked: correctValues.includes(choice.text),
+              }));
+            }
+          }
+        }
+
+        return {
+          text: q.text || q.question || "",
+          type: questionType,
+          isLongText,
+          answer: q.correctAnswer || q.answer || "",
+          choices: choices,
+          displayType: isLongText
+            ? "Long text"
+            : questionType === "checkbox"
+            ? "Checkbox"
+            : questionType === "input"
+            ? "Short text"
+            : "Multiple choice",
+        };
+      });
+    };
+
     return {
-      ...trainingData,
-      modules: trainingData.modules?.map(
-        (module: any, moduleIndex: number) => ({
+      bannerImage: trainingData.training.bannerImage || null,
+      title: trainingData.training.title || "",
+      description: trainingData.training.description || "",
+      startDate: formatDate(trainingData.training.startDate) || "",
+      endDate: formatDate(trainingData.training.endDate) || "",
+      modules:
+        trainingData.modules?.map((module: any, moduleIndex: number) => ({
           id: moduleIndex + 1,
-          title: module.moduleTitle,
+          title: module.moduleTitle || module.title || "",
           isCollapsed: false,
           lessons: module.lessons.map((lesson: any, lessonIndex: number) => ({
             id: lessonIndex + 1,
-            title: lesson.lessonTitle,
-            type: lesson.lessonType,
+            title: lesson.lessonTitle || lesson.title || "",
+            type: lesson.lessonType || lesson.type || "video",
             content: lesson.content,
             quizzes:
-              lesson.questions.length > 0
+              lesson.questions && lesson.questions.length > 0
                 ? [
                     {
                       id: 1,
-                      questions: lesson.questions.map((question: any) => ({
-                        id: `q${Math.random().toString(36).substr(2, 9)}`,
-                        text: question.question,
-                        type: question.questionType,
-                        displayType: getDisplayType(question),
-                        choices:
-                          question.options?.map(
-                            (option: string, index: number) => ({
-                              id: `c${index + 1}`,
-                              text: option,
-                              isChecked: isOptionCorrect(question, option),
-                            })
-                          ) || [],
-                        answer: question.correctAnswer,
-                        isLongText:
-                          question.answerMethod === "input" &&
-                          question.correctAnswer?.length > 100,
-                      })),
+                      questions: transformQuestions(lesson.questions),
                     },
                   ]
                 : [],
           })),
-        })
-      ),
+        })) || [],
     };
   };
 
@@ -80,33 +205,113 @@ const EditTrainingModules = ({ prepareDataForBackend }) => {
       : "Checkbox";
   };
 
-  // const isOptionCorrect = (question: any, option: string) => {
-  //   if (question.questionType === "multiple-choice") {
-  //     return option === question.correctAnswer;
-  //   }
-  //   if (question.questionType === "checkbox") {
-  //     return question.correctAnswer?.split(",").includes(option);
-  //   }
-  //   return false;
-  // };
-
   const handleUpdateTraining = async (formData: any) => {
     try {
-      const formattedData = prepareDataForBackend(formData);
+      console.log("Preparing to update with data:", formData);
+
+      const transformQuestionsForBackend = (questions: any[]) => {
+        return questions.map((q) => {
+          const result: any = {
+            text: q.text,
+            type: q.type,
+          };
+
+          if (q.type === "input") {
+            result.answer = q.answer;
+            if (q.isLongText) {
+              result.isLongText = true;
+            }
+          } else {
+            result.choices = q.choices.map((choice: any) => ({
+              text: choice.text,
+            }));
+
+            if (q.type === "multiple-choice") {
+              const checkedChoice = q.choices.find((c: any) => c.isChecked);
+              result.answer = checkedChoice ? checkedChoice.text : "";
+            } else if (q.type === "checkbox") {
+              result.answer = q.choices
+                .filter((c: any) => c.isChecked)
+                .map((c: any) => c.text)
+                .join(",");
+            }
+          }
+
+          return result;
+        });
+      };
+
+      // Format the data structure to match what the backend expects
+      const dataToUpdate = {
+        _id: singleTraining?.training?._id || trainingId,
+        bannerImage: formData.bannerImage || "",
+        title: formData.title,
+        description: formData.description || "",
+        startDate: formData.startDate,
+        endDate: formData.endDate,
+        modules: formData.modules.map((module: any) => ({
+          moduleTitle: module.title,
+          lessons: module.lessons.map((lesson: any) => {
+            const allQuestions: any[] = [];
+            lesson.questions.forEach((quiz: any) => {
+              if (quiz.questions && quiz.questions.length > 0) {
+                const transformedQuestions = transformQuestionsForBackend(
+                  quiz.questions
+                );
+                allQuestions.push(...transformedQuestions);
+              }
+            });
+
+            return {
+              lessonTitle: lesson.title,
+              lessonType: lesson.type,
+              content: lesson.content,
+              questions: allQuestions,
+            };
+          }),
+        })),
+      };
+
       if (trainingId) {
-        await updateTraining(trainingId, formattedData);
-        navigate("/awareness-training");
+        console.log("Sending update with data:", dataToUpdate);
+        const response = await updateTraining(trainingId, dataToUpdate);
+
+        if (response) {
+          console.log("Training updated successfully");
+          navigate("/awareness-training");
+        }
       }
     } catch (error) {
       console.error("Error updating training:", error);
+      // console.log(response);
+      // alert("Failed to update training. Please check console for details.");
     }
   };
 
   if (!singleTraining) return <div>Loading...</div>;
 
+  const initialFormData = transformDataToFormState(singleTraining);
+
+  // Debug log to verify the choices are properly populated
+  console.log("Transformed data:", initialFormData);
+  console.log(
+    "Questions with choices:",
+    initialFormData.modules.flatMap((m) =>
+      m.lessons.flatMap((l) =>
+        l.quizzes.flatMap((q) =>
+          q.questions.filter(
+            (question) =>
+              question.type === "multiple-choice" ||
+              question.type === "checkbox"
+          )
+        )
+      )
+    )
+  );
+
   return (
     <CreateTrainingModules
-      initialData={transformDataToFormState(singleTraining)}
+      initialData={initialFormData}
       onSave={handleUpdateTraining}
       isEditMode={true}
     />
