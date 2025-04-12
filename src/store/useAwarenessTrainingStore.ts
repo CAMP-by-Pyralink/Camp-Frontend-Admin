@@ -55,6 +55,7 @@ interface Question {
 }
 
 export interface CreateTrainingData {
+  assignedTo: any;
   progress: any;
   assignedUsers: any;
   _id: string;
@@ -64,6 +65,11 @@ export interface CreateTrainingData {
   startDate: string;
   endDate: string;
   modules: Module[];
+  training: Training[];
+}
+export interface Training {
+  _id: string;
+  title: string;
 }
 
 interface AssignTrainingData {}
@@ -84,7 +90,7 @@ interface TrainingState {
   addQuestion: (question: Question) => void;
   resetTraining: () => void;
   deleteSingleTraining: (trainingId: string) => Promise<any>;
-  updateTraining: (data: any, trainingId: string) => Promise<any>;
+  updateTraining: (trainingId: string, data: any) => Promise<any>;
 }
 
 export const useTrainingStore = create<TrainingState>((set, get) => ({
@@ -95,7 +101,10 @@ export const useTrainingStore = create<TrainingState>((set, get) => ({
   modules: [
     {
       moduleTitle: "",
-      lessons: [{ lessonType: "video", content: "" }],
+      lessons: [
+        { lessonTitle: "", lessonType: "video" as LessonType, content: "" },
+      ],
+      questions: [],
     },
   ],
   questions: [
@@ -107,6 +116,32 @@ export const useTrainingStore = create<TrainingState>((set, get) => ({
       answerMethod: "multiple-choice",
     },
   ],
+  moduless: [],
+
+  resetTraining: () =>
+    set({
+      isCreatingTraining: false,
+      isLoading: false,
+      trainings: [],
+      singleTraining: null,
+      modules: [
+        {
+          moduleTitle: "",
+          lessons: [{ lessonTitle: "", lessonType: "video", content: "" }],
+          questions: [],
+        },
+      ],
+      questions: [
+        {
+          question: "",
+          questionType: "multiple-choice",
+          options: ["", ""],
+          correctAnswer: "",
+          answerMethod: "multiple-choice",
+        },
+      ],
+      moduless: [],
+    }),
 
   createTraining: async (data: CreateTrainingData) => {
     set({ isCreatingTraining: true });
@@ -201,14 +236,14 @@ export const useTrainingStore = create<TrainingState>((set, get) => ({
   addQuestion: (question) =>
     set((state) => ({ questions: [...state.questions, question] })),
 
-  updateTraining: async (trainingId: string, data: any) => {
+  updateTraining: async (trainingId: string, dataToUpdate: any) => {
     set({ isLoading: true });
 
-    console.log(data, "sending");
+    // console.log(data, "sending");
     try {
       const response = await api.patch(
         `/training/updateTraining/${trainingId}`,
-        data
+        dataToUpdate
       );
 
       if (response.status === 200) {
@@ -217,6 +252,7 @@ export const useTrainingStore = create<TrainingState>((set, get) => ({
           await get().fetchSingleTraining(trainingId);
         }
         console.log(response.data.msg);
+        toast.success(response.data.msg);
         return true;
       }
       console.log(response.data.msg);
@@ -224,6 +260,8 @@ export const useTrainingStore = create<TrainingState>((set, get) => ({
     } catch (error: any) {
       console.log(error.response.data.msg);
       return null;
+    } finally {
+      set({ isLoading: false });
     }
   },
 }));

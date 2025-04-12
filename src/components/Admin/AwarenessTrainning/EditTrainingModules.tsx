@@ -205,86 +205,43 @@ const EditTrainingModules = () => {
       : "Checkbox";
   };
 
+  // EditTrainingModules.tsx (updated parts)
+
   const handleUpdateTraining = async (formData: any) => {
     try {
       console.log("Preparing to update with data:", formData);
 
       const transformQuestionsForBackend = (questions: any[]) => {
-        return questions.map((q) => {
-          const result: any = {
-            text: q.text,
-            type: q.type,
-          };
-
-          if (q.type === "input") {
-            result.answer = q.answer;
-            if (q.isLongText) {
-              result.isLongText = true;
-            }
-          } else {
-            result.choices = q.choices.map((choice: any) => ({
-              text: choice.text,
-            }));
-
-            if (q.type === "multiple-choice") {
-              const checkedChoice = q.choices.find((c: any) => c.isChecked);
-              result.answer = checkedChoice ? checkedChoice.text : "";
-            } else if (q.type === "checkbox") {
-              result.answer = q.choices
-                .filter((c: any) => c.isChecked)
-                .map((c: any) => c.text)
-                .join(",");
-            }
-          }
-
-          return result;
-        });
+        return questions.map((q: any) => ({
+          question: q.text,
+          questionType: q.type,
+          correctAnswer: q.type === "input" ? q.answer : undefined,
+          options:
+            q.type !== "input" ? q.choices.map((c: any) => c.text) : undefined,
+          isLongText: q.isLongText || undefined,
+        }));
       };
 
-      // Format the data structure to match what the backend expects
+      // Correctly structure dataToUpdate with proper field mappings
       const dataToUpdate = {
-        _id: singleTraining?.training?._id || trainingId,
+        _id: Array.isArray(singleTraining?.training)
+          ? singleTraining.training[0]?._id
+          : singleTraining?.training?._id || trainingId,
         bannerImage: formData.bannerImage || "",
         title: formData.title,
-        description: formData.description || "",
+        description: formData.description,
         startDate: formData.startDate,
         endDate: formData.endDate,
-        modules: formData.modules.map((module: any) => ({
-          moduleTitle: module.title,
-          lessons: module.lessons.map((lesson: any) => {
-            const allQuestions: any[] = [];
-            lesson.questions.forEach((quiz: any) => {
-              if (quiz.questions && quiz.questions.length > 0) {
-                const transformedQuestions = transformQuestionsForBackend(
-                  quiz.questions
-                );
-                allQuestions.push(...transformedQuestions);
-              }
-            });
-
-            return {
-              lessonTitle: lesson.title,
-              lessonType: lesson.type,
-              content: lesson.content,
-              questions: allQuestions,
-            };
-          }),
-        })),
+        modules: formData.modules,
       };
 
       if (trainingId) {
         console.log("Sending update with data:", dataToUpdate);
         const response = await updateTraining(trainingId, dataToUpdate);
-
-        if (response) {
-          console.log("Training updated successfully");
-          navigate("/awareness-training");
-        }
+        if (response) navigate("/awareness-training");
       }
     } catch (error) {
       console.error("Error updating training:", error);
-      // console.log(response);
-      // alert("Failed to update training. Please check console for details.");
     }
   };
 
@@ -296,11 +253,11 @@ const EditTrainingModules = () => {
   console.log("Transformed data:", initialFormData);
   console.log(
     "Questions with choices:",
-    initialFormData.modules.flatMap((m) =>
+    initialFormData.modules.flatMap((m: { lessons: any[] }) =>
       m.lessons.flatMap((l) =>
-        l.quizzes.flatMap((q) =>
+        l.quizzes.flatMap((q: { questions: any[] }) =>
           q.questions.filter(
-            (question) =>
+            (question: { type: string }) =>
               question.type === "multiple-choice" ||
               question.type === "checkbox"
           )

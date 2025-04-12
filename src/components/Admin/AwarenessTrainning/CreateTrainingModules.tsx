@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import {
   ChevronDown,
   ChevronUp,
+  Loader2,
   PlusCircle,
   Trash,
   UploadCloud,
@@ -19,6 +20,7 @@ import {
 } from "../../../store/useAwarenessTrainingStore";
 import CreateTrainingStep3 from "./CreateTrainingStep3";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 interface CreateTrainingModulesProps {
   initialData?: FormState;
@@ -31,7 +33,7 @@ interface QuestionData {
   questionType: QuestionType;
   options: string[];
   correctAnswer: string;
-  answerMethod: string;
+  answerMethod: "multiple-choice" | "checkbox" | "input";
 }
 
 interface LessonData {
@@ -79,8 +81,7 @@ const CreateTrainingModules = ({
     moduleId: number | null;
     lessonId: number | null;
   }>({ moduleId: null, lessonId: null });
-  // Get createTraining function from store
-  const { createTraining } = useTrainingStore();
+  const { createTraining, isLoading } = useTrainingStore();
 
   // Form state
   const [formState, setFormState] = useState<FormState>(
@@ -472,14 +473,12 @@ const CreateTrainingModules = ({
     }));
   };
 
-  // Inside CreateTrainingModules component, update the prepareDataForBackend function:
-
   const prepareDataForBackend = (formData = formState) => {
     // Format modules according to the backend's expected structure
     const formattedModules = formData.modules.map((module) => {
       const formattedLessons = module.lessons.map((lesson) => {
         // Collect all questions from all quizzes in this lesson
-        const allQuestions = [];
+        const allQuestions: QuestionData[] = [];
         lesson.quizzes.forEach((quiz) => {
           if (quiz.questions && quiz.questions.length > 0) {
             allQuestions.push(...quiz.questions);
@@ -510,6 +509,7 @@ const CreateTrainingModules = ({
       return {
         moduleTitle: module.title,
         lessons: formattedLessons,
+        questions: formattedLessons.flatMap((lesson) => lesson.questions),
       };
     });
 
@@ -520,7 +520,9 @@ const CreateTrainingModules = ({
       startDate: formData.startDate,
       endDate: formData.endDate,
       modules: formattedModules,
-
+      progress: 0, // Default value for progress
+      assignedUsers: [], // Default value for assignedUsers
+      training: [], // Default value for training as an empty array
       _id: "", // Default value for _id
     };
   };
@@ -529,7 +531,7 @@ const CreateTrainingModules = ({
   const saveTrainingModule = async () => {
     // Check if any file is currently uploading
     if (isUploading.moduleId !== null && isUploading.lessonId !== null) {
-      alert("Please wait, file is still uploading");
+      toast("Please wait, file is still uploading");
       return;
     }
 
@@ -563,7 +565,6 @@ const CreateTrainingModules = ({
       type: "text & image" as LessonType,
     },
   ];
-  // console.log(initialData, "dfghj");
 
   return (
     <div className="px-24 space-y-6">
@@ -573,10 +574,25 @@ const CreateTrainingModules = ({
           {isEditMode ? "Edit Training" : "Create Training Module"}
         </h1>
         <button
-          className="bg-primary500 text-white py-3 px-12 rounded-lg font-semibold"
+          disabled={!!isLoading}
+          className={` bg-primary500 text-white py-3 px-12 rounded-lg font-semibold flex items-center justify-center
+           ${isLoading ? "opacity-50 cursor-not-allowed" : ""}
+          `}
           onClick={saveTrainingModule}
         >
-          {isEditMode ? "Update" : "Save"}
+          {isLoading ? (
+            <>
+              {isEditMode ? (
+                <>
+                  <Loader2 className=" size-6 mr-2 animate-spin" />
+                </>
+              ) : (
+                <Loader2 className=" size-6 mr-2 animate-spin" />
+              )}
+            </>
+          ) : (
+            <>{isEditMode ? "Update" : "Save"}</>
+          )}
         </button>
       </div>
 
@@ -901,7 +917,7 @@ const CreateTrainingModules = ({
 
                             {activeLessonTab.tabIndex === 3 && (
                               <Editor
-                                onChange={(content) =>
+                                onChange={(content: any) =>
                                   handleEditorContent(
                                     module.id,
                                     lesson.id,
@@ -971,10 +987,25 @@ const CreateTrainingModules = ({
       </div>
       {/*  */}
       <button
-        className="w-full bg-primary500 text-white py-3 px-12 rounded-lg font-semibold"
+        disabled={!!isLoading}
+        className={`w-full bg-primary500 text-white py-3 px-12 rounded-lg font-semibold flex items-center justify-center
+           ${isLoading ? "opacity-50 cursor-not-allowed" : ""}
+          `}
         onClick={saveTrainingModule}
       >
-        {isEditMode ? "Update" : "Save"}
+        {isLoading ? (
+          <>
+            {isEditMode ? (
+              <>
+                <Loader2 className=" size-6 mr-2 animate-spin" />
+              </>
+            ) : (
+              <Loader2 className=" size-6 mr-2 animate-spin" />
+            )}
+          </>
+        ) : (
+          <>{isEditMode ? "Update" : "Save"}</>
+        )}
       </button>
     </div>
   );

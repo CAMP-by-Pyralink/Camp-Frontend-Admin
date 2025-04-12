@@ -2,14 +2,11 @@ import { useState, useEffect } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import downArrow from "../../../assets/svgs/downarrfilled.svg";
 import upArrow from "../../../assets/svgs/up-arrow-filled.svg";
-import ModalLayout from "../../../shared/ModalLayout";
-import AssignTrainingModal from "./AssignTrainingModal";
 import { useTrainingStore } from "../../../store/useAwarenessTrainingStore";
-import dragIcon from "../../../assets/svgs/dragIcon.svg";
 import { ArrowDownIcon, ChevronDown, ChevronUp } from "lucide-react";
 import { Video, FileText, Link, Image } from "lucide-react";
 import ModuleManagementModal from "./ModuleManagementModal";
-import Button from "../../../shared/Button";
+import { ClipLoader } from "react-spinners";
 // import { useAuthStore } from "../../../store/useAuthStore";
 
 const TrainingDetails: React.FC = () => {
@@ -21,7 +18,7 @@ const TrainingDetails: React.FC = () => {
   );
   const [isEditMode, setIsEditMode] = useState(false);
   const { trainingId } = useParams<{ trainingId: string }>();
-  const { fetchSingleTraining, singleTraining } = useTrainingStore();
+  const { fetchSingleTraining, singleTraining, isLoading } = useTrainingStore();
   const navigate = useNavigate();
   const location = useLocation();
   const { assignedView } = location.state || { assignedView: false };
@@ -31,7 +28,11 @@ const TrainingDetails: React.FC = () => {
   }, [trainingId, fetchSingleTraining]);
 
   if (!singleTraining)
-    return <div className="text-center py-10">Loading...</div>;
+    return (
+      <div className="loading-container hdh">
+        <ClipLoader size={50} color="#123abc" />
+      </div>
+    );
 
   const toggleModule = (index: number) => {
     setExpandedModule(expandedModule === index ? null : index);
@@ -61,6 +62,13 @@ const TrainingDetails: React.FC = () => {
     singleTraining.assignedTo &&
     Array.isArray(singleTraining.assignedTo) &&
     singleTraining.assignedTo.length > 0;
+
+  if (isLoading)
+    return (
+      <div className="loading-container hdh">
+        <ClipLoader size={50} color="#123abc" />
+      </div>
+    );
 
   return (
     <div>
