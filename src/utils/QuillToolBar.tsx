@@ -106,12 +106,12 @@ export const QuillToolbar = (props: { toolbarId: string }) => {
               <button className="ql-underline" />
               {/* <button className="ql-strike" /> */}
             </span>
-            {/* <span className="ql-formats">
+            <span className="ql-formats">
               <button className="ql-list" value="ordered" />
               <button className="ql-list" value="bullet" />
               <button className="ql-indent" value="-1" />
               <button className="ql-indent" value="+1" />
-            </span> */}
+            </span>
             {/* <span className="ql-formats">
               <button className="ql-script" value="super" />
               <button className="ql-script" value="sub" />
@@ -129,7 +129,7 @@ export const QuillToolbar = (props: { toolbarId: string }) => {
             </span>
             <span className="ql-formats">
               <button className="ql-link" />
-              {/* <button className="ql-image" /> */}
+              <button className="ql-image" />
               {/* <button className="ql-video" /> */}
             </span>
             <span className="ql-formats">
@@ -138,7 +138,7 @@ export const QuillToolbar = (props: { toolbarId: string }) => {
               <button className="ql-clean" />
             </span>
           </div>
-          {/* <div className="w-[5rem]">
+          <div className="w-[5rem]">
             <span className="ql-formats">
               <button className="ql-undo">
                 <CustomUndo />
@@ -147,7 +147,7 @@ export const QuillToolbar = (props: { toolbarId: string }) => {
                 <CustomRedo />
               </button>
             </span>
-          </div> */}
+          </div>
         </div>
       )}
     </>

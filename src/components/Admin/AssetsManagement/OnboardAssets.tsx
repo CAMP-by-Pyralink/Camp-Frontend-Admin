@@ -1,12 +1,12 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
-import { ChevronDown, X } from "lucide-react";
+import React, { useState } from "react";
+import { X } from "lucide-react";
+import InfoRow from "./InfoRow"; // adjust path as needed
 import lockIcon from "../../../assets/svgs/lock-icon.svg";
 
 interface OnboardAssetsProps {
   onClose?: () => void;
   onSubmit?: (formData: FormData) => void;
   onClick: () => void;
-  //   setRiskRegisterModal: Dispatch<SetStateAction<boolean>>;
 }
 
 interface FormData {
@@ -23,14 +23,7 @@ interface FormData {
   note: string;
 }
 
-const OnboardAssets: React.FC<OnboardAssetsProps> = ({
-  //   onClose,
-  onSubmit,
-  //   setRiskRegisterModal,
-  onClick,
-}) => {
-  const [active, setActive] = useState("manual");
-
+const OnboardAssets: React.FC<OnboardAssetsProps> = ({ onSubmit, onClick }) => {
   const [formData, setFormData] = useState<FormData>({
     riskId: "AS 32345",
     riskName: "",
@@ -51,11 +44,10 @@ const OnboardAssets: React.FC<OnboardAssetsProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg   mx-auto">
+    <div className="bg-white rounded-lg shadow-lg mx-auto">
       <div className="flex justify-between items-center mb-4 py-4 px-12 bg-[#DEEFFC]">
-        <h2 className="text-2xl  text-textColor">Risk register</h2>
+        <h2 className="text-2xl text-textColor">Onboard Assets</h2>
         <button
-          //   onClick={() => setRiskRegisterModal(false)}
           onClick={onClick}
           className="text-gray-500 hover:text-textColor"
         >
@@ -65,204 +57,85 @@ const OnboardAssets: React.FC<OnboardAssetsProps> = ({
 
       <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-2 gap-x-6 gap-y-4 px-12">
-          {/* Risk ID */}
-          <div className="relative">
-            <label className="block text-sm font-medium text-textColor ">
-              Asset ID
-            </label>
-            <div className="relative">
-              <input
-                disabled
-                type="text"
-                value={formData.riskId}
-                readOnly
-                className="w-[444px] text-[#98A2B3] text-sm p-2 border rounded-md bg-[#F0F2F5]"
-              />
-              <button className="absolute right-2 top-2 text-gray-400 hover:text-gray-600">
-                {/* <Copy size={18} /> */}
-                <img src={lockIcon} width={15} alt="" />
-              </button>
-            </div>
-          </div>
+          <InfoRow
+            label="Asset ID"
+            value={formData.riskId}
+            onChange={() => {}}
+            disabled
+            readOnly
+            extraButton={<img src={lockIcon} width={15} alt="" />}
+          />
 
-          {/* Risk Name */}
-          <div>
-            <label className="block text-sm font-medium text-textColor ">
-              Purchase date
-            </label>
-            <input
-              type="text"
-              value={formData.riskName}
-              onChange={(e) =>
-                setFormData({ ...formData, riskName: e.target.value })
-              }
-              className=" w-[444px] p-2 border rounded-md"
-            />
-          </div>
+          <InfoRow
+            label="Purchase date"
+            value={formData.riskName}
+            onChange={(val) => setFormData({ ...formData, riskName: val })}
+          />
 
-          {/* Risk Description */}
-          <div>
-            <label className="block text-sm font-medium text-textColor ">
-              Asset name
-            </label>
-            <input
-              type="text"
-              value={formData.description}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
-              className=" w-[444px] p-2 border rounded-md"
-            />
-          </div>
+          <InfoRow
+            label="Asset name"
+            value={formData.description}
+            onChange={(val) => setFormData({ ...formData, description: val })}
+          />
 
-          {/* Category */}
-          <div>
-            <label className="block text-sm font-medium text-textColor ">
-              Select Department (optional)
-            </label>
-            <div className="relative">
-              <select
-                // value={formData.category}
-                onChange={(e) =>
-                  setFormData({ ...formData, category: e.target.value })
-                }
-                className=" w-[444px] p-2 border rounded-md appearance-none"
-              >
-                {/* <option value="">Select category</option> */}
-                {/* Add your categories here */}
-              </select>
-              <ChevronDown
-                className="absolute right-2 top-3 text-gray-400"
-                size={16}
-              />
-            </div>
-          </div>
+          <InfoRow
+            label="Select Department (optional)"
+            type="select"
+            value={formData.category}
+            onChange={(val) => setFormData({ ...formData, category: val })}
+            options={["IT", "Management", "Security"]}
+          />
 
-          {/* Risk Status */}
-          <div>
-            <label className="block text-sm font-medium text-textColor ">
-              Select category
-            </label>
-            <div className="relative">
-              <select
-                value={formData.status}
-                onChange={(e) =>
-                  setFormData({ ...formData, status: e.target.value })
-                }
-                className=" w-[444px] text-[#454545] text-xs p-2 border rounded-md appearance-none"
-              >
-                <option value="Active">Active</option>
-                <option value="Mitigated">Mitigated</option>
-                {/* Add other status options */}
-              </select>
-              <ChevronDown
-                className="absolute right-2 top-3 text-gray-400"
-                size={16}
-              />
-            </div>
-          </div>
+          <InfoRow
+            label="Select category"
+            type="select"
+            value={formData.status}
+            onChange={(val) => setFormData({ ...formData, status: val })}
+            options={["Active", "Mitigated"]}
+          />
 
-          {/* Department */}
-          <div>
-            <label className="block text-sm font-medium text-textColor ">
-              Assign asset (optional)
-            </label>
-            <div className="relative">
-              <select
-                value={formData.department}
-                onChange={(e) =>
-                  setFormData({ ...formData, department: e.target.value })
-                }
-                className=" w-[444px] text-[#454545] text-xs p-2 border rounded-md appearance-none"
-              >
-                <option value="">Select department</option>
-                <option value="It">It</option>
-                <option value="Management">Management</option>
-                {/* Add your departments here */}
-              </select>
-              <ChevronDown
-                className="absolute right-2 top-3 text-gray-400"
-                size={16}
-              />
-            </div>
-          </div>
+          <InfoRow
+            label="Assign asset (optional)"
+            type="select"
+            value={formData.department}
+            onChange={(val) => setFormData({ ...formData, department: val })}
+            options={["", "IT", "Management"]}
+          />
 
-          {/* Risk Probability */}
-          <div>
-            <label className="block text-sm font-medium text-textColor ">
-              Status
-            </label>
-            <div className="relative">
-              <select
-                value={formData.probability}
-                onChange={(e) =>
-                  setFormData({ ...formData, probability: e.target.value })
-                }
-                className=" w-[444px] text-[#454545] text-xs p-2 border rounded-md appearance-none"
-              >
-                <option value="Low">Low</option>
-                <option value="Medium">Medium</option>
-                <option value="High">High</option>
-              </select>
-              <ChevronDown
-                className="absolute right-2 top-3 text-gray-400"
-                size={16}
-              />
-            </div>
-          </div>
+          <InfoRow
+            label="Status"
+            type="select"
+            value={formData.probability}
+            onChange={(val) => setFormData({ ...formData, probability: val })}
+            options={["Low", "Medium", "High"]}
+          />
 
-          {/* Risk Owner */}
-          <div>
-            <label className="block text-sm font-medium text-textColor ">
-              Antivirus Status
-            </label>
-            <div className="relative">
-              <input
-                type="text"
-                value={formData.owner}
-                onChange={(e) =>
-                  setFormData({ ...formData, owner: e.target.value })
-                }
-                placeholder="Search employee"
-                className=" w-[444px] px-20 p-2 border rounded-md"
-              />
+          <InfoRow
+            label="Antivirus Status"
+            value={formData.owner}
+            onChange={(val) => setFormData({ ...formData, owner: val })}
+            placeholder="Search employee"
+            extraButton={
               <button className="absolute left-0 top-0 h-full px-2 py-1 bg-[#F2F2F2] text-gray-400 border-l">
                 Filter
               </button>
-            </div>
-          </div>
+            }
+          />
 
-          {/* Risk Impact */}
-          <div>
-            <label className="block text-sm font-medium text-textColor ">
-              Subscription renewal
-            </label>
-            <div className="relative">
-              <select
-                value={formData.impact}
-                onChange={(e) =>
-                  setFormData({ ...formData, impact: e.target.value })
-                }
-                className=" w-[444px] text-[#454545] text-xs p-2 border rounded-md appearance-none"
-              >
-                <option value="Low">Low</option>
-                <option value="Medium">Medium</option>
-                <option value="High">High</option>
-              </select>
-              <ChevronDown
-                className="absolute right-2 top-3 text-gray-400"
-                size={16}
-              />
-            </div>
-          </div>
+          <InfoRow
+            label="Subscription renewal"
+            type="select"
+            value={formData.impact}
+            onChange={(val) => setFormData({ ...formData, impact: val })}
+            options={["Low", "Medium", "High"]}
+          />
         </div>
       </form>
 
-      {/* Submit Button */}
       <div className="my-8 mr-12 flex items-center justify-end">
         <button
           type="submit"
-          className=" w-[302px] bg-primary500 text-white py-2 px-4 rounded-md hover:bg-blue-700"
+          className="w-[302px] bg-primary500 text-white py-2 px-4 rounded-md hover:bg-blue-700"
           onClick={onClick}
         >
           Save

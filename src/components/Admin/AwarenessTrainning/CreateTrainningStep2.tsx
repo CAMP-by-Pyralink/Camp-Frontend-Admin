@@ -21,8 +21,8 @@ const CreateTrainningStep2 = ({
     { icon: uploadLinkicon, name: "Link", type: "link" as LessonType },
     {
       icon: uploadTexticon,
-      name: "Text & Image",
-      type: "text & image" as LessonType,
+      name: "text-&-image",
+      type: "text-&-image" as LessonType,
     },
   ];
   const [activeTab, setActiveTab] = useState(0);

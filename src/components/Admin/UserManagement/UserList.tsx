@@ -174,15 +174,6 @@ const UserList: React.FC<UserListProps> = ({ setHasData, data }) => {
     return `${day}/${month}/${year} ${formattedHours}:${minutes}${ampm}`;
   };
 
-  // If no data, return null or a message
-  if (!data || data.length === 0) {
-    return (
-      <div className=" text-center">
-        Not found Add {type === "Admin" ? "Admin" : "User"}
-      </div>
-    );
-  }
-
   return (
     <div className="relative">
       <table className="w-full border-collapse border border-gray-200">

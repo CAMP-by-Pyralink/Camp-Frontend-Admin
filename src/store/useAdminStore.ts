@@ -25,6 +25,7 @@ api.interceptors.request.use(
     const token = Cookies.get("token");
 
     // If token exists, add it to the headers
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -76,6 +77,23 @@ export interface GetCurrentAdminData {
   phoneNumber: string;
 }
 
+export interface AdminDetails {
+  fName: string;
+  lName: string;
+  phoneNumber: string;
+  homeAddress: string;
+  profileImage: string;
+}
+
+export interface UserDetails {
+  fName: string;
+  lName: string;
+  phoneNumber: string;
+  homeAddress: string;
+  // profileImage: string;
+  department: string;
+}
+
 // --- Admin store interface
 
 interface AdminStore {
@@ -88,7 +106,7 @@ interface AdminStore {
   currentUser: GetCurrentAdminData | null;
   companyDetails: any | null;
   fetchDepartments: () => Promise<void>;
-  getAdmins: () => Promise<void>;
+  getAdmins: (search?: string, filter?: string) => Promise<void>;
   // getUsers: () => Promise<void>;
   getUsers: (search?: string, filter?: string) => Promise<void>;
   getCurrentAdmin: () => Promise<any>;
@@ -130,13 +148,16 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
     }
   },
 
-  getAdmins: async () => {
+  getAdmins: async (search = "", filter = "") => {
     set({ isLoading: true });
     try {
       const response: AxiosResponse = await api.get(
-        "/admin/getAllAdmins?page=1"
+        "/admin/getAllAdmins?page=1",
+        {
+          params: { search, filter },
+        }
       );
-      set({ admins: response.data.admins });
+      set({ admins: response.data.allAdmins || [] });
       console.log("getAdmins", response.data.allAdmins);
     } catch (error) {
       console.error("getAdmins", error);
@@ -164,19 +185,18 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
       set({ isRegisteringAdmin: false });
     }
   },
+
   getUsers: async (search = "", filter = "") => {
-    set({ isLoading: true });
+    set({ isLoading: true }); // Clear old users while loading
     try {
       const response: AxiosResponse = await api.get(
         "/user/getAllUsers?page=1",
         {
-          params: { search, filter }, // Send query params
+          params: { search, filter },
         }
       );
-      set({ users: response.data.users });
+      set({ users: response.data.users || [] });
       console.log("getUsers", response.data.users);
-      // console.log("users", users);
-      set({ users: response.data.users });
     } catch (error) {
       console.error("getUsers", error);
     } finally {

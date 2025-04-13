@@ -68,8 +68,8 @@ const ModuleManagementModal = ({
     { icon: <LinkIcon />, name: "Link", type: "link" as LessonType },
     {
       icon: <Image />,
-      name: "Text & Image",
-      type: "text & image" as LessonType,
+      name: "text-&-image",
+      type: "text-&-image" as LessonType,
     },
   ];
 

@@ -12,7 +12,6 @@ import uploadDocumentIcon from "../../../assets/svgs/upload-document-icon.svg";
 import uploadLinkicon from "../../../assets/svgs/link-icon.svg";
 import uploadTexticon from "../../../assets/svgs/upload-text-img-icon.svg";
 import delIcon from "../../../assets/svgs/delete-icon.svg";
-import Editor from "./Editor";
 import {
   LessonType,
   QuestionType,
@@ -21,6 +20,10 @@ import {
 import CreateTrainingStep3 from "./CreateTrainingStep3";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import QuillToolbar, { formats, modules } from "../../../utils/QuillToolBar";
+import ReactQuill from "react-quill";
+import DOMPurify from "dompurify";
+import he from "he";
 
 interface CreateTrainingModulesProps {
   initialData?: FormState;
@@ -473,6 +476,55 @@ const CreateTrainingModules = ({
     }));
   };
 
+  // const sanitizedContent = DOMPurify.sanitize(content);
+
+  // Update your prepareDataForBackend function
+  // Update the prepareDataForBackend function to properly handle the text editor content
+
+  // Function to properly clean and format the content
+  const cleanEditorContent = (content, lessonType) => {
+    if (!content || typeof content !== "string") return "";
+
+    // For text & image type, we need special handling
+    if (lessonType === "text-&-image") {
+      try {
+        // Check if content contains an image
+        if (content.includes('<img src="data:image/')) {
+          // Extract just the base64 data from the image
+          const imageMatch = content.match(/data:image\/[^;]+;base64,[^"]+/);
+          if (imageMatch) {
+            // Return just the base64 image data
+            return imageMatch[0];
+          }
+        }
+
+        // If it's text content (not an image)
+        // Create a temporary DOM element to parse the HTML
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = content;
+
+        // Option 1: Extract just the text content without any HTML
+        const plainText = tempDiv.textContent || tempDiv.innerText || "";
+
+        // Option 2: If you want to keep minimal formatting like lists, but clean up tags
+        // const minimalHtml = tempDiv.innerHTML.replace(/<\/?ol[^>]*>/g, '')
+        //                                      .replace(/<\/?ul[^>]*>/g, '')
+        //                                      .replace(/<li[^>]*>/g, '• ')
+        //                                      .replace(/<\/li>/g, '\n');
+
+        return plainText.trim();
+      } catch (error) {
+        console.error("Error processing content:", error);
+        // Fallback to a simple tag removal if DOM parsing fails
+        return content.replace(/<[^>]+>/g, "").trim();
+      }
+    }
+
+    // For other types, just return the content as is
+    return content;
+  };
+
+  // Update the prepareDataForBackend function
   const prepareDataForBackend = (formData = formState) => {
     // Format modules according to the backend's expected structure
     const formattedModules = formData.modules.map((module) => {
@@ -485,17 +537,11 @@ const CreateTrainingModules = ({
           }
         });
 
-        // Get content based on lesson type
+        // Process the content based on lesson type
         let formattedContent = "";
-        if (typeof lesson.content === "string") {
-          // If it's already a base64 string or a link
-          formattedContent = lesson.content;
-        } else if (
-          lesson.content !== null &&
-          typeof lesson.content === "object"
-        ) {
-          // For rich text editor content
-          formattedContent = JSON.stringify(lesson.content);
+
+        if (lesson.content) {
+          formattedContent = cleanEditorContent(lesson.content, lesson.type);
         }
 
         return {
@@ -520,11 +566,34 @@ const CreateTrainingModules = ({
       startDate: formData.startDate,
       endDate: formData.endDate,
       modules: formattedModules,
-      progress: 0, // Default value for progress
-      assignedUsers: [], // Default value for assignedUsers
-      training: [], // Default value for training as an empty array
-      _id: "", // Default value for _id
     };
+  };
+
+  // Optional: A more robust function that can handle both image and text mixed content
+  const processComplexContent = (content) => {
+    if (!content || typeof content !== "string") return "";
+
+    // Create a temporary DOM element
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = content;
+
+    // Check for images
+    const images = tempDiv.querySelectorAll("img");
+    if (images.length > 0) {
+      // If there's an image, extract its src attribute
+      const imageSrc = images[0].getAttribute("src");
+      if (imageSrc && imageSrc.startsWith("data:image/")) {
+        return imageSrc; // Return just the image data
+      }
+    }
+
+    // No images found, process as text
+    // Remove all HTML tags and return plain text
+    return (
+      tempDiv.textContent ||
+      tempDiv.innerText ||
+      content.replace(/<[^>]+>/g, "")
+    );
   };
 
   // Save training module
@@ -561,8 +630,8 @@ const CreateTrainingModules = ({
     { icon: uploadLinkicon, name: "Link", type: "link" as LessonType },
     {
       icon: uploadTexticon,
-      name: "Text & Image",
-      type: "text & image" as LessonType,
+      name: "text-&-image",
+      type: "text-&-image" as LessonType,
     },
   ];
 
@@ -575,20 +644,14 @@ const CreateTrainingModules = ({
         </h1>
         <button
           disabled={!!isLoading}
-          className={` bg-primary500 text-white py-3 px-12 rounded-lg font-semibold flex items-center justify-center
-           ${isLoading ? "opacity-50 cursor-not-allowed" : ""}
-          `}
+          className={`bg-primary500 text-white py-3 px-12 rounded-lg font-semibold flex items-center justify-center
+    ${isLoading ? "opacity-50 cursor-not-allowed" : ""} `}
           onClick={saveTrainingModule}
         >
           {isLoading ? (
             <>
-              {isEditMode ? (
-                <>
-                  <Loader2 className=" size-6 mr-2 animate-spin" />
-                </>
-              ) : (
-                <Loader2 className=" size-6 mr-2 animate-spin" />
-              )}
+              <Loader2 className="size-6 mr-2 animate-spin" />
+              {isEditMode ? "Updating..." : "Saving..."}
             </>
           ) : (
             <>{isEditMode ? "Update" : "Save"}</>
@@ -916,16 +979,27 @@ const CreateTrainingModules = ({
                             )}
 
                             {activeLessonTab.tabIndex === 3 && (
-                              <Editor
-                                onChange={(content: any) =>
-                                  handleEditorContent(
-                                    module.id,
-                                    lesson.id,
-                                    content
-                                  )
-                                }
-                                initialContent={lesson.content}
-                              />
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700">
+                                  Content
+                                </label>
+                                <QuillToolbar toolbarId={"t1"} />
+                                <ReactQuill
+                                  modules={modules("t1")}
+                                  formats={formats}
+                                  theme="snow"
+                                  value={lesson.content}
+                                  onChange={(value: any) =>
+                                    handleEditorContent(
+                                      module.id,
+                                      lesson.id,
+                                      value
+                                    )
+                                  }
+                                  placeholder="Start typing......"
+                                  className="h-44"
+                                />
+                              </div>
                             )}
                           </>
                         )}
@@ -989,19 +1063,14 @@ const CreateTrainingModules = ({
       <button
         disabled={!!isLoading}
         className={`w-full bg-primary500 text-white py-3 px-12 rounded-lg font-semibold flex items-center justify-center
-           ${isLoading ? "opacity-50 cursor-not-allowed" : ""}
-          `}
+    ${isLoading ? "opacity-50 cursor-not-allowed" : ""}
+  `}
         onClick={saveTrainingModule}
       >
         {isLoading ? (
           <>
-            {isEditMode ? (
-              <>
-                <Loader2 className=" size-6 mr-2 animate-spin" />
-              </>
-            ) : (
-              <Loader2 className=" size-6 mr-2 animate-spin" />
-            )}
+            <Loader2 className="size-6 mr-2 animate-spin" />
+            {isEditMode ? "Updating..." : "Saving..."}
           </>
         ) : (
           <>{isEditMode ? "Update" : "Save"}</>

@@ -32,7 +32,7 @@ api.interceptors.request.use(
 );
 
 export type QuestionType = "multiple-choice" | "checkbox" | "input";
-export type LessonType = "video" | "document" | "link" | "text & image";
+export type LessonType = "video" | "document" | "link" | "text-&-image";
 
 export interface Lesson {
   lessonTitle: ReactNode;
@@ -55,17 +55,20 @@ interface Question {
 }
 
 export interface CreateTrainingData {
-  assignedTo: any;
+  training: any;
+  assignedTo: boolean;
   progress: any;
-  assignedUsers: any;
-  _id: string;
+  // assignedTo: any;
+  // progress: any;
+  // assignedUsers: any;
+  // _id: string;
   bannerImage: string;
   title: string;
   description: string;
   startDate: string;
   endDate: string;
   modules: Module[];
-  training: Training[];
+  // training: Training[];
 }
 export interface Training {
   _id: string;
@@ -144,7 +147,7 @@ export const useTrainingStore = create<TrainingState>((set, get) => ({
     }),
 
   createTraining: async (data: CreateTrainingData) => {
-    set({ isCreatingTraining: true });
+    set({ isLoading: true });
     try {
       const response: AxiosResponse = await api.post(
         "/training/createTraining",
@@ -158,7 +161,7 @@ export const useTrainingStore = create<TrainingState>((set, get) => ({
         error.response?.data?.message || "Failed to create training."
       );
     } finally {
-      set({ isCreatingTraining: false });
+      set({ isLoading: false });
     }
   },
 
@@ -180,6 +183,7 @@ export const useTrainingStore = create<TrainingState>((set, get) => ({
   },
 
   fetchSingleTraining: async (trainingId: string) => {
+    set({ isLoading: true });
     try {
       const response: AxiosResponse = await api.get(
         `/training/getSingleTrainingAdmin/${trainingId}`
@@ -189,6 +193,8 @@ export const useTrainingStore = create<TrainingState>((set, get) => ({
     } catch (error: any) {
       console.log(error);
       toast.error(error.response?.data?.message || "Failed to fetch training.");
+    } finally {
+      set({ isLoading: false });
     }
   },
   deleteSingleTraining: async (trainingId: string) => {

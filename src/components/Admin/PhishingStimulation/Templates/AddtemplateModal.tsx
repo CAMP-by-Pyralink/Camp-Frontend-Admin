@@ -11,6 +11,7 @@ import QuillToolbar, { modules, formats } from "../../../../utils/QuillToolBar";
 import "react-quill/dist/quill.snow.css";
 import DOMPurify from "dompurify";
 import he from "he";
+import { Loader2 } from "lucide-react";
 
 interface AddTemplateModalProps {
   onClose: () => void;
@@ -21,12 +22,8 @@ const AddTemplateModal: React.FC<AddTemplateModalProps> = ({
   onClose,
   templateToEdit,
 }) => {
-  const {
-    createPhishingTemplate,
-    updatePhishingTemplate,
-    isCreatingTemplate,
-    isUpdatingTemplate,
-  } = usePhishingStore();
+  const { createPhishingTemplate, updatePhishingTemplate, isLoading } =
+    usePhishingStore();
   const [title, setTitle] = useState(templateToEdit?.title || "");
   const [content, setContent] = useState(
     templateToEdit?.content ? he.decode(templateToEdit.content) : ""
@@ -75,8 +72,9 @@ const AddTemplateModal: React.FC<AddTemplateModalProps> = ({
       response = await createPhishingTemplate(formData);
     }
 
-    if (response && response.status === 201) {
+    if (response) {
       onClose();
+      // alert("response is true");
     }
   };
 
@@ -130,7 +128,9 @@ const AddTemplateModal: React.FC<AddTemplateModalProps> = ({
               formats={formats}
               theme="snow"
               value={content}
-              onChange={(value) => setContent(value)}
+              onChange={(value: React.SetStateAction<string>) =>
+                setContent(value)
+              }
               placeholder="Enter your message..."
               className="h-44"
             />
@@ -138,11 +138,20 @@ const AddTemplateModal: React.FC<AddTemplateModalProps> = ({
         </div>
 
         <button
-          className="mt-6 w-full bg-blue-600 text-white py-2 rounded-md text-lg font-semibold hover:bg-blue-700 transition-all duration-300"
+          className={`mt-6 w-full bg-primary800 text-white py-2 rounded-md text-lg font-semibold hover:bg-blue-700 transition-all duration-300 flex items-center justify-center
+             ${isLoading ? "opacity-50 cursor-not-allowed" : ""}
+            `}
           onClick={handleSubmit}
-          disabled={templateToEdit ? isUpdatingTemplate : isCreatingTemplate}
+          disabled={!!isLoading}
         >
-          {templateToEdit ? "Update" : "Save"}
+          {isLoading ? (
+            <>
+              <Loader2 className="size-6 mr-2 animate-spin" />
+              {templateToEdit ? "Updating..." : "Saving..."}
+            </>
+          ) : (
+            <>{templateToEdit ? "Update" : "Save"}</>
+          )}
         </button>
       </div>
     </div>

@@ -35,7 +35,7 @@ const AssetManagement = () => {
   const [scanQr, setScanQr] = useState(false);
   const toggleDropdown = () => setIsOpen(!isOpen);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
-  const locked = true;
+  const locked = false;
 
   // State to hold the selected filter values
   const [selectedFilters, setSelectedFilters] = useState({
@@ -174,6 +174,7 @@ const AssetManagement = () => {
         onExportClick={handleExportClick}
         showFilter={true}
         showExport={true}
+        searchTerm={""}
       >
         {/* <RiskList /> */}
         <AssestList />

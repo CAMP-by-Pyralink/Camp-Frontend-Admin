@@ -16,7 +16,7 @@ const AssetsDetailsTab = () => {
   return (
     <div className="bg-white py-10 font-poppins pr-40">
       <div>
-        <div className="flex items-center w-full bg-white">
+        <div className="flex items-center w-full bg-white mb-6">
           {/* tab1 */}
           <div className="w-full bg-white">
             <button

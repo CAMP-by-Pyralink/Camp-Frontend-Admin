@@ -58,6 +58,18 @@ const TemplateLists: React.FC = () => {
     setOptionsIndex(null); // Hide the options menu
     setIsModalOpen(true);
   };
+  // import DOMPurify from "dompurify";
+  // import he from "he";
+
+  // Utility to strip HTML tags and slice text
+  const getSlicedContent = (html: string, maxLength = 200) => {
+    const decoded = he.decode(html); // decode HTML entities
+    const clean = DOMPurify.sanitize(decoded, {
+      ALLOWED_TAGS: [],
+      ALLOWED_ATTR: [],
+    }); // strip all tags
+    return clean.length > maxLength ? clean.slice(0, maxLength) + "..." : clean;
+  };
 
   return (
     <div>
@@ -102,12 +114,15 @@ const TemplateLists: React.FC = () => {
                 </div>
               </div>
 
-              <div
+              {/* <div
                 className="prose prose-blue prose-xl prose-headings:underline prose-a:text-[#0007FC] prose-headings:text-[2rem] text-[#333333] text-sm text-opacity-80"
                 dangerouslySetInnerHTML={{
                   __html: DOMPurify.sanitize(he.decode(content)),
                 }}
-              />
+              /> */}
+              <div className="text-[#333333] text-sm text-opacity-80">
+                {getSlicedContent(content, 100)}
+              </div>
             </div>
           )
         )}

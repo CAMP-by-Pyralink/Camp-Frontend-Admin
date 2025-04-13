@@ -27,10 +27,12 @@ const TrainingDetails: React.FC = () => {
     if (trainingId) fetchSingleTraining(trainingId);
   }, [trainingId, fetchSingleTraining]);
 
-  if (!singleTraining)
+  if (!singleTraining || isLoading)
     return (
-      <div className="loading-container hdh">
-        <ClipLoader size={50} color="#123abc" />
+      <div className=" h-screen flex items-center justify-center fixed inset-0 bg-[#344054B2] bg-opacity-40">
+        <div className="loading-container hdh">
+          <ClipLoader size={50} color="#123abc" />
+        </div>
       </div>
     );
 
@@ -43,7 +45,7 @@ const TrainingDetails: React.FC = () => {
       video: <Video className="size-[14px] text-blue-500" />,
       document: <FileText className="size-[14px] text-green-500" />,
       link: <Link className="size-[14px] text-yellow-500" />,
-      "text & image": <Image className="size-[14px] text-purple-500" />,
+      "text-&-image": <Image className="size-[14px] text-purple-500" />,
     };
     return icons[lessonType] || null;
   };
@@ -185,6 +187,7 @@ const TrainingDetails: React.FC = () => {
               </thead>
               <tbody>
                 {hasAssignedUsers ? (
+                  Array.isArray(singleTraining.assignedTo) &&
                   singleTraining.assignedTo.map(
                     (individual: any, index: number) => {
                       const progressPercentage = getProgressPercentage(

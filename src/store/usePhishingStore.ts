@@ -53,6 +53,7 @@ interface PhishingStore {
   isCreatingTemplate: boolean;
   isUpdatingTemplate: boolean;
   isDeletingTemplate: boolean;
+  isLoading: boolean;
   phishingTemplates: PhishingTemplate[];
   fetchPhishingTemplates: (page: number) => Promise<void>;
   createPhishingTemplate: (data: createTemplateData) => Promise<any>;
@@ -67,24 +68,13 @@ export const usePhishingStore = create<PhishingStore>((set) => ({
   isCreatingTemplate: false,
   isUpdatingTemplate: false,
   isDeletingTemplate: false,
+  isLoading: false,
   phishingTemplates: [],
 
   fetchPhishingTemplates: async (page: number) => {
-    // const { authUser } = useAuthStore.getState();
-    // if (!authUser) {
-    //   console.error("No auth user found or token missing");
-    //   toast.error("Authentication error. Please log in again.");
-    //   return;
-    // }
-
     try {
       const response: AxiosResponse = await api.get(
         `/template/getPhishingTemplates?page=${page}`
-        // {
-        //   headers: {
-        //     Authorization: `Bearer ${token}`,
-        //   },
-        // }
       );
       set({ phishingTemplates: response.data.templates });
       console.log("Phishing Templates:", response.data.templates);
@@ -97,88 +87,60 @@ export const usePhishingStore = create<PhishingStore>((set) => ({
   },
 
   createPhishingTemplate: async (data: createTemplateData) => {
-    const { authUser } = useAuthStore.getState();
-    if (!authUser) {
-      console.error("No auth user found or token missing");
-      toast.error("Authentication error. Please log in again.");
-      return;
-    }
-
-    set({ isCreatingTemplate: true });
+    set({ isLoading: true });
     try {
       const response: AxiosResponse = await api.post(
         "template/createPhishingTemplate",
         data
-        // {
-        //   headers: {
-        //     Authorization: `Bearer ${authUser}`,
-        //   },
-        // }
       );
-      console.log("Authorization Header:", `Bearer ${authUser.token}`);
 
-      console.log(response);
-      toast.success("Template created successfully!");
-      return response;
+      if (response.status === 201) {
+        console.log(response);
+        // alert("response is true");
+        toast.success(response.data.msg);
+        return true;
+      }
+      return null;
     } catch (error: any) {
       console.log(error);
       toast.error(
         error.response?.data?.message || "Failed to create template."
       );
+      return null;
     } finally {
-      set({ isCreatingTemplate: false });
+      set({ isLoading: false });
     }
   },
 
   updatePhishingTemplate: async (id: string, data: createTemplateData) => {
-    const { authUser } = useAuthStore.getState();
-    if (!authUser) {
-      console.error("No auth user found or token missing");
-      toast.error("Authentication error. Please log in again.");
-      return;
-    }
-    set({ isUpdatingTemplate: true });
+    set({ isLoading: true });
     try {
       console.log("Request Data:", data);
       const response: AxiosResponse = await api.patch(
         `template/updatePhishingTemplate/${id}`,
         data
-        // {
-        //   headers: {
-        //     Authorization: `Bearer ${authUser}`,
-        //   },
-        // }
       );
-      console.log("Request Headers:", {
-        Authorization: `Bearer ${authUser}`,
-      });
-      console.log("Response:", response);
-      toast.success("Template updated successfully!");
-      return response;
+
+      if (response.status === 200) {
+        console.log("Response:", response);
+        toast.success(response.data.msg);
+        return true;
+      }
+      return null;
     } catch (error: any) {
       console.log(error);
       toast.error(error.response?.data?.msg || "Failed to update template.");
+      return null;
     } finally {
-      set({ isUpdatingTemplate: false });
+      set({ isLoading: false });
     }
   },
 
   deletePhishingTemplate: async (templateId: string) => {
-    const { authUser } = useAuthStore.getState();
-    if (!authUser) {
-      console.error("No auth user found or token missing");
-      toast.error("Authentication error. Please log in again.");
-      return;
-    }
     set({ isDeletingTemplate: true });
     try {
       const response: AxiosResponse = await api.delete(
         `/template/deletePhishingTemplate/${templateId}`
-        // {
-        //   headers: {
-        //     Authorization: `Bearer ${authUser}`,
-        //   },
-        // }
       );
       toast.success("Template deleted successfully!");
       return response;
