@@ -21,7 +21,8 @@ const TrainingDetails: React.FC = () => {
   const { fetchSingleTraining, singleTraining, isLoading } = useTrainingStore();
   const navigate = useNavigate();
   const location = useLocation();
-  const { assignedView } = location.state || { assignedView: false };
+  const { assignedView = false, tab = "" } = location.state || {};
+  const isCustom = tab === "custom";
 
   useEffect(() => {
     if (trainingId) fetchSingleTraining(trainingId);
@@ -42,10 +43,10 @@ const TrainingDetails: React.FC = () => {
 
   const renderLessonIcon = (lessonType: string) => {
     const icons: Record<string, JSX.Element> = {
-      video: <Video className="size-[14px] text-blue-500" />,
-      document: <FileText className="size-[14px] text-green-500" />,
-      link: <Link className="size-[14px] text-yellow-500" />,
-      "text-&-image": <Image className="size-[14px] text-purple-500" />,
+      video: <Video className="size-[14px] text-black" />,
+      document: <FileText className="size-[14px] text-black" />,
+      link: <Link className="size-[14px] text-black" />,
+      "text-&-image": <Image className="size-[14px] text-black" />,
     };
     return icons[lessonType] || null;
   };
@@ -89,14 +90,16 @@ const TrainingDetails: React.FC = () => {
           </h1>
         </div>
         {/*  */}
-        <button
-          onClick={() =>
-            navigate(`/edit-training/${singleTraining.training._id}`)
-          }
-          className="border border-[#D0D5DD] py-2.5 px-5 rounded-lg text-[#344054]"
-        >
-          Edit Training
-        </button>
+        {isCustom && (
+          <button
+            onClick={() =>
+              navigate(`/edit-training/${singleTraining.training._id}`)
+            }
+            className="border border-[#D0D5DD] py-2.5 px-5 rounded-lg text-[#344054]"
+          >
+            Edit Training
+          </button>
+        )}
       </div>
 
       <div className="bg-[#EBECFF] p-4 space-y-4 rounded-3xl">
@@ -105,8 +108,9 @@ const TrainingDetails: React.FC = () => {
             <h1 className="text-[56px] font-bold">
               {singleTraining.training.title}
             </h1>
-            <p className="text-greyText text-[12px]">
-              {singleTraining.modules?.length} modules
+            <p className="text-greyText text-[14px]">
+              {singleTraining.totalModules} modules,{" "}
+              <span>{singleTraining.totalLessons} Lessons</span>
             </p>
           </div>
           <div className="h-[228px] basis-[60%]">

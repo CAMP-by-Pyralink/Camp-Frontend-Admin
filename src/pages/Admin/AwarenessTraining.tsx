@@ -15,6 +15,23 @@ const AwarenessTraining = () => {
   const [assignModal, setAssignModal] = useState<boolean>(false);
   const [showCheckbox, setShowCheckbox] = useState(false);
 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
+  const { fetchTrainings, trainings } = useTrainingStore();
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, [searchTerm]);
+
+  useEffect(() => {
+    fetchTrainings("all", 1, debouncedSearch); // pass debounced search
+  }, [debouncedSearch]);
+
   const navigate = useNavigate();
   const [selectedTrainings, setSelectedTrainings] = useState<string[]>([]);
 
@@ -109,7 +126,10 @@ const AwarenessTraining = () => {
                 type="text"
                 placeholder="Search"
                 className="border-b-[0.5px] border-black outline-none px-12 py-2 w-full"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
+
               <img
                 src={searchIcon}
                 alt=""
@@ -158,6 +178,7 @@ const AwarenessTraining = () => {
         </div>
         <div className="mt-8">
           <TrainningsList
+            trainings={trainings}
             setSelectionMode={setSelectionMode}
             setAssignModal={setAssignModal}
             setSelectedTrainings={setSelectedTrainings}

@@ -86,7 +86,11 @@ interface TrainingState {
   questions: Question[];
   moduless: any[];
   createTraining: (data: CreateTrainingData) => Promise<any>;
-  fetchTrainings: (fetchType: string, page: number) => Promise<void>;
+  fetchTrainings: (
+    fetchType: string,
+    page: number,
+    search?: string
+  ) => Promise<void>;
   fetchSingleTraining: (trainingId: string) => Promise<void>;
   setCreateTrainingData: (data: Partial<CreateTrainingData>) => void;
   addModule: (module: Module) => void;
@@ -165,15 +169,16 @@ export const useTrainingStore = create<TrainingState>((set, get) => ({
     }
   },
 
-  fetchTrainings: async (fetchType: string, page: number) => {
+  fetchTrainings: async (fetchType: string, page: number, search?: string) => {
     try {
       const response: AxiosResponse = await api.post(
-        `/training/getAllTrainingsAdmin?page=${page}`,
+        `/training/getAllTrainingsAdmin?page=${page}${
+          search ? `&search=${encodeURIComponent(search)}` : ""
+        }`,
         { fetchType }
       );
       console.log(response.data.trainings);
       set({ trainings: response.data.trainings || [] });
-      // set({ moduless: response.data.modules || [] });
     } catch (error: any) {
       console.log(error);
       toast.error(
@@ -181,7 +186,6 @@ export const useTrainingStore = create<TrainingState>((set, get) => ({
       );
     }
   },
-
   fetchSingleTraining: async (trainingId: string) => {
     set({ isLoading: true });
     try {

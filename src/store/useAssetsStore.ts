@@ -57,12 +57,12 @@ export const useAssetsStore = create<AssetsStore>((set) => ({
       const response = await api.post("/asset/createAsset", data);
 
       if (isSuccessfulResponse(response)) {
-        toast.success(response.data?.msg || "Asset created successfully!");
+        toast.success(response.data?.msg);
         return true;
       }
       return null;
     } catch (error) {
-      handleErrorToast(error, "Failed to create asset.");
+      handleErrorToast(error);
       return null;
     } finally {
       set({ isLoading: false });

@@ -16,6 +16,7 @@ interface TrainningsListProps {
   selectedTrainings: string[];
   showCheckbox: boolean;
   setShowCheckbox: (value: boolean) => void;
+  trainings: any[];
 }
 
 const TrainningsList: React.FC<TrainningsListProps> = ({
@@ -25,6 +26,7 @@ const TrainningsList: React.FC<TrainningsListProps> = ({
   selectedTrainings,
   showCheckbox,
   setShowCheckbox,
+  trainings,
 }) => {
   const [activeTab, setActiveTab] = useState("browse");
   const [currentPage, setCurrentPage] = useState(1);
@@ -37,7 +39,7 @@ const TrainningsList: React.FC<TrainningsListProps> = ({
   const { deleteSingleTraining } = useTrainingStore();
 
   const navigate = useNavigate();
-  const { fetchTrainings, trainings } = useTrainingStore();
+  const { fetchTrainings } = useTrainingStore();
 
   useEffect(() => {
     setIsLoading(true);
@@ -69,6 +71,7 @@ const TrainningsList: React.FC<TrainningsListProps> = ({
       state: {
         ...training,
         assignedView: false,
+        tab: activeTab,
       },
     });
   };
@@ -80,6 +83,7 @@ const TrainningsList: React.FC<TrainningsListProps> = ({
       state: {
         ...training,
         assignedView: true,
+        tab: activeTab,
       },
     });
   };

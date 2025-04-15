@@ -498,21 +498,21 @@ const CreateTrainingModules = ({
           }
         }
 
-        // If it's text content (not an image)
-        // Create a temporary DOM element to parse the HTML
-        const tempDiv = document.createElement("div");
-        tempDiv.innerHTML = content;
+        // // If it's text content (not an image)
+        // // Create a temporary DOM element to parse the HTML
+        // const tempDiv = document.createElement("div");
+        // tempDiv.innerHTML = content;
 
-        // Option 1: Extract just the text content without any HTML
-        const plainText = tempDiv.textContent || tempDiv.innerText || "";
+        // // Option 1: Extract just the text content without any HTML
+        // const plainText = tempDiv.textContent || tempDiv.innerText || "";
 
-        // Option 2: If you want to keep minimal formatting like lists, but clean up tags
-        // const minimalHtml = tempDiv.innerHTML.replace(/<\/?ol[^>]*>/g, '')
-        //                                      .replace(/<\/?ul[^>]*>/g, '')
-        //                                      .replace(/<li[^>]*>/g, '• ')
-        //                                      .replace(/<\/li>/g, '\n');
+        // // Option 2: If you want to keep minimal formatting like lists, but clean up tags
+        // // const minimalHtml = tempDiv.innerHTML.replace(/<\/?ol[^>]*>/g, '')
+        // //                                      .replace(/<\/?ul[^>]*>/g, '')
+        // //                                      .replace(/<li[^>]*>/g, '• ')
+        // //                                      .replace(/<\/li>/g, '\n');
 
-        return plainText.trim();
+        // return plainText.trim();
       } catch (error) {
         console.error("Error processing content:", error);
         // Fallback to a simple tag removal if DOM parsing fails
@@ -569,33 +569,6 @@ const CreateTrainingModules = ({
     };
   };
 
-  // Optional: A more robust function that can handle both image and text mixed content
-  const processComplexContent = (content) => {
-    if (!content || typeof content !== "string") return "";
-
-    // Create a temporary DOM element
-    const tempDiv = document.createElement("div");
-    tempDiv.innerHTML = content;
-
-    // Check for images
-    const images = tempDiv.querySelectorAll("img");
-    if (images.length > 0) {
-      // If there's an image, extract its src attribute
-      const imageSrc = images[0].getAttribute("src");
-      if (imageSrc && imageSrc.startsWith("data:image/")) {
-        return imageSrc; // Return just the image data
-      }
-    }
-
-    // No images found, process as text
-    // Remove all HTML tags and return plain text
-    return (
-      tempDiv.textContent ||
-      tempDiv.innerText ||
-      content.replace(/<[^>]+>/g, "")
-    );
-  };
-
   // Save training module
   const saveTrainingModule = async () => {
     // Check if any file is currently uploading
@@ -637,8 +610,22 @@ const CreateTrainingModules = ({
 
   return (
     <div className="px-24 space-y-6">
+      {/* breadcrumbs */}
+      <div className="flex items-center gap-2 mb-4">
+        <h1
+          className="text-primary500 text-sm font-medium cursor-pointer"
+          onClick={() => navigate(-1)}
+        >
+          Awareness training
+        </h1>
+        <span className="text-neutrals500 text-sm font-medium">{">"}</span>
+        <h1 className="text-neutrals500 text-sm font-medium">
+          {isEditMode ? "Edit" : "Create"} Training
+        </h1>
+      </div>
+
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mt-12">
         <h1 className="text-textColor text-2xl">
           {isEditMode ? "Edit Training" : "Create Training Module"}
         </h1>
