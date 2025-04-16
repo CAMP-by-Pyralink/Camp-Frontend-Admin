@@ -686,9 +686,9 @@ const CreateTrainingModules = ({
                 <p className="text-sm font-medium text-primary500">
                   Click to upload banner image
                 </p>
-                <p className="text-xs text-gray-500">
+                {/* <p className="text-xs text-gray-500">
                   Recommended: 1200x300px JPG or PNG
-                </p>
+                </p> */}
               </div>
             </label>
           )}

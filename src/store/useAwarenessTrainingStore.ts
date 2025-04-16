@@ -208,6 +208,7 @@ export const useTrainingStore = create<TrainingState>((set, get) => ({
         `/training/deleteTraining/${trainingId}`
       );
       toast.success(response.data.msg);
+      get().fetchTrainings("browse", 1);
       return response;
     } catch (error: any) {
       console.log(error);
