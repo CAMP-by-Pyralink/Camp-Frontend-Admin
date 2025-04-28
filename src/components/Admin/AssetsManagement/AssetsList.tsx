@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import ModalLayout from "../../../shared/ModalLayout";
 import DeleteModal from "../../../shared/DeleteModal";
 import { useAssetsStore } from "../../../store/useAssetsStore";
+import Loader from "../../../shared/Loader";
 // import useAssetStore from "../../../stores/useAssetStore";
 
 // Define the Asset interface based on your backend response
@@ -307,9 +308,7 @@ const AssetsList = () => {
   return (
     <div className="p-4">
       {isLoading ? (
-        <div className="flex justify-center items-center h-40">
-          <p>Loading assets...</p>
-        </div>
+        <Loader />
       ) : (
         <>
           {/* Action buttons for multiple deletion */}

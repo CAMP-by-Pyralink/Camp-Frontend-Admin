@@ -77,11 +77,11 @@ const Logs: React.FC<AssetProps> = ({ singleAsset }: any) => {
   return (
     <div className="p-4">
       <h1 className="my-4 text-lg font-medium">Asset Activity Logs</h1>
-      <div className="flex justify-end">
+      {/* <div className="flex justify-end">
         <button className="bg-primary500 text-sm px-12 py-2 rounded text-white mb-4">
           Add Entry
         </button>
-      </div>
+      </div> */}
       <table className="w-full border-collapse border border-[#E4E7EC] bg-white">
         <TableHeader />
         <tbody className="">

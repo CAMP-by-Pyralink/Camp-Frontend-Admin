@@ -71,19 +71,19 @@ const Parts: React.FC = ({ singleAsset }: any) => {
         This shows a list of all items (spare parts and other items) that are
         used on an asset during its whole lifetime:
       </h1>
-      <div className=" flex justify-end">
+      {/* <div className=" flex justify-end">
         <button className="  bg-primary500 text-sm px-12 py-[10px] rounded text-white mb-4 ">
           Add new
         </button>
-      </div>
-      <table className="w-full border-collapse border border-[#E4E7EC] bg-white">
+      </div> */}
+      {/* <table className="w-full border-collapse border border-[#E4E7EC] bg-white">
         <TableHeader />
         <tbody className="">
           {parts.map((part) => (
             <TableRow key={part.id} part={part} />
           ))}
         </tbody>
-      </table>
+      </table> */}
     </div>
   );
 };

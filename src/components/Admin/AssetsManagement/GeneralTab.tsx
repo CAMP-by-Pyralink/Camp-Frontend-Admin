@@ -4,6 +4,7 @@ import lockIcon from "../../../assets/svgs/lock-icon.svg";
 import laptop from "../../../assets/laptop.png";
 import code from "../../../assets/barcode.png";
 import { useNavigate } from "react-router-dom";
+import Loader from "../../../shared/Loader";
 
 const GeneralTab = ({ singleAsset, id }: any) => {
   const navigate = useNavigate();
@@ -18,6 +19,8 @@ const GeneralTab = ({ singleAsset, id }: any) => {
   };
 
   console.log(id, "idd");
+
+  if (!singleAsset) return <Loader />;
   return (
     <div>
       <div className=" space-y-6" id="general">
@@ -114,7 +117,10 @@ const GeneralTab = ({ singleAsset, id }: any) => {
             <InfoRow
               disabled
               label="Assign asset (optional)"
-              value={`${singleAsset.assignedTo.fName} ${singleAsset.assignedTo.lName}`}
+              value={
+                `${singleAsset?.assignedTo?.fName} ${singleAsset?.assignedTo?.lName}` ||
+                ""
+              }
             />
 
             {/* Status */}
@@ -143,7 +149,7 @@ const GeneralTab = ({ singleAsset, id }: any) => {
             />
           </div>
         </div>
-
+        {/* 
         <div className="my-8 mr-12 flex items-center justify-end">
           <button
             type="submit"
@@ -152,7 +158,7 @@ const GeneralTab = ({ singleAsset, id }: any) => {
           >
             Save
           </button>
-        </div>
+        </div> */}
       </div>
     </div>
   );
