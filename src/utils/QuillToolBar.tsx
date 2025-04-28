@@ -135,7 +135,7 @@ export const QuillToolbar = (props: { toolbarId: string }) => {
             <span className="ql-formats">
               <button className="ql-formula text-red-" />
               <button className="ql-code-block" />
-              <button className="ql-clean" />
+              {/* <button className="ql-clean" /> */}
             </span>
           </div>
           <div className="w-[5rem]">

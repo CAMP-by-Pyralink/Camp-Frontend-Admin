@@ -48,6 +48,7 @@ import Cookies from "js-cookie";
 import ResetPassword from "./_Auth/Admin/ResetPassword";
 import CreateTrainingModules from "./components/Admin/AwarenessTrainning/CreateTrainingModules";
 import EditTrainingModules from "./components/Admin/AwarenessTrainning/EditTrainingModules";
+import AddorEditAssets from "./components/Admin/AssetsManagement/AddorEditAssets";
 
 function App() {
   const { setIsAuthenticated } = useAuthStore();
@@ -154,6 +155,11 @@ function App() {
                 element={<EditTrainingModules />}
               />
               <Route path="asset-management" element={<AssetManagement />} />
+              <Route path="/assets/add-asset" element={<AddorEditAssets />} />
+              <Route
+                path="/assets/edit-asset/:id"
+                element={<AddorEditAssets />}
+              />
               <Route path="/asset-detail/:id" element={<AssetsDetails />} />
               <Route path="risk-assessment" element={<RiskAssessment />} />
               <Route path="/risk-detail/:id" element={<RiskDetails />} />

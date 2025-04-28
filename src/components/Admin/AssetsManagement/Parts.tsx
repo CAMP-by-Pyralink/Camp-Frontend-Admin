@@ -53,7 +53,7 @@ const TableHeader: React.FC = () => (
 );
 
 // Table row for individual part
-const TableRow: React.FC<{ part: Part }> = ({ part }) => (
+const TableRow: React.FC<{ part: Part }> = ({ part, singleAsset }: any) => (
   <tr className="text-gray-800 text-sm py-4">
     <td className="p-3 py-4 border-b border-[#E4E7EC]">{part.name}</td>
     <td className="p-3 border-b border-[#E4E7EC]">{part.number}</td>
@@ -64,7 +64,7 @@ const TableRow: React.FC<{ part: Part }> = ({ part }) => (
 );
 
 // Main Parts component
-const Parts: React.FC = () => {
+const Parts: React.FC = ({ singleAsset }: any) => {
   return (
     <div className="p-4 ">
       <h1 className=" my-4">

@@ -12,6 +12,7 @@ import OnboardAssets from "../../components/Admin/AssetsManagement/OnboardAssets
 import HeaderTitle from "../../shared/HeaderTitle";
 import FilterModal from "../../components/Admin/UserManagement/FilterModal";
 import LockedPage from "../../shared/LockedPage";
+import { Link } from "react-router-dom";
 
 // Define FilterConfig interface
 interface FilterConfig {
@@ -143,16 +144,18 @@ const AssetManagement = () => {
             {/* Dropdown Menu */}
             {isOpen && (
               <div className="absolute top-[82%] right-0 mt-2 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-10">
-                <button
-                  className="w-full text-left px-4 py-2 border-b text-gray-700 hover:bg-blue50"
-                  onClick={() => {
-                    setIsOpen(false);
-                    // handleManual();
-                    setManualAdd(true);
-                  }}
-                >
-                  Manual add
-                </button>
+                <Link to="/assets/add-asset">
+                  <button
+                    className="w-full text-left px-4 py-2 border-b text-gray-700 hover:bg-blue50"
+                    onClick={() => {
+                      setIsOpen(false);
+                      // handleManual();
+                      // setManualAdd(true);
+                    }}
+                  >
+                    Manual add
+                  </button>
+                </Link>
                 <button
                   className="w-full text-left px-4 py-2 border-b text-gray-700 hover:bg-blue50"
                   onClick={() => {

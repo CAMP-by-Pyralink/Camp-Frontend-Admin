@@ -59,7 +59,7 @@ const SignIn = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full mt-1 p-2 border rounded-lg outline-none focus:outline-none focus:ring-2 focus:ring-primary500/20 focus:border-primary500"
+              className="w-full mt-1 p-3 border rounded-lg outline-none focus:outline-none focus:ring-2 focus:ring-primary500/20 focus:border-primary500"
               required
             />
           </div>
@@ -84,7 +84,7 @@ const SignIn = () => {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full mt-1 p-2 border rounded-lg outline-none focus:outline-none focus:ring-2 focus:ring-primary500/20 focus:border-primary500"
+              className="w-full mt-1 p-3 border rounded-lg outline-none focus:outline-none focus:ring-2 focus:ring-primary500/20 focus:border-primary500"
               required
             />
             <div

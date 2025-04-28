@@ -187,7 +187,7 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
   },
 
   getUsers: async (search = "", filter = "") => {
-    set({ isLoading: true }); // Clear old users while loading
+    set({ isLoading: true });
     try {
       const response: AxiosResponse = await api.get(
         "/user/getAllUsers?page=1",

@@ -1,7 +1,10 @@
 import deleteIcon from "../assets/svgs/delete-icon.svg";
-interface deleteModalProps {
-  onDelete: () => void;
+export interface deleteModalProps {
   backClick: () => void;
+  onDelete: () => void;
+  title: string;
+  message: string;
+  itemCount: number; // Added itemCount property
 }
 const DeleteModal: React.FC<deleteModalProps> = ({ onDelete, backClick }) => {
   return (

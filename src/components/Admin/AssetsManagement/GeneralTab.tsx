@@ -3,48 +3,24 @@ import InfoRow from "./InfoRow";
 import lockIcon from "../../../assets/svgs/lock-icon.svg";
 import laptop from "../../../assets/laptop.png";
 import code from "../../../assets/barcode.png";
+import { useNavigate } from "react-router-dom";
 
-interface OnboardAssetsProps {
-  onClose?: () => void;
-  onSubmit?: (formData: FormData) => void;
-  onClick: () => void;
-}
-
-interface FormData {
-  riskId: string;
-  riskName: string;
-  category: string;
-  status: string;
-  probability: string;
-  impact: string;
-  mitigationStrategy: "Manual" | "AI";
-  description: string;
-  department: string;
-  owner: string;
-  note: string;
-}
-const GeneralTab = () => {
-  const [formData, setFormData] = useState<FormData>({
-    riskId: "AS 32345",
-    riskName: "",
-    category: "",
-    status: "Active",
-    probability: "Low",
-    impact: "High",
-    mitigationStrategy: "Manual",
-    description: "",
-    department: "",
-    owner: "",
-    note: "",
-  });
-
+const GeneralTab = ({ singleAsset, id }: any) => {
+  const navigate = useNavigate();
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // onSubmit?.(formData);
+    // onSubmit?.(singleAsset);
   };
+
+  const handleEditClick = () => {
+    navigate(`/assets/edit-asset/${id}`);
+    console.log("clicked");
+  };
+
+  console.log(id, "idd");
   return (
     <div>
-      <div id="general">
+      <div className=" space-y-6" id="general">
         {/* general info */}
         {/* <div className="bg-[#DEEFFC33] p-[10px]">
           <h1 className="text-sm font-medium text-[#333333]">
@@ -57,107 +33,116 @@ const GeneralTab = () => {
             {/* laptop */}
             <div>
               <div>
-                <img src={laptop} alt="" />
+                <img
+                  src={singleAsset.assetImage}
+                  alt=""
+                  className="w-[150px] h-[150px] object-cover"
+                />
               </div>
             </div>
 
             {/* text */}
-            <h1 className="text-[#333333] font-medium text-[24px] border-[1px] pl-4 py-1 pr-24 border-[#D4D5FF]">
-              Dell XPS 13 PLUS
+            <h1 className="text-[#333333] font-medium text-[24px] border-[1px] w-fit px-4 py-1 border-[#D4D5FF]">
+              {singleAsset.assetName}
             </h1>
 
             {/* barcode */}
-            <div>
+            <div className=" flex flex-col items-center">
               <div>
                 <img src={code} alt="" />
+              </div>
+              <div className="text-[#333333] font-medium text-[16px] pl-4">
+                {singleAsset.barCode || ""}
               </div>
             </div>
           </div>
 
           <button
             className="text-white bg-[#282EFF] rounded px-3 py-[10px] text-sm font-medium mt-5"
-            onClick={() => handleScrollTo("specification")}
+            onClick={handleEditClick}
           >
-            View Specifications
+            Edit Asset
           </button>
         </div>
         {/* tech spec */}
-        <form onSubmit={handleSubmit}>
-          <div className="grid grid-cols-2 gap-x-6 gap-y-4 px-12">
+        <div>
+          <div className="grid grid-cols-2 gap-x-6 gap-y-4 w-full">
+            {/* Asset Name */}
             <InfoRow
-              label="Asset ID"
-              value={formData.riskId}
-              onChange={() => {}}
+              //disabled
               disabled
-              readOnly
-              extraButton={<img src={lockIcon} width={15} alt="" />}
-            />
-
-            <InfoRow
-              label="Purchase date"
-              value={formData.riskName}
-              onChange={(val) => setFormData({ ...formData, riskName: val })}
-            />
-
-            <InfoRow
               label="Asset name"
-              value={formData.description}
-              onChange={(val) => setFormData({ ...formData, description: val })}
+              value={singleAsset.assetName}
             />
 
+            {/* Bar Code */}
+            <InfoRow disabled label="Bar code" value={singleAsset.barCode} />
+
+            {/* Purchase Date - DATE */}
             <InfoRow
+              disabled
+              label="Purchase date"
+              // type="date"
+              value={singleAsset.purchaseDate}
+            />
+
+            {/* Department */}
+            <InfoRow
+              disabled
               label="Select Department (optional)"
-              type="select"
-              value={formData.category}
-              onChange={(val) => setFormData({ ...formData, category: val })}
-              options={["IT", "Management", "Security"]}
+              value={singleAsset.department}
             />
 
+            {/* Location */}
+            <InfoRow disabled label="Location" value={singleAsset.location} />
+
+            {/* Current Location */}
             <InfoRow
+              disabled
+              label="Current Location"
+              value={singleAsset.currentLocation}
+            />
+
+            {/* Category */}
+            <InfoRow
+              disabled
               label="Select category"
-              type="select"
-              value={formData.status}
-              onChange={(val) => setFormData({ ...formData, status: val })}
-              options={["Active", "Mitigated"]}
+              value={singleAsset.category}
             />
 
+            {/* Assign Asset */}
             <InfoRow
+              disabled
               label="Assign asset (optional)"
-              type="select"
-              value={formData.department}
-              onChange={(val) => setFormData({ ...formData, department: val })}
-              options={["", "IT", "Management"]}
+              value={`${singleAsset.assignedTo.fName} ${singleAsset.assignedTo.lName}`}
             />
 
-            <InfoRow
-              label="Status"
-              type="select"
-              value={formData.probability}
-              onChange={(val) => setFormData({ ...formData, probability: val })}
-              options={["Low", "Medium", "High"]}
-            />
+            {/* Status */}
+            <InfoRow disabled label="Status" value={singleAsset.status} />
 
+            {/* Antivirus Status - SELECT */}
             <InfoRow
+              disabled
               label="Antivirus Status"
-              value={formData.owner}
-              onChange={(val) => setFormData({ ...formData, owner: val })}
-              placeholder="Search employee"
-              extraButton={
-                <button className="absolute left-0 top-0 h-full px-2 py-1 bg-[#F2F2F2] text-gray-400 border-l">
-                  Filter
-                </button>
-              }
+              value={singleAsset.antivirusStatus}
             />
 
+            {/* Subscription Renewal */}
             <InfoRow
+              disabled
               label="Subscription renewal"
-              type="select"
-              value={formData.impact}
-              onChange={(val) => setFormData({ ...formData, impact: val })}
-              options={["Low", "Medium", "High"]}
+              value={singleAsset.subscriptionRenewal}
+            />
+
+            {/* Warranty Expiration - DATE */}
+            <InfoRow
+              disabled
+              label="Warranty Expiration"
+              // type="date"
+              value={singleAsset.warrantyExpiration}
             />
           </div>
-        </form>
+        </div>
 
         <div className="my-8 mr-12 flex items-center justify-end">
           <button

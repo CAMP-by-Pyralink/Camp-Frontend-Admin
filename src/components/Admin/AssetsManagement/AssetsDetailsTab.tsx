@@ -1,146 +1,80 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import GeneralTab from "./GeneralTab";
 import Warranty from "./Warranty";
 import Parts from "./Parts";
 import Logs from "./Logs";
+import { useAssetsStore } from "../../../store/useAssetsStore";
+import Loader from "../../../shared/Loader";
+import TechnicalSpecs from "./TechnicalSpecs";
 
-const AssetsDetailsTab = () => {
-  // State to track the active tab
-  const [activeTab, setActiveTab] = useState("1");
-  //   const [showTabs, setShowTabs] = useState(false);
+interface AssetsDetailsTabProps {
+  id: string;
+}
 
-  const handleTabClick = (tab: string) => {
-    setActiveTab(tab);
+const AssetsDetailsTab = ({ id }: AssetsDetailsTabProps) => {
+  const [activeTab, setActiveTab] = useState(0); // Start from 0 now
+  const { getSingleAsset, singleAsset, isLoading } = useAssetsStore();
+
+  useEffect(() => {
+    const fetchAsset = async () => {
+      await getSingleAsset(id);
+    };
+    fetchAsset();
+  }, [getSingleAsset, id]);
+
+  const steps = [
+    "General",
+    "Technical Specifications",
+    "Warranty",
+    "Parts/Boms",
+    "Log",
+  ];
+
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 0:
+        return <GeneralTab singleAsset={singleAsset} id={id} />;
+      case 1:
+        return <TechnicalSpecs singleAsset={singleAsset} />;
+      case 2:
+        return <Warranty singleAsset={singleAsset} />;
+      case 3:
+        return <Parts />;
+      case 4:
+        return <Logs singleAsset={singleAsset} />;
+      default:
+        return null;
+    }
   };
+
+  if (isLoading || !singleAsset) return <Loader />;
 
   return (
     <div className="bg-white py-10 font-poppins pr-40">
-      <div>
-        <div className="flex items-center w-full bg-white mb-6">
-          {/* tab1 */}
-          <div className="w-full bg-white">
-            <button
-              className={`w-full rounded-md border border-[#D0D5DD] py-[8px] text-sm font-medium flex items-center justify-center ${
-                activeTab === "1"
-                  ? "text-[#282EFF] bg-[#DEEFFC]"
-                  : "hover:text-[#282EFF] hover:bg-[#DEEFFC]"
-              }`}
-              onClick={() => handleTabClick("1")}
-            >
-              General
-            </button>
-          </div>
-          <div className="w-full">
-            <button
-              className={`w-full rounded-md border border-[#D0D5DD] py-[8px] text-sm font-medium flex items-center justify-center ${
-                activeTab === "2"
-                  ? "text-[#282EFF] bg-[#DEEFFC]"
-                  : "hover:text-[#282EFF] hover:bg-[#DEEFFC]"
-              }`}
-              onClick={() => handleTabClick("2")}
-            >
-              Warranty
-            </button>
-          </div>
-          <div className="w-full">
-            <button
-              className={`w-full rounded-md border border-[#D0D5DD] py-[8px] text-sm font-medium flex items-center justify-center ${
-                activeTab === "3"
-                  ? "text-[#282EFF] bg-[#DEEFFC]"
-                  : "hover:text-[#282EFF] hover:bg-[#DEEFFC]"
-              }`}
-              onClick={() => handleTabClick("3")}
-            >
-              Parts/Boms
-            </button>
-          </div>
-          <div className="w-full">
-            <button
-              className={`w-full rounded-md border border-[#D0D5DD] py-[8px] text-sm font-medium flex items-center justify-center ${
-                activeTab === "4"
-                  ? "text-[#282EFF] bg-[#DEEFFC]"
-                  : "hover:text-[#282EFF] hover:bg-[#DEEFFC]"
-              }`}
-              onClick={() => handleTabClick("4")}
-            >
-              Log
-            </button>
-          </div>
-        </div>
-
-        <div className="">
-          {activeTab === "1" && <GeneralTab />}
-          {activeTab === "2" && <Warranty />}
-          {activeTab === "3" && <Parts />}
-          {activeTab === "4" && <Logs />}
-        </div>
+      {/* Stepper Tabs */}
+      <div className="flex w-fit whitespace-nowrap rounded-lg overflow-hidden bg-white border border-[#E4E7EC] mb-6">
+        {steps.map((label, idx) => (
+          <button
+            key={label}
+            type="button"
+            onClick={() => setActiveTab(idx)}
+            className={`flex-1 py-3 px-4 text-sm font-medium transition-colors duration-200 ${
+              activeTab === idx
+                ? "bg-[#F0F2F5] text-[#344054] font-semibold shadow-sm"
+                : "bg-white text-[#475367] hover:bg-gray-50 font-medium"
+            }`}
+          >
+            {label}
+          </button>
+        ))}
       </div>
-      {/* tech spec */}
+
+      {/* Tab Content */}
+      <div>{renderTabContent()}</div>
+
+      {/* Tech Specification Section (if you still want it separately) */}
       <div id="specification" className="mt-10">
-        <div className="bg-[#DEEFFC33] p-[10px]">
-          <h1 className="text-sm font-medium text-[#333333]">
-            Tech Specifications
-          </h1>
-        </div>
-        <div className="border">
-          {/* processor */}
-          <div className="flex  border-b">
-            <div className="w-[235px] py-[16px] px-[10px]">
-              <p className="text-[#333333] font-medium">Processor</p>
-            </div>
-            <div className="w-full border-l py-[16px] px-[10px]">
-              <p className="text-[#5a5555] text-sm">
-                Intel® Core™ Ultra 7 155H (24 MB cache, 16 cores, up to 4.80 GHz
-                Turbo)
-              </p>
-            </div>
-          </div>
-
-          {/* graphics */}
-          <div className="flex border-b">
-            <div className="w-[235px] py-[16px] px-[10px]">
-              <p className="text-[#333333] font-medium">Graphics</p>
-            </div>
-            <div className="w-full border-l py-[16px] px-[10px]">
-              <p className="text-[#5a5555] text-sm">Intel® Arc™ Graphics</p>
-            </div>
-          </div>
-          {/* display */}
-          <div className="flex  border-b">
-            <div className="w-[235px] py-[16px] px-[10px]">
-              <p className="text-[#333333] font-medium">Display</p>
-            </div>
-            <div className="w-full border-l py-[16px] px-[10px]">
-              <p className="text-[#5a5555] text-sm">
-                13.4", Non-Touch, FHD+ 1920x1200, 30-120Hz, Anti-Glare, 500 nit,
-                InfinityEdge, Eyesafe®
-              </p>
-            </div>
-          </div>
-          {/* memory */}
-          <div className="flex  border-b">
-            <div className="w-[235px] py-[16px] px-[10px]">
-              <p className="text-[#333333] font-medium">Memory</p>
-            </div>
-            <div className="w-full border-l py-[16px] px-[10px]">
-              <p className="text-[#5a5555] text-sm">
-                8GB, LPDDR5, 6400MT/s, integrated, dual channel
-              </p>
-            </div>
-          </div>
-
-          {/* storage */}
-          <div className="flex border-b">
-            <div className="w-[235px] py-[16px] px-[10px]">
-              <p className="text-[#333333] font-medium">Storage</p>
-            </div>
-            <div className="w-full border-l py-[16px] px-[10px]">
-              <p className="text-[#5a5555] text-sm">
-                8GB, LPDDR5, 6400MT/s, integrated, dual channel
-              </p>
-            </div>
-          </div>
-        </div>
+        {/* your tech specs content here (same as you had it) */}
       </div>
     </div>
   );

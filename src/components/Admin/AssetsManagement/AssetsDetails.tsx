@@ -11,6 +11,9 @@ const AssetsDetails = () => {
       element.scrollIntoView({ behavior: "smooth" });
     }
   };
+
+  const id = window.location.pathname.split("/").slice(-1)[0];
+  console.log(id, "id");
   return (
     <div>
       <h1 className=" mb-4">View Asset</h1>
@@ -31,14 +34,12 @@ const AssetsDetails = () => {
 
       {/* tabs */}
       <div className=" mb-6">
-        <AssetsDetailsTab />
+        <AssetsDetailsTab id={id} />
       </div>
 
-      <div className="shadow-[5px_5px_40px_rgba(107,151,255,0.3)] w-full p-[20px] bg-white">
-        {/* <h1 className="text-[#333333] font-medium text-[24px]">
-          Asset Name: Dell XPS 13 Plus (Py-MF-2031)
-        </h1> */}
-      </div>
+      {/* <div className="shadow-[5px_5px_40px_rgba(107,151,255,0.3)] w-full p-[20px] bg-white">
+    
+      </div> */}
     </div>
   );
 };
