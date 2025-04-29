@@ -15,6 +15,7 @@ const api = axios.create({
 export interface RegisterCompanyData {
   companyName: string;
   email: string;
+  companyUrl: string;
   companySize: string;
   password: string;
   confirmPassword: string;

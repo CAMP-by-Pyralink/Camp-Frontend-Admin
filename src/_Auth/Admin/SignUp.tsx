@@ -18,6 +18,7 @@ const SignUp = () => {
     companySize: "",
     password: "",
     confirmPassword: "",
+    companyUrl: "",
   });
 
   const companySizeRanges = [
@@ -40,6 +41,7 @@ const SignUp = () => {
     const registerCompanyData: RegisterCompanyData = {
       companyName: formData.companyName,
       email: formData.email,
+      companyUrl: formData.companyUrl,
       companySize: formData.companySize,
       password: formData.password,
       confirmPassword: formData.confirmPassword,
@@ -98,6 +100,19 @@ const SignUp = () => {
               type="email"
               name="email"
               value={formData.email}
+              onChange={handleChange}
+              className="w-full mt-1 p-2 border rounded-lg outline-none focus:outline-none focus:ring-2 focus:ring-primary500/20 focus:border-primary500"
+            />
+          </div>
+          {/* url */}
+          <div className="mb-2">
+            <label className="block text-[#101928] text-sm font-medium">
+              Company URL
+            </label>
+            <input
+              type="text"
+              name="companyUrl"
+              value={formData.companyUrl}
               onChange={handleChange}
               className="w-full mt-1 p-2 border rounded-lg outline-none focus:outline-none focus:ring-2 focus:ring-primary500/20 focus:border-primary500"
             />

@@ -71,11 +71,6 @@ const AssetsDetailsTab = ({ id }: AssetsDetailsTabProps) => {
 
       {/* Tab Content */}
       <div>{renderTabContent()}</div>
-
-      {/* Tech Specification Section (if you still want it separately) */}
-      <div id="specification" className="mt-10">
-        {/* your tech specs content here (same as you had it) */}
-      </div>
     </div>
   );
 };
