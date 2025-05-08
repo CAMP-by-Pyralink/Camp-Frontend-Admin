@@ -3,10 +3,11 @@ import axios, { AxiosResponse } from "axios";
 import toast from "react-hot-toast";
 import Cookies from "js-cookie";
 
-const api = axios.create({
+export const api = axios.create({
   baseURL: import.meta.env.VITE_APP_BASE_URL,
   headers: {
     "Content-Type": "application/json",
+    "x-api-key": import.meta.env.VITE_APP_API_KEY,
   },
 });
 
@@ -19,8 +20,8 @@ export interface RegisterCompanyData {
   companySize: string;
   password: string;
   confirmPassword: string;
-  authProvider: "manual";
-  type: "company" | "admin";
+  authProvider?: "manual";
+  type?: "company" | "admin";
   fName?: string;
   lName?: string;
 }
@@ -141,7 +142,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
       return response;
     } catch (error: any) {
       console.log(error.response?.data);
-      const message = error?.response.data.msg || "Registration failed";
+      const message = error?.response.data.message || "Registration failed";
       toast.error(message, {
         style: { maxWidth: "100%" },
       });
@@ -265,13 +266,13 @@ export const useAuthStore = create<AuthStore>((set) => ({
         Cookies.set("token", token, { expires: 1, secure: true });
         set({ authUser: { token }, isAuthenticated: true });
 
-        toast.success(response.data.msg);
+        toast.success(response.data.message);
         return true;
       }
 
       return false;
     } catch (error: any) {
-      const message = error?.response?.data?.msg || "Login failed";
+      const message = error?.response?.data?.message || "Login failed";
       toast.error(message);
       return false;
     } finally {
@@ -283,15 +284,15 @@ export const useAuthStore = create<AuthStore>((set) => ({
     try {
       const response = await api.post("/admin/forgotPassword", data);
       if (response.status === 200) {
-        toast.success(response.data.msg);
+        toast.success(response.data.message);
         sessionStorage.setItem("email", response.data.email);
         return true;
       }
       console.log(response.data);
       return false;
     } catch (error: any) {
-      // const message = error?.response?.data?.msg || "Login failed";
-      toast.error(error.response.data.msg);
+      // const message = error?.response?.data?.message || "Login failed";
+      toast.error(error.response.data.message);
       return false;
     } finally {
       set({ isLoading: false });
@@ -302,13 +303,13 @@ export const useAuthStore = create<AuthStore>((set) => ({
     try {
       const response = await api.post("/admin/verifyEmailResetPassword", data);
       if (response.status === 200) {
-        toast.success(response.data.msg);
+        toast.success(response.data.message);
         return true;
       }
       console.log(response.data);
       return false;
     } catch (error: any) {
-      toast.error(error.response.data.msg);
+      toast.error(error.response.data.message);
       return false;
     } finally {
       set({ isLoading: false });
@@ -319,13 +320,13 @@ export const useAuthStore = create<AuthStore>((set) => ({
     try {
       const response = await api.post("/admin/resendToken", data);
       if (response.status === 200) {
-        toast.success(response.data.msg);
+        toast.success(response.data.message);
         return true;
       }
       console.log(response.data);
       return false;
     } catch (error: any) {
-      toast.error(error.response.data.msg);
+      toast.error(error.response.data.message);
       return false;
     } finally {
       set({ isLoading: false });
@@ -336,13 +337,13 @@ export const useAuthStore = create<AuthStore>((set) => ({
     try {
       const response = await api.patch("/admin/changePassword", data);
       if (response.status === 200) {
-        toast.success(response.data.msg);
+        toast.success(response.data.message);
         return true;
       }
       console.log(response.data);
       return false;
     } catch (error: any) {
-      toast.error(error.response.data.msg);
+      toast.error(error.response.data.message);
       return false;
     } finally {
       set({ isLoading: false });

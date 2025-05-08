@@ -4,32 +4,33 @@ import toast from "react-hot-toast";
 import { useAuthStore } from "./useAuthStore";
 import Cookies from "js-cookie";
 import { ReactNode } from "react";
+import { api } from "./useRiskStore";
 
-const api = axios.create({
-  baseURL: import.meta.env.VITE_APP_BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
+// const api = axios.create({
+//   baseURL: import.meta.env.VITE_APP_BASE_URL,
+//   headers: {
+//     "Content-Type": "application/json",
+//   },
+// });
 
-api.interceptors.request.use(
-  (config) => {
-    // const { authUser } = useAuthStore.getState();
-    // if (authUser) {
-    //   config.headers.Authorization = `Bearer ${authUser}`;
-    // }
-    const token = Cookies.get("token");
+// api.interceptors.request.use(
+//   (config) => {
+//     // const { authUser } = useAuthStore.getState();
+//     // if (authUser) {
+//     //   config.headers.Authorization = `Bearer ${authUser}`;
+//     // }
+//     const token = Cookies.get("token");
 
-    // If token exists, add it to the headers
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+//     // If token exists, add it to the headers
+//     if (token) {
+//       config.headers.Authorization = `Bearer ${token}`;
+//     }
+//     return config;
+//   },
+//   (error) => {
+//     return Promise.reject(error);
+//   }
+// );
 
 export type QuestionType = "multiple-choice" | "checkbox" | "input";
 export type LessonType = "video" | "document" | "link" | "text-&-image";
@@ -207,12 +208,14 @@ export const useTrainingStore = create<TrainingState>((set, get) => ({
       const response = await api.delete(
         `/training/deleteTraining/${trainingId}`
       );
-      toast.success(response.data.msg);
+      toast.success(response.data.message);
       get().fetchTrainings("browse", 1);
       return response;
     } catch (error: any) {
       console.log(error);
-      toast.error(error.response?.data?.msg || "Failed to delete training.");
+      toast.error(
+        error.response?.data?.message || "Failed to delete training."
+      );
     } finally {
       set({ isLoading: false });
     }
@@ -226,13 +229,15 @@ export const useTrainingStore = create<TrainingState>((set, get) => ({
         data
       );
       if (response.status === 200) {
-        toast.success(response.data.msg);
+        toast.success(response.data.message);
       }
       console.log(response.data);
       return response;
     } catch (error: any) {
       console.error(error);
-      toast.error(error.response?.data?.msg || "Failed to assign training.");
+      toast.error(
+        error.response?.data?.message || "Failed to assign training."
+      );
       return null;
     } finally {
       set({ isLoading: false });
@@ -262,14 +267,14 @@ export const useTrainingStore = create<TrainingState>((set, get) => ({
         if (singleTraining && trainingId) {
           await get().fetchSingleTraining(trainingId);
         }
-        console.log(response.data.msg);
-        toast.success(response.data.msg);
+        console.log(response.data.message);
+        toast.success(response.data.message);
         return true;
       }
-      console.log(response.data.msg);
+      console.log(response.data.message);
       return null;
     } catch (error: any) {
-      console.log(error.response.data.msg);
+      console.log(error.response.data.message);
       return null;
     } finally {
       set({ isLoading: false });

@@ -1,37 +1,45 @@
-import React, { useState } from "react";
+import React from "react";
 import InfoRow from "./InfoRow";
-import lockIcon from "../../../assets/svgs/lock-icon.svg";
-import laptop from "../../../assets/laptop.png";
 import code from "../../../assets/barcode.png";
 import { useNavigate } from "react-router-dom";
 import Loader from "../../../shared/Loader";
 
+// Helper function to format dates
+const formatDate = (dateString: any) => {
+  if (!dateString) return "";
+
+  try {
+    const date = new Date(dateString);
+
+    // Check if date is valid
+    if (isNaN(date.getTime())) return dateString;
+
+    // Format as YYYY-MM-DD
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  } catch (error) {
+    // If there's an error parsing the date, return the original string
+    return dateString;
+  }
+};
+
 const GeneralTab = ({ singleAsset, id }: any) => {
   const navigate = useNavigate();
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // onSubmit?.(singleAsset);
-  };
 
   const handleEditClick = () => {
     navigate(`/assets/edit-asset/${id}`);
     console.log("clicked");
   };
 
-  console.log(id, "idd");
-
   if (!singleAsset) return <Loader />;
+
   return (
     <div>
-      <div className=" space-y-6" id="general">
-        {/* general info */}
-        {/* <div className="bg-[#DEEFFC33] p-[10px]">
-          <h1 className="text-sm font-medium text-[#333333]">
-            General information and location of an Asset:
-          </h1>
-        </div> */}
-
-        <div className="py-[21px] px-[43px] bg-[#EBECFF] rounded-md ">
+      <div className="space-y-6" id="general">
+        <div className="py-[21px] px-[43px] bg-[#EBECFF] rounded-md">
           <div className="bg-white flex items-center justify-between px-[30px] py-5 w-full">
             {/* laptop */}
             <div>
@@ -50,7 +58,7 @@ const GeneralTab = ({ singleAsset, id }: any) => {
             </h1>
 
             {/* barcode */}
-            <div className=" flex flex-col items-center">
+            <div className="flex flex-col items-center">
               <div>
                 <img src={code} alt="" />
               </div>
@@ -72,7 +80,6 @@ const GeneralTab = ({ singleAsset, id }: any) => {
           <div className="grid grid-cols-2 gap-x-6 gap-y-4 w-full">
             {/* Asset Name */}
             <InfoRow
-              //disabled
               disabled
               label="Asset name"
               value={singleAsset.assetName}
@@ -81,12 +88,11 @@ const GeneralTab = ({ singleAsset, id }: any) => {
             {/* Bar Code */}
             <InfoRow disabled label="Bar code" value={singleAsset.barCode} />
 
-            {/* Purchase Date - DATE */}
+            {/* Purchase Date - DATE - Now Formatted */}
             <InfoRow
               disabled
               label="Purchase date"
-              // type="date"
-              value={singleAsset.purchaseDate}
+              value={formatDate(singleAsset.purchaseDate)}
             />
 
             {/* Department */}
@@ -118,8 +124,9 @@ const GeneralTab = ({ singleAsset, id }: any) => {
               disabled
               label="Assign asset (optional)"
               value={
-                `${singleAsset?.assignedTo?.fName} ${singleAsset?.assignedTo?.lName}` ||
-                ""
+                `${singleAsset?.assignedTo?.fName || ""} ${
+                  singleAsset?.assignedTo?.lName || ""
+                }`.trim() || ""
               }
             />
 
@@ -140,92 +147,17 @@ const GeneralTab = ({ singleAsset, id }: any) => {
               value={singleAsset.subscriptionRenewal}
             />
 
-            {/* Warranty Expiration - DATE */}
+            {/* Warranty Expiration - DATE - Now Formatted */}
             <InfoRow
               disabled
               label="Warranty Expiration"
-              // type="date"
-              value={singleAsset.warrantyExpiration}
+              value={formatDate(singleAsset.warrantyExpiration)}
             />
           </div>
         </div>
-        {/* 
-        <div className="my-8 mr-12 flex items-center justify-end">
-          <button
-            type="submit"
-            className="w-[302px] bg-primary500 text-white py-2 px-4 rounded-md hover:bg-blue-700"
-            // onClick={onClick}
-          >
-            Save
-          </button>
-        </div> */}
       </div>
     </div>
   );
 };
 
 export default GeneralTab;
-//  <div id="specification">
-//    <div className="bg-[#DEEFFC33] p-[10px]">
-//      <h1 className="text-sm font-medium text-[#333333]">Tech Specifications</h1>
-//    </div>
-//    <div className="border">
-//      {/* processor */}
-//      <div className="flex">
-//        <div className="w-[235px] py-[16px] px-[10px]">
-//          <p className="text-[#333333] font-medium">Processor</p>
-//        </div>
-//        <div className="w-full border-l py-[16px] px-[10px]">
-//          <p className="text-[#5a5555] text-sm">
-//            Intel® Core™ Ultra 7 155H (24 MB cache, 16 cores, up to 4.80 GHz
-//            Turbo)
-//          </p>
-//        </div>
-//      </div>
-
-//      {/* graphics */}
-//      <div className="flex">
-//        <div className="w-[235px] py-[16px] px-[10px]">
-//          <p className="text-[#333333] font-medium">Graphics</p>
-//        </div>
-//        <div className="w-full border-l py-[16px] px-[10px]">
-//          <p className="text-[#5a5555] text-sm">Intel® Arc™ Graphics</p>
-//        </div>
-//      </div>
-//      {/* display */}
-//      <div className="flex">
-//        <div className="w-[235px] py-[16px] px-[10px]">
-//          <p className="text-[#333333] font-medium">Display</p>
-//        </div>
-//        <div className="w-full border-l py-[16px] px-[10px]">
-//          <p className="text-[#5a5555] text-sm">
-//            13.4", Non-Touch, FHD+ 1920x1200, 30-120Hz, Anti-Glare, 500 nit,
-//            InfinityEdge, Eyesafe®
-//          </p>
-//        </div>
-//      </div>
-//      {/* memory */}
-//      <div className="flex">
-//        <div className="w-[235px] py-[16px] px-[10px]">
-//          <p className="text-[#333333] font-medium">Memory</p>
-//        </div>
-//        <div className="w-full border-l py-[16px] px-[10px]">
-//          <p className="text-[#5a5555] text-sm">
-//            8GB, LPDDR5, 6400MT/s, integrated, dual channel
-//          </p>
-//        </div>
-//      </div>
-
-//      {/* storage */}
-//      <div className="flex">
-//        <div className="w-[235px] py-[16px] px-[10px]">
-//          <p className="text-[#333333] font-medium">Storage</p>
-//        </div>
-//        <div className="w-full border-l py-[16px] px-[10px]">
-//          <p className="text-[#5a5555] text-sm">
-//            8GB, LPDDR5, 6400MT/s, integrated, dual channel
-//          </p>
-//        </div>
-//      </div>
-//    </div>
-//  </div>;

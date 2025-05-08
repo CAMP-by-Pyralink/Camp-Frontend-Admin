@@ -53,7 +53,7 @@ const PagesHomeLayout: React.FC<PagesHomeLayoutProps> = ({
 
           {/* Filter and Export Buttons */}
           <div className="flex gap-2">
-            {showFilter && (
+            {/* {showFilter && (
               <div
                 className="flex items-center border border-primary500 px-3 py-[2px] rounded shadow-sm cursor-pointer"
                 onClick={onFilterClick}
@@ -61,8 +61,8 @@ const PagesHomeLayout: React.FC<PagesHomeLayoutProps> = ({
                 <img src={filterIcon} className="mr-2" alt="" />
                 Filter
               </div>
-            )}
-            {showExport && (
+            )} */}
+            {/* {showExport && (
               <div className="relative">
                 <button
                   className="flex items-center bg-primary500 text-white px-4 py-2 rounded-md shadow-sm"
@@ -71,7 +71,6 @@ const PagesHomeLayout: React.FC<PagesHomeLayoutProps> = ({
                   <img src={exportArr} className="mr-2" alt="" />
                   Export CSV
                 </button>
-                {/* Export Dropdown */}
                 {isExportDropdownOpen && (
                   <div className="absolute z-50 right-0  text-textColor text-[10px] font-medium bg-white border rounded-md shadow-lg w-full">
                     <ul>
@@ -99,7 +98,7 @@ const PagesHomeLayout: React.FC<PagesHomeLayoutProps> = ({
                   </div>
                 )}
               </div>
-            )}
+            )} */}
           </div>
         </div>
       </div>

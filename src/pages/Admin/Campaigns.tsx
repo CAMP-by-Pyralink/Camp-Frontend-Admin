@@ -4,6 +4,7 @@ import CampaignsTable from "../../components/Admin/PhishingStimulation/Campaigns
 import HeaderTitle from "../../shared/HeaderTitle";
 import PagesHomeLayout from "../../shared/PagesHomeLayout";
 import FilterModal from "../../components/Admin/UserManagement/FilterModal";
+import LockedPage from "../../shared/LockedPage";
 
 // Define FilterConfig interface
 interface FilterConfig {
@@ -66,7 +67,11 @@ const Campaigns = () => {
       ],
     },
   ];
+  const locked = true;
 
+  if (locked) {
+    return <LockedPage />;
+  }
   return (
     <div>
       <HeaderTitle

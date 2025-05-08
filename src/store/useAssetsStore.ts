@@ -6,22 +6,23 @@ import {
   handleErrorToast,
   isSuccessfulResponse,
 } from "../utils/responseHandler";
+import { api } from "./useRiskStore";
 
-const api = axios.create({
-  baseURL: import.meta.env.VITE_APP_BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
+// const api = axios.create({
+//   baseURL: import.meta.env.VITE_APP_BASE_URL,
+//   headers: {
+//     "Content-Type": "application/json",
+//   },
+// });
 
-api.interceptors.request.use(
-  (config) => {
-    const token = Cookies.get("token");
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+// api.interceptors.request.use(
+//   (config) => {
+//     const token = Cookies.get("token");
+//     if (token) config.headers.Authorization = `Bearer ${token}`;
+//     return config;
+//   },
+//   (error) => Promise.reject(error)
+// );
 
 export interface CreateAssets {
   assetImage: string;
@@ -66,6 +67,8 @@ interface AssetsStore {
   getAllAsset: (data: {
     page?: number;
     limit?: number;
+    search?: string;
+    filter?: string;
   }) => Promise<boolean | null>;
   getSingleAsset: (assetId: string) => Promise<boolean | null>;
   deleteAsset: (assetId: string) => Promise<any>;
@@ -87,7 +90,7 @@ export const useAssetsStore = create<AssetsStore>((set, get) => ({
       const response = await api.post("/asset/createAsset", data);
 
       if (isSuccessfulResponse(response)) {
-        toast.success(response.data?.msg);
+        toast.success(response.data?.message);
         return true;
       }
       return null;
@@ -102,7 +105,9 @@ export const useAssetsStore = create<AssetsStore>((set, get) => ({
     set({ isLoading: true });
 
     try {
-      const response = await api.get("/asset/getAllAssetsAdmin");
+      const response = await api.get("/asset/getAllAssetsAdmin", {
+        params: { search: data.search, filter: data.filter },
+      });
 
       if (isSuccessfulResponse(response)) {
         set({
@@ -111,7 +116,7 @@ export const useAssetsStore = create<AssetsStore>((set, get) => ({
           totalPages: response.data.totalPages,
           totalAssets: response.data.totalAssets,
         });
-        // toast.success(response.data?.msg);
+        // toast.success(response.data?.message);
         return true;
       }
       return null;
@@ -129,7 +134,7 @@ export const useAssetsStore = create<AssetsStore>((set, get) => ({
       const response = await api.get(`/asset/getSingleAssetAdmin/${assetId}`);
 
       if (isSuccessfulResponse(response)) {
-        toast.success(response.data?.msg);
+        // toast.success(response.data?.message);
         set({ singleAsset: response.data.asset });
         return true;
       }
@@ -148,7 +153,7 @@ export const useAssetsStore = create<AssetsStore>((set, get) => ({
       const response = await api.delete(`/asset/deleteAsset/${assetId}`);
 
       if (isSuccessfulResponse(response)) {
-        toast.success(response.data?.msg);
+        toast.success(response.data?.message);
         get().getAllAsset({ page: 1, limit: 10 });
         return true;
       }
@@ -167,7 +172,7 @@ export const useAssetsStore = create<AssetsStore>((set, get) => ({
       const response = await api.patch(`/asset/updateAsset/${assetId}`, data);
 
       if (isSuccessfulResponse(response)) {
-        toast.success(response.data?.msg || "Asset updated successfully");
+        toast.success(response.data?.message || "Asset updated successfully");
         // Optionally refresh assets or singleAsset if needed
         // await get().getSingleAsset(assetId);
         return true;

@@ -62,13 +62,14 @@ const SignUp = () => {
     const isLongEnough = password.length >= 12;
     const hasUpperCase = /[A-Z]/.test(password);
     const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-    return { isLongEnough, hasUpperCase, hasSpecialChar };
+    const hasNumber = /\d/.test(password);
+    return { isLongEnough, hasUpperCase, hasSpecialChar, hasNumber };
   };
 
   const passwordValidation = validatePassword(formData.password);
 
   return (
-    <div className="flex items-center max-h-[621px] max-w-[480px]">
+    <div className="flex items-center">
       <div className="w-full h-full">
         <div>
           <h2 className="text-3xl text-[#1B1818] font-bold">Create account</h2>

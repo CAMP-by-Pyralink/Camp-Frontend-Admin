@@ -13,7 +13,7 @@ import LockedPage from "../../shared/LockedPage";
 interface FilterConfig {
   key: string;
   label: string;
-  type: "select" | "date" | "text"; // Only allow these types
+  type: "select" | "date" | "text";
   options?: { label: string; value: string }[]; // Only for "select" type
 }
 
@@ -28,7 +28,7 @@ const RiskAssessment = () => {
   const [importCsv, setImportCsv] = useState(false);
   const [exportCsv, setExportCsv] = useState(false);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
-  const locked = true;
+  const locked = false;
 
   // State to hold the selected filter values
   const [selectedFilters, setSelectedFilters] = useState({
@@ -134,6 +134,7 @@ const RiskAssessment = () => {
         onExportClick={handleExportClick}
         showFilter={true}
         showExport={true}
+        searchTerm=""
       >
         <RiskList />
 
@@ -148,12 +149,24 @@ const RiskAssessment = () => {
       {/*  */}
       {importCsv && (
         <ModalLayout>
-          <UploadCsvModal onClose={handleExportClick} />
+          <UploadCsvModal
+            onClose={handleExportClick}
+            type={""}
+            onCreate={function (): void {
+              throw new Error("Function not implemented.");
+            }}
+          />
         </ModalLayout>
       )}
       {exportCsv && (
         <ModalLayout>
-          <UploadCsvModal onClose={handleExportClick} />
+          <UploadCsvModal
+            onClose={handleExportClick}
+            type={""}
+            onCreate={function (): void {
+              throw new Error("Function not implemented.");
+            }}
+          />
         </ModalLayout>
       )}
       {isFilterModalOpen && (

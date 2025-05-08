@@ -8,20 +8,13 @@ const api = axios.create({
   baseURL: import.meta.env.VITE_APP_BASE_URL,
   headers: {
     "Content-Type": "application/json",
+    "x-api-key": import.meta.env.VITE_APP_API_KEY,
   },
 });
 
 // Add a request interceptor to attach the bearer token
 api.interceptors.request.use(
   (config) => {
-    // const { authUser } = useAuthStore.getState();
-    // console.log(authToken, "dfg");
-
-    // if (authUser) {
-    //   console.log(authUser, "dfg");
-    //   config.headers.Authorization = `Bearer ${authUser}`;
-    // }
-
     const token = Cookies.get("token");
 
     // If token exists, add it to the headers
@@ -140,7 +133,7 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
       return response;
     } catch (error: any) {
       console.error(error);
-      toast.error(error.response.data.msg, {
+      toast.error(error.response.data.message, {
         style: { maxWidth: "100%" },
       });
     } finally {
@@ -173,12 +166,12 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
         data
       );
       console.log(response);
-      toast.success(response.data.msg);
+      toast.success(response.data.message);
       await get().getUsers();
       return response;
     } catch (error: any) {
       console.error(error);
-      toast.error(error.response.data.msg, {
+      toast.error(error.response.data.message, {
         style: { maxWidth: "100%" },
       });
     } finally {
@@ -233,7 +226,7 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
       );
 
       if (response.status === 200) {
-        toast.success(response.data.msg);
+        toast.success(response.data.message);
 
         // Update user state efficiently
         set((state) => ({
@@ -248,7 +241,7 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
       return false;
     } catch (error: any) {
       console.error("Update profile error:", error);
-      toast.error(error.response?.data?.msg ?? "Failed to update profile");
+      toast.error(error.response?.data?.message ?? "Failed to update profile");
       return false;
     } finally {
       set({ isLoading: false });
@@ -281,14 +274,14 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
           "Company details fetched and state updated:",
           companyDetails
         );
-        // toast.success(response.data.msg);
+        // toast.success(response.data.message);
         // console.log("Dfad", companyData);
         return companyDetails; // Return the data for further use if needed
       }
     } catch (error: any) {
       console.error("Error fetching company details:", error);
       toast.error(
-        error.response?.data?.msg || "Failed to fetch company details."
+        error.response?.data?.message || "Failed to fetch company details."
       );
     } finally {
       set({ isLoading: false });
@@ -310,12 +303,12 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
       );
 
       if (response.status === 200) {
-        toast.success(response.data.msg);
+        toast.success(response.data.message);
         return response;
       }
     } catch (error: any) {
       console.error("Error updating company details:", error);
-      toast.error(error.response?.data?.msg);
+      toast.error(error.response?.data?.message);
     } finally {
       set({ isLoading: false });
     }

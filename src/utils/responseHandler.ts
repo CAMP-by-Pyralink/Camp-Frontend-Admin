@@ -8,11 +8,11 @@ export const handleErrorToast = (
   error: unknown,
   fallbackMessage = "Something went wrong!"
 ) => {
-  const err = error as AxiosError<{ msg?: string; error?: string }>;
-  const msg =
-    err?.response?.data?.msg ||
+  const err = error as AxiosError<{ message?: string; error?: string }>;
+  const message =
+    err?.response?.data?.message ||
     err?.response?.data?.error ||
     err?.message ||
     fallbackMessage;
-  toast.error(msg);
+  toast.error(message);
 };

@@ -1,20 +1,26 @@
-import { useLocation, useParams } from "react-router-dom";
-import { useState } from "react";
+import { Link, useLocation, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 import ModalLayout from "../../../shared/ModalLayout";
 import DeleteModal from "../../../shared/DeleteModal";
 import RiskRegisterForm from "./RiskRegisterForm";
 import aiIcon from "../../../assets/svgs/ai-network.svg";
+import { useRiskStore } from "../../../store/useRiskStore";
+import Loader from "../../../shared/Loader";
 
 interface RiskDetail {
-  id: number;
+  _id: string;
   riskName: string;
-  description: string;
+  riskDescription: string;
   category: string;
-  strategy: string;
-  level: string;
-  date: string;
+  mitigationStrategy: string;
+  isAIGenerated: boolean;
   riskStatus: string;
   riskProbability: string;
+  riskImpact: string;
+  department: string;
+  riskOwner: string;
+  note: string;
+  createdAt: string;
 }
 
 interface MatrixCell {
@@ -35,18 +41,7 @@ const matrixData: MatrixCell[] = [
   { probability: "Low", impact: "High", level: "Low" },
 ];
 
-const getLevelColor = (level: string) => {
-  switch (level) {
-    case "Low":
-      return "bg-greenCell";
-    case "Medium":
-      return "bg-yellowCell";
-    case "High":
-      return "bg-redCell";
-    default:
-      return "bg-gray-200";
-  }
-};
+// This function is no longer used as we handle colors directly in the matrix rendering
 
 const RiskDetails = () => {
   const [isDeleteClicked, setIsDeleteClicked] = useState(false);
@@ -55,146 +50,196 @@ const RiskDetails = () => {
 
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
-  const selectedRisk = location.state?.selectedRisk as Risks;
-  console.log(selectedRisk);
+  const { getSingleRisk, singleRisk, isLoading } = useRiskStore();
 
-  if (!selectedRisk || selectedRisk.id !== Number(id)) {
+  useEffect(() => {
+    const fetchRisk = async () => {
+      if (id) {
+        await getSingleRisk(id);
+      }
+    };
+    fetchRisk();
+  }, [getSingleRisk, id]);
+
+  // Use singleRisk from the store if available, otherwise fall back to location state
+  const selectedRisk = singleRisk || location.state?.selectedRisk;
+
+  console.log("Single risk data:", selectedRisk);
+
+  if (isLoading) {
+    return <Loader />;
+  }
+
+  if (!selectedRisk) {
     return <div>Risk not found</div>;
   }
 
   const handleBackClick = () => {
     setIsDeleteClicked(false);
   };
-  const handleDeleteClick = () => {
-    console.log("clicked");
-    setIsDeleteClicked(false);
-  };
-  const handleEditClicked = () => {
-    // console.log("first");
 
+  const handleDeleteClick = () => {
+    console.log("Delete clicked");
+    setIsDeleteClicked(false);
+    // Implement delete functionality here
+  };
+
+  const handleEditClicked = () => {
     setIsEditClicked(true);
   };
 
   return (
     <div className="mx-auto p-4">
-      <h1 className="text-2xl font-medium text-greyText mb-4">View Risk</h1>
-      <p className="text-sm text-greyText mb-6">View and edit risk</p>
+      <h1 className="text-2xl font-medium text-greyText mb-2">View Risk</h1>
+      <p className="text-sm text-greyText mb-2">View and edit risk</p>
+      <div className="flex items-center gap-2 font-poppins mb-12">
+        <Link to={"/"} className="text-sm font-medium text-[#282EFF]">
+          Dashboard
+        </Link>
+        <p className=" text-[#98A2B3] font-medium h-5">/</p>
+        <Link
+          to={"/risk-assessment"}
+          className="text-sm font-medium text-[#282EFF]"
+        >
+          Risks
+        </Link>
+        <p className=" text-[#98A2B3] font-medium h-5">/</p>
+        <p className="text-sm font-medium text-[#898384]">Assets Details</p>
+      </div>
 
       {/* Risk Details Section */}
-      <div className=" rounded-md p-6 mb-8 shadow-custom-shadow">
+      <div className="rounded-md p-6 mb-8 shadow-custom-shadow">
         <h2 className="text-[20px] text-greyText font-semibold mb-1">
           Risk Details
         </h2>
         <hr />
         <div className="space-y-4 mt-4">
           <div className="grid grid-cols-1 gap-4">
-            <div className=" flex items-center gap-8">
+            <div className="flex items-center gap-8">
               <p className="text-sm text-greyText font-semibold basis-[20%]">
                 Risk ID:
               </p>
-              <p className=" text-greyText text-sm">{selectedRisk.id}</p>
+              <p className="text-greyText text-sm">{selectedRisk._id}</p>
             </div>
-            <div className=" flex items-center gap-8">
+            <div className="flex items-center gap-8">
               <p className="text-sm text-greyText font-semibold basis-[20%]">
                 Risk Name
               </p>
-              <p className=" text-greyText text-sm">{selectedRisk.name}</p>
+              <p className="text-greyText text-sm">{selectedRisk.riskName}</p>
             </div>
           </div>
 
-          <div className=" flex items-center gap-8">
+          <div className="flex items-center gap-8">
             <p className="text-sm text-greyText font-semibold basis-[20%]">
               Description
             </p>
-            <p className=" text-greyText text-sm">{selectedRisk.description}</p>
+            <p className="text-greyText text-sm">
+              {selectedRisk.riskDescription}
+            </p>
           </div>
 
           <div className="grid grid-cols-1 gap-4">
-            <div className=" flex items-center gap-8">
+            <div className="flex items-center gap-8">
               <p className="text-sm text-greyText font-semibold basis-[20%]">
                 Category:
               </p>
-              <p className=" text-greyText text-sm">{selectedRisk.category}</p>
+              <p className="text-greyText text-sm">{selectedRisk.category}</p>
             </div>
-            <div className=" flex items-center gap-8">
+            <div className="flex items-start gap-8">
               <p className="text-sm text-greyText font-semibold basis-[20%]">
                 Mitigation Strategy
               </p>
-              <div className=" flex items-center gap-6">
-                <div className=" flex items-center gap-4 bg-[#F1F2FF] w-fit text-primary500 py-1 px-3 rounded-full">
-                  <img src={aiIcon} alt="" />
-                  AI generated
-                </div>
-                <p className=" text-greyText text-sm">
-                  {selectedRisk.mitigrationStrategy}
+              <div className="flex flex-col w-full gap-3">
+                {selectedRisk.isAIGenerated && (
+                  <div className="flex items-center gap-2 bg-[#F1F2FF] w-fit text-primary500 py-1 px-3 rounded-full">
+                    <img src={aiIcon} alt="AI icon" />
+                    <span>AI generated</span>
+                  </div>
+                )}
+                <p className="text-greyText text-sm">
+                  {selectedRisk.mitigationStrategy}
                 </p>
               </div>
             </div>
           </div>
 
           <div className="grid grid-cols-1 gap-4">
-            <div className=" flex items-center gap-8">
+            <div className="flex items-center gap-8">
               <p className="text-sm text-greyText font-semibold basis-[20%]">
                 Note:
               </p>
-              <p className=" text-greyText text-sm">{selectedRisk.note}</p>
+              <p className="text-greyText text-sm">{selectedRisk.note}</p>
             </div>
-            <div className=" flex items-center gap-8">
+            <div className="flex items-center gap-8">
               <p className="text-sm text-greyText font-semibold basis-[20%]">
                 Status:
               </p>
               <p
                 className={`w-fit py-[2px] px-3 rounded-full ${
-                  selectedRisk.status === "Mitigated"
+                  selectedRisk.riskStatus === "Mitigated"
                     ? "bg-[#E4FCDE] text-[#0B7B69]"
                     : "bg-[#FCDEDE] text-[#B30100]"
                 }`}
               >
-                {selectedRisk.status}
+                {selectedRisk.riskStatus}
               </p>
             </div>
-            <div className=" flex items-center gap-8">
+            <div className="flex items-center gap-8">
               <p className="text-sm text-greyText font-semibold basis-[20%]">
                 Risk Owner:
               </p>
-              <p className=" w-fit bg-blue-100 text-blue600 py-[2px] px-3 rounded-xl">
-                {selectedRisk.owner}
+              <p className="w-fit bg-blue-100 text-blue600 py-[2px] px-3 rounded-xl">
+                {selectedRisk.riskOwner}
               </p>
             </div>
-            <div className=" flex items-center gap-8">
+            <div className="flex items-center gap-8">
               <p className="text-sm text-greyText font-semibold basis-[20%]">
                 Risk Impact:
               </p>
               <p
-                className={` w-fit py-[2px] px-3 rounded-xl ${
-                  selectedRisk.probability === "Low"
+                className={`w-fit py-[2px] px-3 rounded-xl ${
+                  selectedRisk.riskImpact === "Low"
                     ? "bg-[#E4FCDE] text-[#0B7B69]"
-                    : selectedRisk.probability === "Medium"
+                    : selectedRisk.riskImpact === "Medium"
                     ? "bg-[#FFF3CD] text-[#856404]"
-                    : selectedRisk.probability === "High"
+                    : selectedRisk.riskImpact === "High"
                     ? "bg-[#FCDEDE] text-[#B30100]"
                     : ""
                 }`}
               >
-                {selectedRisk.impact}
+                {selectedRisk.riskImpact}
               </p>
-            </div>{" "}
-            <div className=" flex items-center gap-8">
+            </div>
+            <div className="flex items-center gap-8">
               <p className="text-sm text-greyText font-semibold basis-[20%]">
-                Risk Probabilty:
+                Risk Probability:
               </p>
               <p
                 className={`w-fit py-[2px] px-3 rounded-xl ${
-                  selectedRisk.probability === "Low"
+                  selectedRisk.riskProbability === "Low"
                     ? "bg-[#E4FCDE] text-[#0B7B69]"
-                    : selectedRisk.probability === "Medium"
+                    : selectedRisk.riskProbability === "Medium"
                     ? "bg-[#FFF3CD] text-[#856404]"
-                    : selectedRisk.probability === "High"
+                    : selectedRisk.riskProbability === "High"
                     ? "bg-[#F8D7DA] text-[#721C24]"
                     : ""
                 }`}
               >
-                {selectedRisk.probability}
+                {selectedRisk.riskProbability}
+              </p>
+            </div>
+            <div className="flex items-center gap-8">
+              <p className="text-sm text-greyText font-semibold basis-[20%]">
+                Department:
+              </p>
+              <p className="text-greyText text-sm">{selectedRisk.department}</p>
+            </div>
+            <div className="flex items-center gap-8">
+              <p className="text-sm text-greyText font-semibold basis-[20%]">
+                Created At:
+              </p>
+              <p className="text-greyText text-sm">
+                {new Date(selectedRisk.createdAt).toLocaleDateString()}
               </p>
             </div>
           </div>
@@ -218,41 +263,61 @@ const RiskDetails = () => {
       </div>
 
       {/* Risk Matrix Section */}
-      <div className=" rounded-lg p-6">
+      <div className="rounded-lg p-6">
         <h2 className="text-2xl text-greyText font-semibold mb-4">
           3 x 3 Matrix
         </h2>
         <div className="relative flex flex-col w-fit">
           {/* Probability Label */}
-          <div className=" bg-blue50 py-[7px] px-[26.64px] absolute -left-28 top-1/2 -rotate-90 transform -translate-y-1/2">
-            <span className=" text-greyText font-medium text-sm ">
+          <div className="bg-blue50 py-[7px] px-[26.64px] absolute -left-28 top-1/2 -rotate-90 transform -translate-y-1/2">
+            <span className="text-greyText font-medium text-sm">
               PROBABILITY
             </span>
           </div>
 
           {/* Matrix Cells */}
-          <div className=" flex flex-col items-center">
+          <div className="flex flex-col items-center">
             <div className="grid grid-cols-3 gap-1 w-[504.58px]">
-              {matrixData.map((cell, index) => (
-                <div
-                  key={index}
-                  className={`${getLevelColor(
-                    cell.level
-                  )} h-[101.66px] text-[25.24px]  flex items-center justify-center text-white font-medium rounded`}
-                >
-                  {cell.level}
-                </div>
-              ))}
+              {matrixData.map((cell, index) => {
+                const isActiveCell =
+                  cell.probability === selectedRisk.riskProbability &&
+                  cell.impact === selectedRisk.riskImpact;
+
+                // Get base color class based on risk level
+                let colorClass = "";
+                if (cell.level === "Low") {
+                  colorClass = isActiveCell
+                    ? "bg-green-500"
+                    : "bg-greenCell opacity-50";
+                } else if (cell.level === "Medium") {
+                  colorClass = isActiveCell
+                    ? "bg-yellow-500"
+                    : "bg-yellowCell opacity-50";
+                } else if (cell.level === "High") {
+                  colorClass = isActiveCell
+                    ? "bg-red-500"
+                    : "bg-redCell opacity-50";
+                }
+
+                return (
+                  <div
+                    key={index}
+                    className={`${colorClass} h-[101.66px] text-[25.24px] flex items-center justify-center text-white font-medium rounded`}
+                  >
+                    {cell.level}
+                  </div>
+                );
+              })}
             </div>
             {/* Impact Label */}
-            <div className="bg-blue50 py-[7px] px-[26.64px] translate-x-1/2   w-fit mt-4">
-              <span className="text-sm font-medium text-greyText ">IMPACT</span>
+            <div className="bg-blue50 py-[7px] px-[26.64px] translate-x-1/2 w-fit mt-4">
+              <span className="text-sm font-medium text-greyText">IMPACT</span>
             </div>
           </div>
-          {/*  */}
         </div>
       </div>
-      {/*  */}
+
+      {/* Modals */}
       {isDeleteClicked && (
         <ModalLayout>
           <DeleteModal
@@ -263,7 +328,10 @@ const RiskDetails = () => {
       )}
       {isEditClicked && (
         <ModalLayout>
-          <RiskRegisterForm setRiskRegisterModal={setIsEditClicked} />
+          <RiskRegisterForm
+            setRiskRegisterModal={setIsEditClicked}
+            initialData={selectedRisk}
+          />
         </ModalLayout>
       )}
     </div>
@@ -271,8 +339,3 @@ const RiskDetails = () => {
 };
 
 export default RiskDetails;
-
-// Route definition for RiskDetails component
-{
-  /* <Route path="/risk-detail/:id" element={<RiskDetails />} />; */
-}

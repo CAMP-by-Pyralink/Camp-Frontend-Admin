@@ -4,6 +4,8 @@ import closeIcon from "../../../assets/svgs/close.svg";
 import NewUserAdded from "./NewUserAdded";
 import { useAdminStore } from "../../../store/useAdminStore";
 import { generatePassword } from "../../../utils/generatePassword";
+import Loader from "../../../shared/Loader";
+import { Loader2 } from "lucide-react";
 
 interface CreateUserManualProps {
   onCreate: () => void;
@@ -21,8 +23,14 @@ const CreateUserManual: React.FC<CreateUserManualProps> = ({
   const [department, setDepartment] = useState("");
   const [create, setCreate] = useState(false);
   const { type } = useParams<{ type: string }>();
-  const { departments, fetchDepartments, registerAdmin, registerUser } =
-    useAdminStore();
+  const {
+    departments,
+    fetchDepartments,
+    registerAdmin,
+    isLoading,
+    isRegisteringAdmin,
+    registerUser,
+  } = useAdminStore();
 
   useEffect(() => {
     fetchDepartments();
@@ -179,9 +187,17 @@ const CreateUserManual: React.FC<CreateUserManualProps> = ({
 
             <button
               onClick={handleCreateClick}
-              className="w-full bg-primary500 text-white py-2 rounded-lg font-semibold mb-1"
+              disabled={!!isRegisteringAdmin}
+              className={`w-full bg-primary500 text-white py-3 rounded-lg font-bold flex items-center justify-center 
+              ${isRegisteringAdmin ? "opacity-50 cursor-not-allowed" : ""}`}
             >
-              Create
+              {isRegisteringAdmin ? (
+                <>
+                  <Loader2 className=" size-6 mr-2 animate-spin" />
+                </>
+              ) : (
+                "Create"
+              )}
             </button>
           </div>
         ) : (

@@ -58,71 +58,59 @@ const UserManagement: React.FC = () => {
   const { admins, users, getAdmins, getUsers, isLoading } = useAdminStore();
   const currentData = userType === "Admin" ? admins : users;
 
-  // Update data cache when data changes
+  // Fixed: Update data cache only when data actually changes
   useEffect(() => {
     if (currentData && currentData.length > 0) {
-      dataCache[userType].all = [...currentData];
-      setHasDataEverExisted(true);
+      // Only update cache if data has changed
+      const cacheData = dataCache[userType].all;
+      const shouldUpdateCache =
+        currentData.length !== cacheData.length ||
+        currentData.some(
+          (item, index) =>
+            cacheData.length <= index || item._id !== cacheData[index]._id
+        );
+
+      if (shouldUpdateCache) {
+        dataCache[userType].all = [...currentData];
+        setHasDataEverExisted(true);
+      }
     }
   }, [currentData, userType]);
 
-  // Reset search when switching between Admin and User views
+  // Fixed: Reset search and trigger load on type change
   useEffect(() => {
     setSearchTerm(""); // Reset search when type changes
-  }, [userType]);
 
-  // Initial data load - use cached data immediately if available
-  useEffect(() => {
-    const loadData = async () => {
-      // Check if we have cached data
-      if (dataCache[userType].all.length > 0) {
-        setHasDataEverExisted(true);
-      }
-
-      // Load fresh data in background
+    // Load data for this type
+    const loadInitialData = async () => {
       try {
         if (userType === "Admin") {
-          const result = await getAdmins();
-          // Don't test result directly since it's void
-          if (admins && admins.length > 0) {
-            setHasDataEverExisted(true);
-            dataCache.Admin.all = [...admins];
-          }
+          await getAdmins();
         } else {
-          const result = await getUsers();
-          // Don't test result directly since it's void
-          if (users && users.length > 0) {
-            setHasDataEverExisted(true);
-            dataCache.User.all = [...users];
-          }
+          await getUsers();
         }
       } catch (error) {
-        console.error("Error loading data:", error);
+        console.error(`Error loading ${userType} data:`, error);
       }
     };
 
-    loadData();
-  }, [userType, getAdmins, getUsers, admins, users]);
+    loadInitialData();
+  }, [userType, getAdmins, getUsers]);
 
-  // Handle search with debounce
+  // Fixed: Handle search with debounce, avoiding dependency on admins/users
   useEffect(() => {
     const delaySearch = setTimeout(async () => {
+      if (searchTerm === "") {
+        // Skip if there's no search term (will be handled by the initial load)
+        return;
+      }
+
       setIsSearching(true);
       try {
-        if (searchTerm.trim() !== "") {
-          console.log(`Searching for ${searchTerm} in ${userType} list`);
-          if (userType === "Admin") {
-            await getAdmins(searchTerm);
-          } else {
-            await getUsers(searchTerm);
-          }
+        if (userType === "Admin") {
+          await getAdmins(searchTerm);
         } else {
-          console.log(`Loading all ${userType}s`);
-          if (userType === "Admin") {
-            await getAdmins();
-          } else {
-            await getUsers();
-          }
+          await getUsers(searchTerm);
         }
       } catch (error) {
         console.error(`Error searching ${userType}:`, error);
@@ -162,7 +150,7 @@ const UserManagement: React.FC = () => {
     } else {
       getUsers();
     }
-  }, [userType, getAdmins, getUsers]);
+  }, []);
 
   const toggleDropdown = useCallback(() => setIsOpen((prev) => !prev), []);
 
@@ -260,6 +248,11 @@ const UserManagement: React.FC = () => {
 
   // Determine what to render
   const contentToRender = useMemo(() => {
+    // If explicitly searching, show loader
+    if (isSearching) {
+      return Loader;
+    }
+
     // If loading but we have cached data, show the table with cached data
     if (isLoading && dataCache[userType].all.length > 0) {
       return (
@@ -270,11 +263,12 @@ const UserManagement: React.FC = () => {
       );
     }
 
-    // If loading without cache or searching, show loader
-    // if ((isLoading && !dataCache[userType].all.length) || isSearching) {
-    //   return Loader;
-    // }
+    // If loading without cache, show loader
+    if (isLoading && !dataCache[userType].all.length) {
+      return Loader;
+    }
 
+    // No results cases
     if (currentData?.length === 0) {
       // If searching with no results, show no results component
       if (searchTerm) {

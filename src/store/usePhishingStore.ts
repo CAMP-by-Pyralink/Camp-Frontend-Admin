@@ -3,35 +3,36 @@ import axios, { AxiosResponse } from "axios";
 import toast from "react-hot-toast";
 import { useAuthStore } from "./useAuthStore";
 import Cookies from "js-cookie";
+import { api } from "./useRiskStore";
 
-const api = axios.create({
-  baseURL: import.meta.env.VITE_APP_BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
+// const api = axios.create({
+//   baseURL: import.meta.env.VITE_APP_BASE_URL,
+//   headers: {
+//     "Content-Type": "application/json",
+//   },
+// });
 
 // const token = Cookies.get("token");
 // console.log("Token:", token);
 
-api.interceptors.request.use(
-  (config) => {
-    // const { authUser } = useAuthStore.getState();
-    // if (authUser) {
-    //   config.headers.Authorization = `Bearer ${authUser}`;
-    // }
-    const token = Cookies.get("token");
+// api.interceptors.request.use(
+//   (config) => {
+//     // const { authUser } = useAuthStore.getState();
+//     // if (authUser) {
+//     //   config.headers.Authorization = `Bearer ${authUser}`;
+//     // }
+//     const token = Cookies.get("token");
 
-    // If token exists, add it to the headers
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+//     // If token exists, add it to the headers
+//     if (token) {
+//       config.headers.Authorization = `Bearer ${token}`;
+//     }
+//     return config;
+//   },
+//   (error) => {
+//     return Promise.reject(error);
+//   }
+// );
 
 // --- Data Payload Interfaces ---
 
@@ -97,7 +98,7 @@ export const usePhishingStore = create<PhishingStore>((set) => ({
       if (response.status === 201) {
         console.log(response);
         // alert("response is true");
-        toast.success(response.data.msg);
+        toast.success(response.data.message);
         return true;
       }
       return null;
@@ -123,13 +124,15 @@ export const usePhishingStore = create<PhishingStore>((set) => ({
 
       if (response.status === 200) {
         console.log("Response:", response);
-        toast.success(response.data.msg);
+        toast.success(response.data.message);
         return true;
       }
       return null;
     } catch (error: any) {
       console.log(error);
-      toast.error(error.response?.data?.msg || "Failed to update template.");
+      toast.error(
+        error.response?.data?.message || "Failed to update template."
+      );
       return null;
     } finally {
       set({ isLoading: false });
@@ -146,7 +149,9 @@ export const usePhishingStore = create<PhishingStore>((set) => ({
       return response;
     } catch (error: any) {
       console.log(error);
-      toast.error(error.response?.data?.msg || "Failed to delete template.");
+      toast.error(
+        error.response?.data?.message || "Failed to delete template."
+      );
     } finally {
       set({ isDeletingTemplate: false });
     }
