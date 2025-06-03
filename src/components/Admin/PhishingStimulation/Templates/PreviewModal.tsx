@@ -2,7 +2,7 @@ import { Link, useLocation, useParams } from "react-router-dom";
 import closeIcon from "../../../../assets/svgs/closeicongrey.svg";
 
 import editIcon from "../../../../assets/svgs/edit-icon.svg";
-const PreviewModal = ({ setContinueClicked }) => {
+const PreviewModal = ({ setContinueClicked }: any) => {
   // const { title } = useParams<{ title: string }>();
   const location = useLocation();
 
@@ -25,7 +25,7 @@ const PreviewModal = ({ setContinueClicked }) => {
             alt=""
             className=" cursor-pointer"
             // onClick={handleFilterClick}
-            onClick={() => setContinueClicked((prev) => !prev)}
+            onClick={() => setContinueClicked((prev: any) => !prev)}
           />
         </div>
         {/*  */}

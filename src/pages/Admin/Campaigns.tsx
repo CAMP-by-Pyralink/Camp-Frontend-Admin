@@ -67,7 +67,7 @@ const Campaigns = () => {
       ],
     },
   ];
-  const locked = true;
+  const locked = false;
 
   if (locked) {
     return <LockedPage />;

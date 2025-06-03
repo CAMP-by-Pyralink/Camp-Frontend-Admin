@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   PhishingTemplate,
   usePhishingStore,
@@ -8,14 +9,19 @@ import toast from "react-hot-toast";
 import DOMPurify from "dompurify";
 import he from "he";
 import AddTemplateModal from "./AddtemplateModal";
-// import AddTemplateModal from "./AddTemplateModal";
+import closeIcon from "../../../../assets/svgs/closeicongrey.svg";
+import Button from "../../../../shared/Button";
 
 const TemplateLists: React.FC = () => {
+  const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [templateClicked, setTemplateClicked] = useState<boolean>(false);
   const [selectedCard, setSelectedCard] = useState<PhishingTemplate | null>(
     null
   );
   const [optionsIndex, setOptionsIndex] = useState<number | null>(null);
+  const [campaignName, setCampaignName] = useState<string>("");
+
   const { phishingTemplates, fetchPhishingTemplates, deletePhishingTemplate } =
     usePhishingStore();
   const [page, setPage] = useState<number>(1);
@@ -25,8 +31,10 @@ const TemplateLists: React.FC = () => {
   }, [page, fetchPhishingTemplates]);
 
   const handleCardClick = (index: number) => {
-    setSelectedCard(phishingTemplates[index]);
-    setIsModalOpen(true);
+    const template = phishingTemplates[index];
+    setSelectedCard(template);
+    setTemplateClicked(true);
+    setCampaignName(""); // Reset campaign name
   };
 
   const handleCloseModal = () => {
@@ -34,7 +42,14 @@ const TemplateLists: React.FC = () => {
     setSelectedCard(null);
   };
 
-  const handleOptionsClick = (index: number) => {
+  const handleCloseTemplateModal = () => {
+    setTemplateClicked(false);
+    setSelectedCard(null);
+    setCampaignName("");
+  };
+
+  const handleOptionsClick = (e: React.MouseEvent, index: number) => {
+    e.stopPropagation(); // Prevent card click event from firing
     setSelectedCard(phishingTemplates[index]);
     setOptionsIndex(optionsIndex === index ? null : index);
   };
@@ -44,30 +59,47 @@ const TemplateLists: React.FC = () => {
     setSelectedCard(null);
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
     const response = await deletePhishingTemplate(id);
     if (response && response.status === 200) {
-      // toast.success("Template deleted successfully!");
+      toast.success("Template deleted successfully!");
       fetchPhishingTemplates(page);
       handleCloseOptionsModal();
     }
-    setOptionsIndex(null); // Hide the options menu
+    setOptionsIndex(null);
   };
 
-  const handleEdit = () => {
-    setOptionsIndex(null); // Hide the options menu
+  const handleEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setOptionsIndex(null);
     setIsModalOpen(true);
   };
-  // import DOMPurify from "dompurify";
-  // import he from "he";
+
+  const handleNext = () => {
+    if (!selectedCard || !campaignName.trim()) {
+      toast.error("Please enter a campaign name");
+      return;
+    }
+
+    // Navigate to phishing details page with template data
+    navigate(`/phishing-details/${selectedCard._id}`, {
+      state: {
+        templateId: selectedCard._id,
+        templateName: selectedCard.title,
+        campaignName: campaignName.trim(),
+        templateData: selectedCard,
+      },
+    });
+  };
 
   // Utility to strip HTML tags and slice text
   const getSlicedContent = (html: string, maxLength = 200) => {
-    const decoded = he.decode(html); // decode HTML entities
+    const decoded = he.decode(html);
     const clean = DOMPurify.sanitize(decoded, {
       ALLOWED_TAGS: [],
       ALLOWED_ATTR: [],
-    }); // strip all tags
+    });
     return clean.length > maxLength ? clean.slice(0, maxLength) + "..." : clean;
   };
 
@@ -77,8 +109,9 @@ const TemplateLists: React.FC = () => {
         {phishingTemplates.map(
           ({ _id, bannerImage, title, content }, index) => (
             <div
-              key={index}
+              key={_id || index}
               className="bg-white border border-[#D3D3D3] p-3 rounded-lg flex flex-col gap-2 cursor-pointer relative"
+              onClick={() => handleCardClick(index)}
             >
               <div className="absolute top-2 right-2"></div>
               <div className="w-full h-[300px]">
@@ -92,20 +125,20 @@ const TemplateLists: React.FC = () => {
                 <h1 className="text-[#333333] font-medium text-xl">{title}</h1>
                 <div
                   className="hover:text-gray-700 relative"
-                  onClick={() => handleOptionsClick(index)}
+                  onClick={(e) => handleOptionsClick(e, index)}
                 >
                   <MoreVertical className="size-6" />
                   {optionsIndex === index && (
                     <div className="absolute top-8 right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
                       <button
                         className="w-full text-left px-4 py-2 border-b text-textColor hover:bg-blue50"
-                        onClick={handleEdit}
+                        onClick={(e) => handleEdit(e)}
                       >
                         Edit
                       </button>
                       <button
                         className="w-full text-left px-4 py-2 text-textColor hover:bg-blue50"
-                        onClick={() => handleDelete(_id)}
+                        onClick={(e) => handleDelete(e, _id)}
                       >
                         Delete
                       </button>
@@ -114,12 +147,6 @@ const TemplateLists: React.FC = () => {
                 </div>
               </div>
 
-              {/* <div
-                className="prose prose-blue prose-xl prose-headings:underline prose-a:text-[#0007FC] prose-headings:text-[2rem] text-[#333333] text-sm text-opacity-80"
-                dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(he.decode(content)),
-                }}
-              /> */}
               <div className="text-[#333333] text-sm text-opacity-80">
                 {getSlicedContent(content, 100)}
               </div>
@@ -152,6 +179,33 @@ const TemplateLists: React.FC = () => {
           onClose={handleCloseModal}
           templateToEdit={selectedCard}
         />
+      )}
+
+      {templateClicked && selectedCard && (
+        <div className="fixed inset-0 bg-[#344054B2] bg-opacity-40 flex justify-center items-center h-screen z-50">
+          <div className="px-8 py-6 bg-white rounded-lg shadow-lg w-full max-w-md space-y-8">
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-bold text-[#454545]">
+                {selectedCard.title}
+              </h2>
+              <img
+                src={closeIcon}
+                alt="Close"
+                className="cursor-pointer"
+                onClick={handleCloseTemplateModal}
+              />
+            </div>
+            <div>
+              <input
+                className="w-full border border-[#D0D5DD] rounded p-4 text-[#454545]"
+                placeholder="Enter campaign name"
+                value={campaignName}
+                onChange={(e) => setCampaignName(e.target.value)}
+              />
+            </div>
+            <Button label="Next" width="w-full" onClick={handleNext} />
+          </div>
+        </div>
       )}
     </div>
   );

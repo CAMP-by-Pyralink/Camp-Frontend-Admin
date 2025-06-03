@@ -136,7 +136,10 @@ function App() {
                   element={<PhishingPreview />}
                 />
               </Route>
-              <Route path="phishing-details" element={<PhishingDetails />} />
+              <Route
+                path="phishing-details/:id"
+                element={<PhishingDetails />}
+              />
               <Route
                 path="awareness-training"
                 element={<AwarenessTraining />}

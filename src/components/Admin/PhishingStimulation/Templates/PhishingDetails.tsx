@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import closeIcon from "../../../../assets/svgs/closeicongrey.svg";
-import { useParams } from "react-router-dom";
-// import { DateRange } from "react-date-range";
-import { DayPicker } from "react-day-picker";
+import { useLocation, useParams } from "react-router-dom";
+import { DayPicker, DateRange } from "react-day-picker";
 import "react-day-picker/style.css";
 import "react-date-range/dist/styles.css"; // Main style file
 import "react-date-range/dist/theme/default.css"; // Theme CSS file
@@ -10,57 +9,173 @@ import departmentIcon from "../../../../assets/svgs/department.svg";
 import employeeicon from "../../../../assets/svgs/employee-icon.svg";
 import organizationicon from "../../../../assets/svgs/organization.svg";
 import PreviewModal from "./PreviewModal";
-// import CustomDatePicker from "./CustomDatePicker";
 import { startOfMonth } from "date-fns";
 import { usePhishingStore } from "../../../../store/usePhishingStore";
+import { useAdminStore } from "../../../../store/useAdminStore";
+
+interface User {
+  _id: string;
+  fName: string;
+  lName: string;
+  email: string;
+  department: string;
+  profileImage?: string;
+}
 
 const PhishingDetails: React.FC = () => {
   const [continueClicked, setContinueClicked] = useState<boolean>(false);
   const { title } = useParams<{ title: string }>();
+  const { id } = useParams();
+  const location = useLocation();
+  const { templateId, templateName, campaignName, templateData } =
+    location.state || {};
+
+  // Calendar state for multi-date selection
+  const [selectedDates, setSelectedDates] = useState<Date[]>([]);
+  const { fetchDepartments, departments, getUsers, users } = useAdminStore();
+
+  useEffect(() => {
+    getUsers();
+    fetchDepartments();
+  }, [getUsers, fetchDepartments]);
+
+  // Alternative: Range selection state
+  const [dateRange, setDateRange] = useState<DateRange | undefined>();
+
+  // Target selection state
+  const [selectedTarget, setSelectedTarget] = useState<string>("");
+
+  // Department selection state
+  const [selectedDepartments, setSelectedDepartments] = useState<string[]>([]);
+
+  // Employee selection state
+  const [selectedEmployees, setSelectedEmployees] = useState<User[]>([]);
+
+  // Dropdown states
+  const [showDepartmentDropdown, setShowDepartmentDropdown] = useState(false);
+  const [showEmployeeDropdown, setShowEmployeeDropdown] = useState(false);
+
+  // Search states
+  const [departmentSearch, setDepartmentSearch] = useState("");
+  const [employeeSearch, setEmployeeSearch] = useState("");
+
   const [isToggled, setIsToggled] = useState(false);
   const handleToggle = () => {
     setIsToggled(!isToggled);
   };
-  const currentMonth = startOfMonth(new Date()); // First day of the current month
 
   const { updatePhishingTemplate } = usePhishingStore();
-
-  // const [dateRange, setDateRange] = useState([
-  //   {
-  //     startDate: new Date(),
-  //     endDate: new Date(),
-  //     key: "selection",
-  //   },
-  // ]);
 
   const cards = [
     {
       img: organizationicon,
-      title: "All",
+      title: "All Employees",
+      subtitle: `${users?.length || 0} employees across all departments`,
+      value: "all",
     },
     {
       img: departmentIcon,
-      title: "Specific department",
+      title: "Specific Department",
+      subtitle: "Target employees from selected departments",
+      value: "department",
     },
     {
       img: employeeicon,
-      title: "Specific employee",
+      title: "Specific Employees",
+      subtitle: "Choose individual employees to target",
+      value: "employee",
     },
   ];
 
-  const handleUpdate = async () => {
-    const data = {
-      id: "67ab28fd86d351caa4e5d7b4",
-      title: "Updated Title",
-      content: "Updated Content",
-      bannerImage: "updated-banner-image-url", // Replace with the actual banner image URL
-    };
-    await updatePhishingTemplate(data);
+  // Handle multi-date selection
+  const handleDateSelect = (dates: Date[] | undefined) => {
+    if (dates) {
+      setSelectedDates(dates);
+    }
   };
 
-  // useEffect(() => {
-  //   handleUpdate();
-  // }, []);
+  // Handle range selection (alternative approach)
+  const handleRangeSelect = (range: DateRange | undefined) => {
+    setDateRange(range);
+  };
+
+  // Handle target selection
+  const handleTargetChange = (value: string) => {
+    setSelectedTarget(value);
+    // Reset selections when changing target type
+    if (value !== "department") {
+      setSelectedDepartments([]);
+    }
+    if (value !== "employee") {
+      setSelectedEmployees([]);
+    }
+  };
+
+  // Handle department selection
+  const handleDepartmentSelect = (department: string) => {
+    if (!selectedDepartments.includes(department)) {
+      setSelectedDepartments((prev) => [...prev, department]);
+    }
+    setShowDepartmentDropdown(false);
+    setDepartmentSearch("");
+  };
+
+  // Handle department removal
+  const removeDepartment = (departmentToRemove: string) => {
+    setSelectedDepartments((prev) =>
+      prev.filter((dept) => dept !== departmentToRemove)
+    );
+  };
+
+  // Handle employee selection
+  const handleEmployeeSelect = (employee: User) => {
+    if (!selectedEmployees.find((emp) => emp._id === employee._id)) {
+      setSelectedEmployees((prev) => [...prev, employee]);
+    }
+    setShowEmployeeDropdown(false);
+    setEmployeeSearch("");
+  };
+
+  // Handle employee removal
+  const removeEmployee = (employeeToRemove: User) => {
+    setSelectedEmployees((prev) =>
+      prev.filter((emp) => emp._id !== employeeToRemove._id)
+    );
+  };
+
+  // Filter departments based on search
+  const filteredDepartments =
+    departments?.filter((dept) =>
+      dept.toLowerCase().includes(departmentSearch.toLowerCase())
+    ) || [];
+
+  // Filter employees based on search
+  const filteredEmployees =
+    users?.filter(
+      (user) =>
+        `${user.fName} ${user.lName}`
+          .toLowerCase()
+          .includes(employeeSearch.toLowerCase()) ||
+        user.email.toLowerCase().includes(employeeSearch.toLowerCase()) ||
+        user.department.toLowerCase().includes(employeeSearch.toLowerCase())
+    ) || [];
+
+  // Get target summary
+  const getTargetSummary = () => {
+    switch (selectedTarget) {
+      case "all":
+        return `All ${users?.length || 0} employees`;
+      case "department":
+        const deptEmployeeCount =
+          users?.filter((user) => selectedDepartments.includes(user.department))
+            .length || 0;
+        return `${deptEmployeeCount} employees from ${selectedDepartments.length} department(s)`;
+      case "employee":
+        return `${selectedEmployees.length} selected employee(s)`;
+      default:
+        return "No target selected";
+    }
+  };
 
   return (
     <>
@@ -71,10 +186,8 @@ const PhishingDetails: React.FC = () => {
         <div className="bg-white shadow-lg rounded-lg w-full">
           <div className="flex justify-between gap-8 py-4 px-8 h-full">
             {/* Left Panel */}
-
             <div className="basis-[60%]">
-              {/* paignation */}
-
+              {/* Pagination */}
               <div className=" flex items-center gap-1 mb-4">
                 <span className="bg-primary500 w-4 h-4 p-3 flex items-center justify-center text-white rounded-full">
                   1
@@ -84,10 +197,10 @@ const PhishingDetails: React.FC = () => {
                   phishing simulation exercise
                 </p>
               </div>
-              <h1 className="text-[#454545] pb-2">Work Test</h1>
+              <h1 className="text-[#454545] pb-2">{campaignName}</h1>
 
               <h2 className="text-2xl font-bold text-[#454545] pb-2">
-                Happy Birthday!
+                {templateName}
               </h2>
               <p className="text-greyText text-xs mb-8">
                 Select a department or specific employees to receive this
@@ -95,47 +208,232 @@ const PhishingDetails: React.FC = () => {
               </p>
 
               {/* Target Selection */}
-              <div className="grid grid-cols-3 gap-4">
-                {cards.map(({ img, title }, index) => (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                {cards.map(({ img, title, subtitle, value }, index) => (
                   <div
                     key={index}
-                    className="p-8 shadow-[5px_5px_40px_rgba(107,151,255,0.3)]"
+                    className={`p-6 shadow-[5px_5px_40px_rgba(107,151,255,0.3)] rounded-lg cursor-pointer transition-all duration-200 hover:shadow-lg ${
+                      selectedTarget === value
+                        ? "ring-2 ring-primary500 bg-blue-50"
+                        : "hover:bg-gray-50"
+                    }`}
+                    onClick={() => handleTargetChange(value)}
                   >
-                    <div className="flex items-start justify-between">
-                      <div className="bg-blue-50 h-[52px] w-[52px] flex items-center justify-center">
-                        <img src={img} alt="" />
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="bg-blue-50 h-[52px] w-[52px] flex items-center justify-center rounded-lg">
+                        <img src={img} alt="" className="w-6 h-6" />
                       </div>
-                      <input type="radio" name="target" />
+                      <input
+                        type="radio"
+                        name="target"
+                        value={value}
+                        checked={selectedTarget === value}
+                        onChange={() => {}}
+                        className="w-4 h-4 text-primary500"
+                      />
                     </div>
-                    <h1 className="mt-4 text-xs font-medium text-[#454545]">
+                    <h3 className="text-sm font-semibold text-[#454545] mb-2">
                       {title}
-                    </h1>
+                    </h3>
+                    <p className="text-xs text-greyText">{subtitle}</p>
                   </div>
                 ))}
               </div>
 
-              {/* Department Selection */}
-              <div className="mt-12 bg-white p-8 shadow-[5px_5px_40px_rgba(107,151,255,0.3)] rounded-md">
-                <input
-                  className="w-full border border-[#D0D5DD] rounded p-4 text-[#454545]"
-                  value="Select a department"
-                />
-                <div className=" flex items-center gap-4 mt-8">
-                  <div className=" flex items-center justify-between gap-4 border-[0.62px]  border-[#949494] rounded-full py-1 px-6">
-                    <h1 className=" text-[#454545]">IT</h1>
-                    <img src={closeIcon} alt="" className=" w-[10.22px]" />
-                  </div>
-                  <div className=" flex items-center justify-between gap-4 border-[0.62px]  border-[#949494] rounded-full py-1 px-6">
-                    <h1 className=" text-[#454545]">Human resource</h1>
-                    <img src={closeIcon} alt="" className=" w-[10.22px]" />
-                  </div>
+              {/* Target Summary */}
+              {selectedTarget && (
+                <div className="mb-6 p-4 bg-blue-50 rounded-lg border-l-4 border-primary500">
+                  <p className="text-sm font-medium text-[#454545]">
+                    Target Summary: {getTargetSummary()}
+                  </p>
                 </div>
-              </div>
+              )}
+
+              {/* Department Selection */}
+              {selectedTarget === "department" && (
+                <div className="mb-8 bg-white p-6 shadow-[5px_5px_40px_rgba(107,151,255,0.3)] rounded-lg">
+                  <h3 className="text-lg font-semibold text-[#454545] mb-4">
+                    Select Departments
+                  </h3>
+                  <div className="relative">
+                    <input
+                      className="w-full border border-[#D0D5DD] rounded-lg p-4 text-[#454545] focus:ring-2 focus:ring-primary500 focus:border-primary500"
+                      placeholder="Search and select departments..."
+                      value={departmentSearch}
+                      onChange={(e) => setDepartmentSearch(e.target.value)}
+                      onFocus={() => setShowDepartmentDropdown(true)}
+                    />
+
+                    {showDepartmentDropdown && (
+                      <div className="absolute z-10 w-full mt-1 bg-white border border-[#D0D5DD] rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                        {filteredDepartments.length > 0 ? (
+                          filteredDepartments.map((department, index) => (
+                            <div
+                              key={index}
+                              className="px-4 py-3 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                              onClick={() => handleDepartmentSelect(department)}
+                            >
+                              <div className="flex items-center justify-between">
+                                <span className="text-[#454545] font-medium">
+                                  {department}
+                                </span>
+                                <span className="text-xs text-greyText">
+                                  {users?.filter(
+                                    (user) => user.department === department
+                                  ).length || 0}{" "}
+                                  employees
+                                </span>
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="px-4 py-3 text-greyText text-center">
+                            No departments found
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Selected Departments */}
+                  {selectedDepartments.length > 0 && (
+                    <div className="flex flex-wrap gap-3 mt-6">
+                      {selectedDepartments.map((dept, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center gap-2 bg-primary100 border border-primary300 rounded-full py-2 px-4"
+                        >
+                          <span className="text-sm text-primary700 font-medium">
+                            {dept}
+                          </span>
+                          <button
+                            onClick={() => removeDepartment(dept)}
+                            className="text-primary500 hover:text-primary700 transition-colors"
+                          >
+                            <img
+                              src={closeIcon}
+                              alt="Remove"
+                              className="w-3 h-3"
+                            />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Employee Selection */}
+              {selectedTarget === "employee" && (
+                <div className="mb-8 bg-white p-6 shadow-[5px_5px_40px_rgba(107,151,255,0.3)] rounded-lg">
+                  <h3 className="text-lg font-semibold text-[#454545] mb-4">
+                    Select Employees
+                  </h3>
+                  <div className="relative">
+                    <input
+                      className="w-full border border-[#D0D5DD] rounded-lg p-4 text-[#454545] focus:ring-2 focus:ring-primary500 focus:border-primary500"
+                      placeholder="Search employees by name, email, or department..."
+                      value={employeeSearch}
+                      onChange={(e) => setEmployeeSearch(e.target.value)}
+                      onFocus={() => setShowEmployeeDropdown(true)}
+                    />
+
+                    {showEmployeeDropdown && (
+                      <div className="absolute z-10 w-full mt-1 bg-white border border-[#D0D5DD] rounded-lg shadow-lg max-h-80 overflow-y-auto">
+                        {filteredEmployees.length > 0 ? (
+                          filteredEmployees.map((employee) => (
+                            <div
+                              key={employee._id}
+                              className="px-4 py-3 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                              onClick={() => handleEmployeeSelect(employee)}
+                            >
+                              <div className="flex items-center gap-3">
+                                {employee.profileImage ? (
+                                  <img
+                                    src={employee.profileImage}
+                                    alt={`${employee.fName} ${employee.lName}`}
+                                    className="w-8 h-8 rounded-full object-cover"
+                                  />
+                                ) : (
+                                  <div className="w-8 h-8 bg-primary100 rounded-full flex items-center justify-center">
+                                    <span className="text-primary600 text-sm font-medium">
+                                      {employee.fName.charAt(0)}
+                                      {employee.lName.charAt(0)}
+                                    </span>
+                                  </div>
+                                )}
+                                <div className="flex-1">
+                                  <p className="text-[#454545] font-medium">
+                                    {employee.fName} {employee.lName}
+                                  </p>
+                                  <p className="text-xs text-greyText">
+                                    {employee.email} • {employee.department}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="px-4 py-3 text-greyText text-center">
+                            No employees found
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Selected Employees */}
+                  {selectedEmployees.length > 0 && (
+                    <div className="mt-6 space-y-3">
+                      {selectedEmployees.map((employee) => (
+                        <div
+                          key={employee._id}
+                          className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border"
+                        >
+                          <div className="flex items-center gap-3">
+                            {employee.profileImage ? (
+                              <img
+                                src={employee.profileImage}
+                                alt={`${employee.fName} ${employee.lName}`}
+                                className="w-10 h-10 rounded-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-10 h-10 bg-primary100 rounded-full flex items-center justify-center">
+                                <span className="text-primary600 font-medium">
+                                  {employee.fName.charAt(0)}
+                                  {employee.lName.charAt(0)}
+                                </span>
+                              </div>
+                            )}
+                            <div>
+                              <p className="text-[#454545] font-medium">
+                                {employee.fName} {employee.lName}
+                              </p>
+                              <p className="text-xs text-greyText">
+                                {employee.email} • {employee.department}
+                              </p>
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => removeEmployee(employee)}
+                            className="text-red-500 hover:text-red-700 transition-colors p-1"
+                          >
+                            <img
+                              src={closeIcon}
+                              alt="Remove"
+                              className="w-4 h-4"
+                            />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Simulation Duration with Date Picker */}
-              <div className=" mt-8">
-                {/* paignation */}
-
+              <div className="mt-8">
+                {/* Pagination */}
                 <div className=" flex items-center gap-1 mb-4">
                   <span className="bg-primary500 w-4 h-4 p-3 flex items-center justify-center text-white rounded-full">
                     2
@@ -144,24 +442,107 @@ const PhishingDetails: React.FC = () => {
                     Select simulation duration
                   </p>
                 </div>
-                <DayPicker
-                  mode="range"
-                  numberOfMonths={3}
-                  pagedNavigation
-                  defaultMonth={startOfMonth(new Date())} // Start with the current month
-                  // selected={range} // Bind the selected range
-                  // onSelect={setRange} // Update range on selection
-                  classNames={{
-                    root: "rdp",
-                    months: "rdp-months",
-                    caption: "rdp-caption",
-                    week: "rdp-week",
-                    day: "rdp-day",
-                    today: "border-blue-500",
-                    selected: "bg-blue-600 text-white",
-                    chevron: "fill-blue-600",
-                  }}
-                />
+
+                {/* Option 1: Multi-date selection */}
+                <div className="mb-4">
+                  <h4 className="text-sm font-medium mb-2 text-[#454545]">
+                    Select Multiple Dates:
+                  </h4>
+                  <DayPicker
+                    mode="multiple"
+                    selected={selectedDates}
+                    onSelect={handleDateSelect}
+                    numberOfMonths={3}
+                    pagedNavigation
+                    defaultMonth={startOfMonth(new Date())}
+                    classNames={{
+                      root: "rdp",
+                      months: "rdp-months flex gap-4",
+                      month: "rdp-month",
+                      caption: "rdp-caption text-center font-medium mb-4",
+                      week: "rdp-week",
+                      day: "rdp-day hover:bg-blue-100 cursor-pointer",
+                      today: "border-2 border-blue-500 font-bold",
+                      selected: "bg-blue-600 text-white font-bold",
+                      chevron: "fill-blue-600",
+                      nav_button: "hover:bg-blue-100 p-2 rounded",
+                      nav_button_previous: "absolute left-2 top-2",
+                      nav_button_next: "absolute right-2 top-2",
+                    }}
+                    styles={{
+                      day: {
+                        borderRadius: "4px",
+                        padding: "8px",
+                        margin: "2px",
+                      },
+                    }}
+                  />
+                  {selectedDates.length > 0 && (
+                    <div className="mt-4 p-3 bg-blue-50 rounded">
+                      <p className="text-sm font-medium text-[#454545]">
+                        Selected Dates:
+                      </p>
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {selectedDates.map((date, index) => (
+                          <span
+                            key={index}
+                            className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded"
+                          >
+                            {date.toLocaleDateString()}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Option 2: Range selection (alternative) */}
+                <div className="mt-8">
+                  <h4 className="text-sm font-medium mb-2 text-[#454545]">
+                    Or Select Date Range:
+                  </h4>
+                  <DayPicker
+                    mode="range"
+                    selected={dateRange}
+                    onSelect={handleRangeSelect}
+                    numberOfMonths={2}
+                    pagedNavigation
+                    defaultMonth={startOfMonth(new Date())}
+                    classNames={{
+                      root: "rdp",
+                      months: "rdp-months flex gap-4",
+                      month: "rdp-month",
+                      caption: "rdp-caption text-center font-medium mb-4",
+                      week: "rdp-week",
+                      day: "rdp-day hover:bg-blue-100 cursor-pointer",
+                      today: "border-2 border-blue-500 font-bold",
+                      selected: "bg-blue-600 text-white font-bold",
+                      range_start: "bg-blue-600 text-white rounded-l",
+                      range_middle: "bg-blue-200 text-blue-800",
+                      range_end: "bg-blue-600 text-white rounded-r",
+                      chevron: "fill-blue-600",
+                    }}
+                    styles={{
+                      day: {
+                        borderRadius: "4px",
+                        padding: "8px",
+                        margin: "2px",
+                      },
+                    }}
+                  />
+                  {dateRange?.from && (
+                    <div className="mt-4 p-3 bg-green-50 rounded">
+                      <p className="text-sm font-medium text-[#454545]">
+                        Selected Range:
+                      </p>
+                      <p className="text-sm text-green-800">
+                        From: {dateRange.from.toLocaleDateString()}
+                        {dateRange.to &&
+                          ` - To: ${dateRange.to.toLocaleDateString()}`}
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -200,14 +581,14 @@ const PhishingDetails: React.FC = () => {
               <div className="flex items-center gap-4">
                 <label className=" text-xs font-medium">Delivery time</label>
                 <input
-                  type="text"
-                  value="9:00am"
+                  type="time"
+                  defaultValue="09:00"
                   className="border-[0.8px] w-[90px] border-[#D0D5DD] rounded-[4.79px] p-[12.78px] text-[#454545] text-xs"
                 />
                 <p>to</p>
                 <input
-                  type="text"
-                  value="4:00pm"
+                  type="time"
+                  defaultValue="16:00"
                   className="border-[0.8px] w-[90px] border-[#D0D5DD] rounded-[4.79px] p-[12.78px] text-[#454545] text-xs"
                 />
               </div>
@@ -216,14 +597,23 @@ const PhishingDetails: React.FC = () => {
                 <label className="text-xs ">Timezone</label>
                 <select className="border-[0.8px] w-[90px] border-[#D0D5DD] rounded-[4.79px] p-[12.78px] text-[#454545] text-xs">
                   <option>GMT</option>
-                  {/* Add timezone options here */}
+                  <option>UTC</option>
+                  <option>EST</option>
+                  <option>PST</option>
                 </select>
               </div>
-              {/*  */}
+
               <div className=" flex items-center mt-8  mb-8">
                 <button
-                  className="w-fit  bg-primary500 text-white py-2 px-12 rounded-lg font-semibold  transition-colors"
-                  onClick={() => setContinueClicked((prev) => !prev)}
+                  className={`w-fit py-2 px-12 rounded-lg font-semibold transition-colors ${
+                    selectedTarget
+                      ? "bg-primary500 text-white hover:bg-primary600"
+                      : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  }`}
+                  onClick={() =>
+                    selectedTarget && setContinueClicked((prev) => !prev)
+                  }
+                  disabled={!selectedTarget}
                 >
                   Continue
                 </button>
