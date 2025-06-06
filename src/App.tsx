@@ -49,6 +49,7 @@ import ResetPassword from "./_Auth/Admin/ResetPassword";
 import CreateTrainingModules from "./components/Admin/AwarenessTrainning/CreateTrainingModules";
 import EditTrainingModules from "./components/Admin/AwarenessTrainning/EditTrainingModules";
 import AddorEditAssets from "./components/Admin/AssetsManagement/AddorEditAssets";
+import PreviewModal from "./components/Admin/PhishingStimulation/Templates/PreviewModal";
 
 function App() {
   const { setIsAuthenticated } = useAuthStore();
@@ -131,9 +132,13 @@ function App() {
                   path="/phishing-simulation/campaign-details/:id"
                   element={<CampaignDetails />}
                 />
-                <Route
+                {/* <Route
                   path="/phishing-simulation/preview"
                   element={<PhishingPreview />}
+                /> */}
+                <Route
+                  path="/phishing-simulation/preview"
+                  element={<PreviewModal />}
                 />
               </Route>
               <Route

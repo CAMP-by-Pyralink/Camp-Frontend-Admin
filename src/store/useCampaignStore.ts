@@ -12,7 +12,6 @@ import {
 export interface CreateCampaign {
   campaignName: string;
   campaignTo: "user" | "department"; // "user" or "department"
-
   campaignToId: number[]; // "If user, user ids if department department ids"
   dates: string[];
   startTime: string;
@@ -26,7 +25,8 @@ interface CampaignStore {
   currentPage: number;
   totalPages: number;
   singleCampaign: any | null;
-  createCampaign: (data: CampaignStore, id: any) => Promise<any>;
+  createCampaign: (data: CreateCampaign, id: any) => Promise<any>;
+  sendTestMail: (id: any) => Promise<any>;
   getAllCampaigns: () => Promise<any>;
   getSingleCampaign: (id: string) => Promise<any>;
   getTimezone: (data: any) => Promise<any>;
@@ -108,7 +108,23 @@ export const useCampaignStore = create<CampaignStore>((set, get) => ({
 
       if (isSuccessfulResponse(response)) {
         // toast.success(response.data?.message);
-        set({ singleCampaign: response.data.risk });
+        set({ singleCampaign: response.data.campaign });
+        return true;
+      }
+      return null;
+    } catch (error) {
+      handleErrorToast(error);
+      return null;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  sendTestMail: async (id) => {
+    set({ isLoading: true });
+    try {
+      const response = await api.post(`/campaign/sendTestPhishingEmail/${id}`);
+      if (isSuccessfulResponse(response)) {
+        toast.success(response.data?.message);
         return true;
       }
       return null;

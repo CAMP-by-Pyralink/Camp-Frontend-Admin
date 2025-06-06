@@ -1,42 +1,33 @@
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 import Table from "../../../../shared/Table";
-// import Table from "../../../../shared/Table";
+import { useCampaignStore } from "../../../../store/useCampaignStore";
+import { useEffect } from "react";
 
-interface AssignedTraining {
-  id: number; // Ensure ID is included
+interface Campaign {
+  _id: string;
+  campaignName: string;
+  companyName: string;
+  createdAt: string;
+  recipientCount: number;
+  templateTitle: string;
+  users: Array<{
+    _id: string;
+    fName: string;
+    lName: string;
+    email: string;
+  }>;
+}
+
+interface TableRowData {
+  id: string;
   templateName: string;
   campaignName: string;
   audience: string[];
   status: string;
   recipient: number;
+  companyName: string;
+  createdAt: string;
 }
-
-const assignedData: AssignedTraining[] = [
-  {
-    id: 1,
-    templateName: "Happy birthday",
-    campaignName: "Work test",
-    audience: ["IT", "Finance"],
-    status: "Completed",
-    recipient: 120,
-  },
-  {
-    id: 2,
-    templateName: "Happy birthday",
-    campaignName: "Work test",
-    audience: ["IT"],
-    status: "In progress",
-    recipient: 120,
-  },
-  {
-    id: 3,
-    templateName: "Happy birthday",
-    campaignName: "Work test",
-    audience: ["Human Resources", "Admin"],
-    status: "In progress",
-    recipient: 120,
-  },
-];
 
 const assignedColumns = [
   { key: "templateName", header: "TEMPLATE NAME" },
@@ -77,8 +68,29 @@ const assignedColumns = [
 
 const CampaignsTable = () => {
   const navigate = useNavigate();
+  const { getAllCampaigns, campaigns } = useCampaignStore();
 
-  const handleRowClick = (row: AssignedTraining) => {
+  useEffect(() => {
+    getAllCampaigns();
+  }, [getAllCampaigns]);
+
+  console.log(campaigns, "campaigns");
+
+  // Transform backend data to match table format
+  const transformedData: TableRowData[] = campaigns.map(
+    (campaign: Campaign) => ({
+      id: campaign._id,
+      templateName: campaign.templateTitle,
+      campaignName: campaign.campaignName,
+      audience: campaign.users.map((user) => `${user.fName} ${user.lName}`), // Using user names as audience
+      status: "In progress", // You can add logic to determine status based on your business rules
+      recipient: campaign.recipientCount,
+      companyName: campaign.companyName,
+      createdAt: campaign.createdAt,
+    })
+  );
+
+  const handleRowClick = (row: TableRowData) => {
     console.log(`Row clicked with id: ${row.id}`);
     console.log("Navigating with state:", {
       templateName: row.templateName,
@@ -90,6 +102,8 @@ const CampaignsTable = () => {
         templateName: row.templateName,
         campaignName: row.campaignName,
         audience: row.audience,
+        companyName: row.companyName,
+        createdAt: row.createdAt,
       },
     });
   };
@@ -99,9 +113,9 @@ const CampaignsTable = () => {
       <div>
         <Table
           headerBgColor="white"
-          data={assignedData}
+          data={transformedData}
           columns={assignedColumns}
-          onRowClick={handleRowClick} // Pass the row click handler
+          onRowClick={handleRowClick}
         />
       </div>
       <div className="flex justify-between items-center mt-4">

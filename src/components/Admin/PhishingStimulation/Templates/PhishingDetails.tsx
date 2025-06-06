@@ -1,16 +1,11 @@
 import React, { useEffect, useState } from "react";
 import closeIcon from "../../../../assets/svgs/closeicongrey.svg";
-import { useLocation, useParams } from "react-router-dom";
-import { DayPicker, DateRange } from "react-day-picker";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { DayPicker } from "react-day-picker";
 import "react-day-picker/style.css";
-import "react-date-range/dist/styles.css"; // Main style file
-import "react-date-range/dist/theme/default.css"; // Theme CSS file
 import departmentIcon from "../../../../assets/svgs/department.svg";
 import employeeicon from "../../../../assets/svgs/employee-icon.svg";
 import organizationicon from "../../../../assets/svgs/organization.svg";
-import PreviewModal from "./PreviewModal";
-import { startOfMonth } from "date-fns";
-import { usePhishingStore } from "../../../../store/usePhishingStore";
 import { useAdminStore } from "../../../../store/useAdminStore";
 
 interface User {
@@ -22,49 +17,73 @@ interface User {
   profileImage?: string;
 }
 
+interface Timezone {
+  name: string;
+  value: string;
+  offset: string;
+}
+
 const PhishingDetails: React.FC = () => {
-  const [continueClicked, setContinueClicked] = useState<boolean>(false);
   const { title } = useParams<{ title: string }>();
   const { id } = useParams();
   const location = useLocation();
   const { templateId, templateName, campaignName, templateData } =
     location.state || {};
 
-  // Calendar state for multi-date selection
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
   const { fetchDepartments, departments, getUsers, users } = useAdminStore();
+
+  const [timezones, setTimezones] = useState<Timezone[]>([]);
+  const [selectedTimezone, setSelectedTimezone] = useState<string>("GMT");
 
   useEffect(() => {
     getUsers();
     fetchDepartments();
+    fetchTimezones();
   }, [getUsers, fetchDepartments]);
 
-  // Alternative: Range selection state
-  const [dateRange, setDateRange] = useState<DateRange | undefined>();
+  const fetchTimezones = async () => {
+    try {
+      const defaultTimezones = [
+        { name: "GMT", value: "GMT", offset: "+00:00" },
+        { name: "UTC", value: "UTC", offset: "+00:00" },
+        { name: "EST", value: "EST", offset: "-05:00" },
+        { name: "PST", value: "PST", offset: "-08:00" },
+        { name: "WAT", value: "WAT", offset: "+01:00" },
+      ];
+      setTimezones(defaultTimezones);
+    } catch (error) {
+      console.error("Error fetching timezones:", error);
+      const defaultTimezones = [
+        { name: "GMT", value: "GMT", offset: "+00:00" },
+        { name: "UTC", value: "UTC", offset: "+00:00" },
+        { name: "EST", value: "EST", offset: "-05:00" },
+        { name: "PST", value: "PST", offset: "-08:00" },
+        { name: "WAT", value: "WAT", offset: "+01:00" },
+      ];
+      setTimezones(defaultTimezones);
+    }
+  };
 
-  // Target selection state
   const [selectedTarget, setSelectedTarget] = useState<string>("");
-
-  // Department selection state
   const [selectedDepartments, setSelectedDepartments] = useState<string[]>([]);
-
-  // Employee selection state
   const [selectedEmployees, setSelectedEmployees] = useState<User[]>([]);
-
-  // Dropdown states
   const [showDepartmentDropdown, setShowDepartmentDropdown] = useState(false);
   const [showEmployeeDropdown, setShowEmployeeDropdown] = useState(false);
-
-  // Search states
   const [departmentSearch, setDepartmentSearch] = useState("");
   const [employeeSearch, setEmployeeSearch] = useState("");
-
   const [isToggled, setIsToggled] = useState(false);
+  const [startTime, setStartTime] = useState("09:00");
+  const [endTime, setEndTime] = useState("16:00");
+  const [frequency, setFrequency] = useState("Monthly");
+  const [startDate, setStartDate] = useState<Date>(new Date());
+  const [deliveryPeriod, setDeliveryPeriod] = useState("5 days");
+
+  const navigate = useNavigate();
+
   const handleToggle = () => {
     setIsToggled(!isToggled);
   };
-
-  const { updatePhishingTemplate } = usePhishingStore();
 
   const cards = [
     {
@@ -87,22 +106,14 @@ const PhishingDetails: React.FC = () => {
     },
   ];
 
-  // Handle multi-date selection
   const handleDateSelect = (dates: Date[] | undefined) => {
     if (dates) {
       setSelectedDates(dates);
     }
   };
 
-  // Handle range selection (alternative approach)
-  const handleRangeSelect = (range: DateRange | undefined) => {
-    setDateRange(range);
-  };
-
-  // Handle target selection
   const handleTargetChange = (value: string) => {
     setSelectedTarget(value);
-    // Reset selections when changing target type
     if (value !== "department") {
       setSelectedDepartments([]);
     }
@@ -111,7 +122,6 @@ const PhishingDetails: React.FC = () => {
     }
   };
 
-  // Handle department selection
   const handleDepartmentSelect = (department: string) => {
     if (!selectedDepartments.includes(department)) {
       setSelectedDepartments((prev) => [...prev, department]);
@@ -120,14 +130,12 @@ const PhishingDetails: React.FC = () => {
     setDepartmentSearch("");
   };
 
-  // Handle department removal
   const removeDepartment = (departmentToRemove: string) => {
     setSelectedDepartments((prev) =>
       prev.filter((dept) => dept !== departmentToRemove)
     );
   };
 
-  // Handle employee selection
   const handleEmployeeSelect = (employee: User) => {
     if (!selectedEmployees.find((emp) => emp._id === employee._id)) {
       setSelectedEmployees((prev) => [...prev, employee]);
@@ -136,20 +144,17 @@ const PhishingDetails: React.FC = () => {
     setEmployeeSearch("");
   };
 
-  // Handle employee removal
   const removeEmployee = (employeeToRemove: User) => {
     setSelectedEmployees((prev) =>
       prev.filter((emp) => emp._id !== employeeToRemove._id)
     );
   };
 
-  // Filter departments based on search
   const filteredDepartments =
     departments?.filter((dept) =>
       dept.toLowerCase().includes(departmentSearch.toLowerCase())
     ) || [];
 
-  // Filter employees based on search
   const filteredEmployees =
     users?.filter(
       (user) =>
@@ -160,7 +165,6 @@ const PhishingDetails: React.FC = () => {
         user.department.toLowerCase().includes(employeeSearch.toLowerCase())
     ) || [];
 
-  // Get target summary
   const getTargetSummary = () => {
     switch (selectedTarget) {
       case "all":
@@ -177,17 +181,52 @@ const PhishingDetails: React.FC = () => {
     }
   };
 
+  const isFormValid = () => {
+    return (
+      selectedTarget &&
+      selectedDates.length > 0 &&
+      startTime &&
+      endTime &&
+      selectedTimezone
+    );
+  };
+
+  const handleContinue = () => {
+    navigate("/phishing-simulation/preview", {
+      state: {
+        campaignData: {
+          campaignName: campaignName || "Untitled Campaign",
+          selectedTarget,
+          selectedDepartments,
+          selectedEmployees,
+          selectedDates,
+          startTime,
+          endTime,
+          selectedTimezone,
+          isToggled,
+          frequency,
+          startDate,
+          deliveryPeriod,
+          users,
+        },
+        templateData: {
+          templateName: templateName || "Untitled Template",
+          templateImage: templateData?.img || "/default-template.png",
+          templateId,
+        },
+      },
+    });
+  };
+
   return (
-    <>
+    <div>
       <h1 className="text-primary500 mb-8 text-sm font-semibold">
         Phishing <span className=" text-neutrals500">/ Select target</span>
       </h1>
       <div className="bg-blue50 px-4 rounded-md py-8 h-full">
         <div className="bg-white shadow-lg rounded-lg w-full">
           <div className="flex justify-between gap-8 py-4 px-8 h-full">
-            {/* Left Panel */}
             <div className="basis-[60%]">
-              {/* Pagination */}
               <div className=" flex items-center gap-1 mb-4">
                 <span className="bg-primary500 w-4 h-4 p-3 flex items-center justify-center text-white rounded-full">
                   1
@@ -207,7 +246,6 @@ const PhishingDetails: React.FC = () => {
                 phishing simulation exercise
               </p>
 
-              {/* Target Selection */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                 {cards.map(({ img, title, subtitle, value }, index) => (
                   <div
@@ -240,7 +278,6 @@ const PhishingDetails: React.FC = () => {
                 ))}
               </div>
 
-              {/* Target Summary */}
               {selectedTarget && (
                 <div className="mb-6 p-4 bg-blue-50 rounded-lg border-l-4 border-primary500">
                   <p className="text-sm font-medium text-[#454545]">
@@ -249,7 +286,6 @@ const PhishingDetails: React.FC = () => {
                 </div>
               )}
 
-              {/* Department Selection */}
               {selectedTarget === "department" && (
                 <div className="mb-8 bg-white p-6 shadow-[5px_5px_40px_rgba(107,151,255,0.3)] rounded-lg">
                   <h3 className="text-lg font-semibold text-[#454545] mb-4">
@@ -295,7 +331,6 @@ const PhishingDetails: React.FC = () => {
                     )}
                   </div>
 
-                  {/* Selected Departments */}
                   {selectedDepartments.length > 0 && (
                     <div className="flex flex-wrap gap-3 mt-6">
                       {selectedDepartments.map((dept, index) => (
@@ -323,7 +358,6 @@ const PhishingDetails: React.FC = () => {
                 </div>
               )}
 
-              {/* Employee Selection */}
               {selectedTarget === "employee" && (
                 <div className="mb-8 bg-white p-6 shadow-[5px_5px_40px_rgba(107,151,255,0.3)] rounded-lg">
                   <h3 className="text-lg font-semibold text-[#454545] mb-4">
@@ -382,7 +416,6 @@ const PhishingDetails: React.FC = () => {
                     )}
                   </div>
 
-                  {/* Selected Employees */}
                   {selectedEmployees.length > 0 && (
                     <div className="mt-6 space-y-3">
                       {selectedEmployees.map((employee) => (
@@ -431,9 +464,7 @@ const PhishingDetails: React.FC = () => {
                 </div>
               )}
 
-              {/* Simulation Duration with Date Picker */}
               <div className="mt-8">
-                {/* Pagination */}
                 <div className=" flex items-center gap-1 mb-4">
                   <span className="bg-primary500 w-4 h-4 p-3 flex items-center justify-center text-white rounded-full">
                     2
@@ -443,10 +474,9 @@ const PhishingDetails: React.FC = () => {
                   </p>
                 </div>
 
-                {/* Option 1: Multi-date selection */}
                 <div className="mb-4">
                   <h4 className="text-sm font-medium mb-2 text-[#454545]">
-                    Select Multiple Dates:
+                    Select Campaign Dates:
                   </h4>
                   <DayPicker
                     mode="multiple"
@@ -454,7 +484,7 @@ const PhishingDetails: React.FC = () => {
                     onSelect={handleDateSelect}
                     numberOfMonths={3}
                     pagedNavigation
-                    defaultMonth={startOfMonth(new Date())}
+                    defaultMonth={new Date()}
                     classNames={{
                       root: "rdp",
                       months: "rdp-months flex gap-4",
@@ -480,7 +510,7 @@ const PhishingDetails: React.FC = () => {
                   {selectedDates.length > 0 && (
                     <div className="mt-4 p-3 bg-blue-50 rounded">
                       <p className="text-sm font-medium text-[#454545]">
-                        Selected Dates:
+                        Selected Dates ({selectedDates.length}):
                       </p>
                       <div className="flex flex-wrap gap-2 mt-2">
                         {selectedDates.map((date, index) => (
@@ -495,65 +525,15 @@ const PhishingDetails: React.FC = () => {
                     </div>
                   )}
                 </div>
-
-                {/* Option 2: Range selection (alternative) */}
-                <div className="mt-8">
-                  <h4 className="text-sm font-medium mb-2 text-[#454545]">
-                    Or Select Date Range:
-                  </h4>
-                  <DayPicker
-                    mode="range"
-                    selected={dateRange}
-                    onSelect={handleRangeSelect}
-                    numberOfMonths={2}
-                    pagedNavigation
-                    defaultMonth={startOfMonth(new Date())}
-                    classNames={{
-                      root: "rdp",
-                      months: "rdp-months flex gap-4",
-                      month: "rdp-month",
-                      caption: "rdp-caption text-center font-medium mb-4",
-                      week: "rdp-week",
-                      day: "rdp-day hover:bg-blue-100 cursor-pointer",
-                      today: "border-2 border-blue-500 font-bold",
-                      selected: "bg-blue-600 text-white font-bold",
-                      range_start: "bg-blue-600 text-white rounded-l",
-                      range_middle: "bg-blue-200 text-blue-800",
-                      range_end: "bg-blue-600 text-white rounded-r",
-                      chevron: "fill-blue-600",
-                    }}
-                    styles={{
-                      day: {
-                        borderRadius: "4px",
-                        padding: "8px",
-                        margin: "2px",
-                      },
-                    }}
-                  />
-                  {dateRange?.from && (
-                    <div className="mt-4 p-3 bg-green-50 rounded">
-                      <p className="text-sm font-medium text-[#454545]">
-                        Selected Range:
-                      </p>
-                      <p className="text-sm text-green-800">
-                        From: {dateRange.from.toLocaleDateString()}
-                        {dateRange.to &&
-                          ` - To: ${dateRange.to.toLocaleDateString()}`}
-                      </p>
-                    </div>
-                  )}
-                </div>
               </div>
             </div>
 
-            {/* Divider */}
-            <div className="w-[0.5px] h-screen bg-black"></div>
+            <div className="w-[1px] h-screen bg-gray-200"></div>
 
-            {/* Right Panel */}
-            <div className=" space-y-4">
-              <div className=" flex gap-8">
-                <div className=" flex items-center gap-1 mb-4">
-                  <span className="bg-primary500 w-4 h-4 p-3 flex items-center justify-center text-white rounded-full">
+            <div className="basis-[35%] space-y-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1">
+                  <span className="bg-primary500 w-4 h-4 p-3 flex items-center justify-center text-white rounded-full text-xs">
                     3
                   </span>
                   <h3 className="text-lg font-semibold text-black">
@@ -563,7 +543,7 @@ const PhishingDetails: React.FC = () => {
 
                 <button
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none ${
-                    isToggled ? "bg-primary900" : "bg-[#E4E8F1]"
+                    isToggled ? "bg-primary500" : "bg-[#E4E8F1]"
                   }`}
                   onClick={handleToggle}
                 >
@@ -574,46 +554,108 @@ const PhishingDetails: React.FC = () => {
                   />
                 </button>
               </div>
+
               <p className="text-greyText text-xs font-medium">
                 Turn this on to repeat this simulation exercise
               </p>
 
-              <div className="flex items-center gap-4">
-                <label className=" text-xs font-medium">Delivery time</label>
-                <input
-                  type="time"
-                  defaultValue="09:00"
-                  className="border-[0.8px] w-[90px] border-[#D0D5DD] rounded-[4.79px] p-[12.78px] text-[#454545] text-xs"
-                />
-                <p>to</p>
-                <input
-                  type="time"
-                  defaultValue="16:00"
-                  className="border-[0.8px] w-[90px] border-[#D0D5DD] rounded-[4.79px] p-[12.78px] text-[#454545] text-xs"
-                />
+              <div className="space-y-4">
+                <label className="text-sm font-medium text-[#454545]">
+                  Delivery time
+                </label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="time"
+                    value={startTime}
+                    onChange={(e) => setStartTime(e.target.value)}
+                    className="border border-[#D0D5DD] rounded p-3 text-[#454545] text-sm flex-1"
+                  />
+                  <span className="text-sm text-greyText">to</span>
+                  <input
+                    type="time"
+                    value={endTime}
+                    onChange={(e) => setEndTime(e.target.value)}
+                    className="border border-[#D0D5DD] rounded p-3 text-[#454545] text-sm flex-1"
+                  />
+                </div>
               </div>
 
-              <div className="flex items-center gap-[16px] mb-8">
-                <label className="text-xs ">Timezone</label>
-                <select className="border-[0.8px] w-[90px] border-[#D0D5DD] rounded-[4.79px] p-[12.78px] text-[#454545] text-xs">
-                  <option>GMT</option>
-                  <option>UTC</option>
-                  <option>EST</option>
-                  <option>PST</option>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-[#454545]">
+                  Timezone
+                </label>
+                <select
+                  value={selectedTimezone}
+                  onChange={(e) => setSelectedTimezone(e.target.value)}
+                  className="w-full border border-[#D0D5DD] rounded p-3 text-[#454545] text-sm focus:ring-2 focus:ring-primary500 focus:border-primary500"
+                >
+                  {timezones.map((timezone) => (
+                    <option key={timezone.value} value={timezone.value}>
+                      {timezone.name} ({timezone.offset})
+                    </option>
+                  ))}
                 </select>
               </div>
 
-              <div className=" flex items-center mt-8  mb-8">
+              {isToggled && (
+                <>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-[#454545]">
+                      Frequency
+                    </label>
+                    <select
+                      value={frequency}
+                      onChange={(e) => setFrequency(e.target.value)}
+                      className="w-full border border-[#D0D5DD] rounded p-3 text-[#454545] text-sm focus:ring-2 focus:ring-primary500 focus:border-primary500"
+                    >
+                      <option value="Daily">Daily</option>
+                      <option value="Weekly">Weekly</option>
+                      <option value="Monthly">Monthly</option>
+                      <option value="Quarterly">Quarterly</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-[#454545]">
+                      Start date
+                    </label>
+                    <input
+                      type="date"
+                      value={startDate.toISOString().split("T")[0]}
+                      onChange={(e) => setStartDate(new Date(e.target.value))}
+                      className="w-full border border-[#D0D5DD] rounded p-3 text-[#454545] text-sm focus:ring-2 focus:ring-primary500 focus:border-primary500"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-[#454545]">
+                      Delivery period
+                    </label>
+                    <select
+                      value={deliveryPeriod}
+                      onChange={(e) => setDeliveryPeriod(e.target.value)}
+                      className="w-full border border-[#D0D5DD] rounded p-3 text-[#454545] text-sm focus:ring-2 focus:ring-primary500 focus:border-primary500"
+                    >
+                      <option value="1 day">1 day</option>
+                      <option value="3 days">3 days</option>
+                      <option value="5 days">5 days</option>
+                      <option value="1 week">1 week</option>
+                      <option value="2 weeks">2 weeks</option>
+                      <option value="1 month">1 month</option>
+                    </select>
+                  </div>
+                </>
+              )}
+
+              <div className="pt-6">
                 <button
-                  className={`w-fit py-2 px-12 rounded-lg font-semibold transition-colors ${
-                    selectedTarget
+                  className={`w-full py-3 px-6 rounded-lg font-semibold transition-colors ${
+                    isFormValid()
                       ? "bg-primary500 text-white hover:bg-primary600"
                       : "bg-gray-300 text-gray-500 cursor-not-allowed"
                   }`}
-                  onClick={() =>
-                    selectedTarget && setContinueClicked((prev) => !prev)
-                  }
-                  disabled={!selectedTarget}
+                  onClick={handleContinue}
+                  disabled={!isFormValid()}
                 >
                   Continue
                 </button>
@@ -622,10 +664,7 @@ const PhishingDetails: React.FC = () => {
           </div>
         </div>
       </div>
-      {continueClicked && (
-        <PreviewModal setContinueClicked={setContinueClicked} />
-      )}
-    </>
+    </div>
   );
 };
 

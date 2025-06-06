@@ -3,8 +3,10 @@ import CampaignStats from "./CampaignStats";
 import PagesHomeLayout from "../../../../shared/PagesHomeLayout";
 import Breadcrumb from "../../../../shared/BreadCrumb";
 import ViewCampaignsTable from "./ViewCampaignTable";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FilterModal from "../../UserManagement/FilterModal";
+import { useCampaignStore } from "../../../../store/useCampaignStore";
+import Loader from "../../../../shared/Loader";
 
 // Define FilterConfig interface
 interface FilterConfig {
@@ -33,9 +35,149 @@ const CampaignDetails = () => {
   const { templateName, campaignName, audience } = location.state || {}; // Destructure state
   console.log("Location State:", location.state);
   console.log(templateName, campaignName, audience);
+
+  const { getSingleCampaign, isLoading, singleCampaign } = useCampaignStore();
+
+  useEffect(() => {
+    if (id) {
+      getSingleCampaign(id);
+    }
+  }, [id, getSingleCampaign]);
+
+  console.log(singleCampaign, "singleCamp");
+
+  // Helper function to format date
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
+  // Helper function to format time
+  const formatTime = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
+  };
+
+  // Calculate stats from backend data
+  const calculateStats = () => {
+    if (
+      !singleCampaign ||
+      !singleCampaign.recipients ||
+      singleCampaign.recipients.length === 0
+    ) {
+      return [
+        { percentage: 0, label: "sent" },
+        { percentage: 0, label: "opened" },
+        { percentage: 0, label: "clicked" },
+        { percentage: 0, label: "phished" },
+      ];
+    }
+
+    const totalRecipients = singleCampaign.recipients.length;
+    const sentCount = singleCampaign.recipients.filter(
+      (r) => r.sentStatus === "sent"
+    ).length;
+    const openedCount = singleCampaign.recipients.filter(
+      (r) => r.opened === true
+    ).length;
+    const clickedCount = singleCampaign.recipients.filter(
+      (r) => r.clicked === true
+    ).length;
+    const phishedCount = singleCampaign.recipients.filter(
+      (r) => r.phished === true
+    ).length;
+
+    return [
+      {
+        percentage:
+          totalRecipients > 0
+            ? Math.round((sentCount / totalRecipients) * 100)
+            : 0,
+        label: "sent",
+      },
+      {
+        percentage:
+          totalRecipients > 0
+            ? Math.round((openedCount / totalRecipients) * 100)
+            : 0,
+        label: "opened",
+      },
+      {
+        percentage:
+          totalRecipients > 0
+            ? Math.round((clickedCount / totalRecipients) * 100)
+            : 0,
+        label: "clicked",
+      },
+      {
+        percentage:
+          totalRecipients > 0
+            ? Math.round((phishedCount / totalRecipients) * 100)
+            : 0,
+        label: "phished",
+      },
+    ];
+  };
+
+  // Get delivery dates from backend data
+  const getDeliveryDates = () => {
+    if (
+      !singleCampaign ||
+      !singleCampaign.sendAt ||
+      singleCampaign.sendAt.length === 0
+    ) {
+      return {
+        start: "Not scheduled",
+        end: "Not scheduled",
+        nextStart: "Not scheduled",
+        nextEnd: "Not scheduled",
+      };
+    }
+
+    const scheduledDate = singleCampaign.sendAt[0];
+    const formattedDate = formatDate(scheduledDate);
+    const formattedTime = formatTime(scheduledDate);
+
+    return {
+      start: formattedDate,
+      end: formattedDate, // Assuming same day delivery
+      nextStart: "Not scheduled", // You can calculate next delivery if needed
+      nextEnd: "Not scheduled",
+      time: formattedTime,
+    };
+  };
+
+  // Get audiences from backend data
+  const getAudiences = () => {
+    if (
+      !singleCampaign ||
+      !singleCampaign.recipients ||
+      singleCampaign.recipients.length === 0
+    ) {
+      return audience || []; // Fallback to location state
+    }
+
+    // Extract unique departments from recipients
+    const departments = [
+      ...new Set(
+        singleCampaign.recipients.map((r) => r.department).filter(Boolean)
+      ),
+    ];
+    return departments.length > 0 ? departments : audience || [];
+  };
+
   const handleAdd = () => {
     console.log("first");
   };
+
   const handleFilterClick = () => {
     setIsFilterModalOpen((prev) => !prev);
     console.log("Filter button clicked");
@@ -59,6 +201,7 @@ const CampaignDetails = () => {
       options: [
         { label: "HR", value: "hr" },
         { label: "Management", value: "management" },
+        { label: "ICT", value: "ICT" },
         // { label: "Marketing", value: "marketing" },
       ],
     },
@@ -79,6 +222,11 @@ const CampaignDetails = () => {
     // },
   ];
 
+  // Show loading state while data is being fetched
+  if (isLoading) {
+    return <Loader />;
+  }
+
   return (
     <div>
       <div className=" py-4  flex items-center gap-1 text-[#828690]">
@@ -89,23 +237,14 @@ const CampaignDetails = () => {
         <span className=" font-bold underline">View campaign</span>
         {/* <Breadcrumb /> */}
       </div>
-      {/* Pass data to CampaignStats */}
+
+      {/* Pass backend data to CampaignStats */}
       <CampaignStats
-        title={campaignName}
-        subtitle={templateName}
-        audiences={audience}
-        deliveryDates={{
-          start: "July 10, 2023",
-          end: "July 14, 2023",
-          nextStart: "August 10, 2023",
-          nextEnd: "August 14, 2023",
-        }}
-        stats={[
-          { percentage: 90, label: "sent" },
-          { percentage: 45, label: "opened" },
-          { percentage: 40, label: "clicked" },
-          { percentage: 23, label: "phished" },
-        ]}
+        title={singleCampaign?.campaignName || campaignName || "Campaign"}
+        subtitle={singleCampaign?.templateName || templateName || "Template"}
+        audiences={getAudiences()}
+        deliveryDates={getDeliveryDates()}
+        stats={calculateStats()}
       />
 
       <PagesHomeLayout
@@ -114,7 +253,10 @@ const CampaignDetails = () => {
         showFilter={true}
         showExport={true}
       >
-        <ViewCampaignsTable />
+        <ViewCampaignsTable
+          singleCampaign={singleCampaign}
+          isLoading={isLoading}
+        />
       </PagesHomeLayout>
       {/*  */}
       {isFilterModalOpen && (
