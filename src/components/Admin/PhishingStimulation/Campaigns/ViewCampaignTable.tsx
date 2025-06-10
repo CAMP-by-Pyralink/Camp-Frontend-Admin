@@ -37,7 +37,7 @@ interface TableData {
   phished: boolean;
 }
 
-const ViewCampaignsTable = ({ singleCampaign, isLoading }) => {
+const ViewCampaignsTable = ({ singleCampaign, isLoading }: any) => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);

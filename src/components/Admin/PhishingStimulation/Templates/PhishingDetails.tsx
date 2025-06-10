@@ -7,6 +7,7 @@ import departmentIcon from "../../../../assets/svgs/department.svg";
 import employeeicon from "../../../../assets/svgs/employee-icon.svg";
 import organizationicon from "../../../../assets/svgs/organization.svg";
 import { useAdminStore } from "../../../../store/useAdminStore";
+import { useCampaignStore } from "../../../../store/useCampaignStore";
 
 interface User {
   _id: string;
@@ -32,15 +33,19 @@ const PhishingDetails: React.FC = () => {
 
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
   const { fetchDepartments, departments, getUsers, users } = useAdminStore();
+  const { getTimezone, timezones } = useCampaignStore();
 
-  const [timezones, setTimezones] = useState<Timezone[]>([]);
+  const [timezoness, setTimezones] = useState<Timezone[]>([]);
   const [selectedTimezone, setSelectedTimezone] = useState<string>("GMT");
 
   useEffect(() => {
     getUsers();
     fetchDepartments();
     fetchTimezones();
+    getTimezone();
   }, [getUsers, fetchDepartments]);
+
+  console.log(timezones);
 
   const fetchTimezones = async () => {
     try {
@@ -51,7 +56,7 @@ const PhishingDetails: React.FC = () => {
         { name: "PST", value: "PST", offset: "-08:00" },
         { name: "WAT", value: "WAT", offset: "+01:00" },
       ];
-      setTimezones(defaultTimezones);
+      setTimezones(timezones);
     } catch (error) {
       console.error("Error fetching timezones:", error);
       const defaultTimezones = [
@@ -191,11 +196,13 @@ const PhishingDetails: React.FC = () => {
     );
   };
 
+  console.log(templateData, "tData");
+
   const handleContinue = () => {
     navigate("/phishing-simulation/preview", {
       state: {
         campaignData: {
-          campaignName: campaignName || "Untitled Campaign",
+          campaignName: campaignName || "",
           selectedTarget,
           selectedDepartments,
           selectedEmployees,
@@ -210,9 +217,10 @@ const PhishingDetails: React.FC = () => {
           users,
         },
         templateData: {
-          templateName: templateName || "Untitled Template",
-          templateImage: templateData?.img || "/default-template.png",
+          templateName: templateName || "",
+          templateImage: templateData?.bannerImage || "/default-template.png",
           templateId,
+          templateContent: templateData.content,
         },
       },
     });
@@ -590,8 +598,8 @@ const PhishingDetails: React.FC = () => {
                   className="w-full border border-[#D0D5DD] rounded p-3 text-[#454545] text-sm focus:ring-2 focus:ring-primary500 focus:border-primary500"
                 >
                   {timezones.map((timezone) => (
-                    <option key={timezone.value} value={timezone.value}>
-                      {timezone.name} ({timezone.offset})
+                    <option key={timezone.zones} value={timezone.value}>
+                      {timezone.zones}
                     </option>
                   ))}
                 </select>

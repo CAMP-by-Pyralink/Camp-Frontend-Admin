@@ -25,11 +25,12 @@ interface CampaignStore {
   currentPage: number;
   totalPages: number;
   singleCampaign: any | null;
+  timezones: any[];
   createCampaign: (data: CreateCampaign, id: any) => Promise<any>;
   sendTestMail: (id: any) => Promise<any>;
   getAllCampaigns: () => Promise<any>;
   getSingleCampaign: (id: string) => Promise<any>;
-  getTimezone: (data: any) => Promise<any>;
+  getTimezone: () => Promise<any>;
 }
 
 export const useCampaignStore = create<CampaignStore>((set, get) => ({
@@ -38,13 +39,15 @@ export const useCampaignStore = create<CampaignStore>((set, get) => ({
   totalPages: 1,
   campaigns: [],
   singleCampaign: null,
+  timezones: [],
 
-  getTimezone: async (data) => {
+  getTimezone: async () => {
     set({ isLoading: true });
     try {
-      const response = await api.post(`/timezone/getTimezone`, data);
+      const response = await api.get(`/timezone/timeZone`);
       if (isSuccessfulResponse(response)) {
         toast.success(response.data?.message);
+        set({ timezones: response.data.zones });
         console.log(response.data.timezone);
         return true;
       }

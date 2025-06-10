@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import editIcon from "../../../../assets/svgs/edit-icon.svg";
 import { useCampaignStore } from "../../../../store/useCampaignStore";
+import PhishingPreview from "../Campaigns/PhishingPreview";
 
 interface User {
   _id: string;
@@ -38,6 +39,7 @@ interface PreviewModalProps {
 const PreviewModal: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
   const { createCampaign, sendTestMail } = useCampaignStore();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -87,16 +89,17 @@ const PreviewModal: React.FC = () => {
         };
       case "department":
         const deptEmployeeCount =
-          campaignData.users?.filter((user) =>
+          campaignData.users?.filter((user: any) =>
             campaignData.selectedDepartments.includes(user.department)
           ).length || 0;
         return {
           count: deptEmployeeCount,
           type: "department",
-          details: campaignData.selectedDepartments.map((dept) => {
+          details: campaignData.selectedDepartments.map((dept: any) => {
             const count =
-              campaignData.users?.filter((user) => user.department === dept)
-                .length || 0;
+              campaignData.users?.filter(
+                (user: any) => user.department === dept
+              ).length || 0;
             return { name: dept, count };
           }),
         };
@@ -104,7 +107,7 @@ const PreviewModal: React.FC = () => {
         return {
           count: campaignData.selectedEmployees.length,
           type: "specific employees",
-          details: campaignData.selectedEmployees.map((emp) => ({
+          details: campaignData.selectedEmployees.map((emp: any) => ({
             name: `${emp.fName} ${emp.lName}`,
             email: emp.email,
           })),
@@ -139,9 +142,9 @@ const PreviewModal: React.FC = () => {
     if (!campaignData.selectedDates || campaignData.selectedDates.length === 0)
       return "0 days";
 
-    const dates = campaignData.selectedDates.map((d) => new Date(d));
-    const minDate = new Date(Math.min(...dates.map((d) => d.getTime())));
-    const maxDate = new Date(Math.max(...dates.map((d) => d.getTime())));
+    const dates = campaignData.selectedDates.map((d: any) => new Date(d));
+    const minDate = new Date(Math.min(...dates.map((d: any) => d.getTime())));
+    const maxDate = new Date(Math.max(...dates.map((d: any) => d.getTime())));
 
     const diffTime = Math.abs(maxDate.getTime() - minDate.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
@@ -153,8 +156,8 @@ const PreviewModal: React.FC = () => {
     if (!campaignData.selectedDates || campaignData.selectedDates.length === 0)
       return new Date();
 
-    const dates = campaignData.selectedDates.map((d) => new Date(d));
-    const minDate = new Date(Math.min(...dates.map((d) => d.getTime())));
+    const dates = campaignData.selectedDates.map((d: any) => new Date(d));
+    const minDate = new Date(Math.min(...dates.map((d: any) => d.getTime())));
     return minDate;
   };
 
@@ -187,12 +190,12 @@ const PreviewModal: React.FC = () => {
       const getCampaignTargetIds = () => {
         switch (campaignData.selectedTarget) {
           case "all":
-            return campaignData.users?.map((user) => user._id) || [];
+            return campaignData.users?.map((user: any) => user._id) || [];
           case "department":
             return campaignData.selectedDepartments;
           case "employee":
             return campaignData.selectedEmployees.map(
-              (employee) => employee._id
+              (employee: any) => employee._id
             );
           default:
             return [];
@@ -203,7 +206,7 @@ const PreviewModal: React.FC = () => {
         campaignName: campaignData.campaignName,
         campaignTo,
         campaignToId: getCampaignTargetIds(),
-        dates: campaignData.selectedDates.map((date) =>
+        dates: campaignData.selectedDates.map((date: any) =>
           date instanceof Date ? date.toISOString().split("T")[0] : date
         ),
         startTime: campaignData.startTime,
@@ -229,42 +232,29 @@ const PreviewModal: React.FC = () => {
     await sendTestMail(templateData.templateId);
   };
 
+  const handleCloseModal = () => {
+    setShowPreviewModal(false);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4">
         <div className="mb-8">
-          <h1 className="text-primary500 text-sm font-semibold">
-            Phishing{" "}
-            <span className="text-neutrals500">
-              / Select target / Preview & Apply
+          <h1 className="text-primary500 text-sm font-semibold cursor-pointer">
+            <span onClick={() => navigate(-2)}> Phishing </span>
+            <span className="" onClick={() => navigate(-1)}>
+              / Select target
             </span>
+            <span className="text-neutrals500">/ Preview & Apply</span>
           </h1>
         </div>
 
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-          <div className="bg-[#DEEFFC] py-6 px-8 border-b">
+        <div className="overflow-hidden">
+          <div className="">
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-semibold text-[#333333]">
                 Preview & Apply
               </h2>
-              <button
-                onClick={() => navigate(-1)}
-                className="text-gray-500 hover:text-gray-700 transition-colors"
-              >
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
             </div>
           </div>
 
@@ -385,7 +375,7 @@ const PreviewModal: React.FC = () => {
                   )}
 
                   {campaignData.selectedTarget === "department" &&
-                    recipientInfo.details.map((dept: any, index) => (
+                    recipientInfo.details.map((dept: any, index: any) => (
                       <div
                         key={index}
                         className="bg-blue-100 border border-blue-200 py-2 px-4 rounded-lg text-[#454545] text-sm"
@@ -395,7 +385,7 @@ const PreviewModal: React.FC = () => {
                     ))}
 
                   {campaignData.selectedTarget === "employee" &&
-                    recipientInfo.details.map((emp: any, index) => (
+                    recipientInfo.details.map((emp: any, index: any) => (
                       <div
                         key={index}
                         className="bg-blue-100 border border-blue-200 py-2 px-4 rounded-lg text-[#454545] text-sm"
@@ -455,15 +445,25 @@ const PreviewModal: React.FC = () => {
               >
                 Send test email
               </button>
-              <Link to="/phishing-simulation/preview">
-                <button className="font-medium py-3 px-6 text-primary500 underline hover:text-primary600 transition-colors">
-                  Preview Template
-                </button>
-              </Link>
+              {/* <Link to="/phishing-simulation/preview"> */}
+              <button
+                className="font-medium py-3 px-6 text-primary500 underline hover:text-primary600 transition-colors"
+                onClick={() => setShowPreviewModal(true)}
+              >
+                Preview Template
+              </button>
+              {/* </Link> */}
             </div>
           </div>
         </div>
       </div>
+
+      {showPreviewModal && (
+        <PhishingPreview
+          templateData={templateData}
+          handleCloseModal={handleCloseModal}
+        />
+      )}
     </div>
   );
 };

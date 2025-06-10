@@ -83,16 +83,16 @@ const CampaignDetails = () => {
 
     const totalRecipients = singleCampaign.recipients.length;
     const sentCount = singleCampaign.recipients.filter(
-      (r) => r.sentStatus === "sent"
+      (r: { sentStatus: string }) => r.sentStatus === "sent"
     ).length;
     const openedCount = singleCampaign.recipients.filter(
-      (r) => r.opened === true
+      (r: { opened: boolean }) => r.opened === true
     ).length;
     const clickedCount = singleCampaign.recipients.filter(
-      (r) => r.clicked === true
+      (r: { clicked: boolean }) => r.clicked === true
     ).length;
     const phishedCount = singleCampaign.recipients.filter(
-      (r) => r.phished === true
+      (r: { phished: boolean }) => r.phished === true
     ).length;
 
     return [
@@ -155,6 +155,33 @@ const CampaignDetails = () => {
     };
   };
 
+  // Helper function to normalize audience data
+  const normalizeAudienceData = (audienceData: any): string[] => {
+    if (!audienceData) return [];
+
+    // If it's already an array of strings, return as is
+    if (Array.isArray(audienceData) && typeof audienceData[0] === "string") {
+      return audienceData;
+    }
+
+    // If it's an array of objects with name/type structure, extract names
+    if (
+      Array.isArray(audienceData) &&
+      audienceData[0] &&
+      typeof audienceData[0] === "object" &&
+      "name" in audienceData[0]
+    ) {
+      return audienceData.map((item: any) => item.name);
+    }
+
+    // If it's a single string, wrap in array
+    if (typeof audienceData === "string") {
+      return [audienceData];
+    }
+
+    return [];
+  };
+
   // Get audiences from backend data
   const getAudiences = () => {
     if (
@@ -162,16 +189,21 @@ const CampaignDetails = () => {
       !singleCampaign.recipients ||
       singleCampaign.recipients.length === 0
     ) {
-      return audience || []; // Fallback to location state
+      // Use the normalized audience from location state as fallback
+      return normalizeAudienceData(audience);
     }
 
     // Extract unique departments from recipients
     const departments = [
       ...new Set(
-        singleCampaign.recipients.map((r) => r.department).filter(Boolean)
+        singleCampaign.recipients
+          .map((r: { department: any }) => r.department)
+          .filter(Boolean)
       ),
     ];
-    return departments.length > 0 ? departments : audience || [];
+    return departments.length > 0
+      ? departments
+      : normalizeAudienceData(audience);
   };
 
   const handleAdd = () => {

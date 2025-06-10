@@ -92,6 +92,7 @@ const TemplateLists: React.FC = () => {
       },
     });
   };
+  console.log(selectedCard, "selectedcard");
 
   // Utility to strip HTML tags and slice text
   const getSlicedContent = (html: string, maxLength = 200) => {

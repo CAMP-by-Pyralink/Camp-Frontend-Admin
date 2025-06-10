@@ -4,7 +4,7 @@ import "react-circular-progressbar/dist/styles.css";
 interface CampaignStatsProps {
   title: string;
   subtitle: string;
-  audiences: string[];
+  audiences: any[];
   deliveryDates: {
     start: string;
     end: string;
