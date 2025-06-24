@@ -52,7 +52,7 @@ interface RiskStore {
   currentPage: number;
   totalPages: number;
   totalRisks: number;
-  getAllRisks: () => Promise<any>;
+  getAllRisks: (page?: string, search?: string) => Promise<any>;
   getSingleRisk: (assetId: string) => Promise<any>;
   deleteRisk: (riskId: string) => Promise<any>;
 
@@ -103,11 +103,15 @@ export const useRiskStore = create<RiskStore>((set, get) => ({
       set({ isLoading: false });
     }
   },
-  getAllRisks: async () => {
+  getAllRisks: async (page, search) => {
     set({ isLoading: true });
 
     try {
-      const response = await api.get("/risk/getAllRiskAdmin");
+      const response = await api.get(
+        `/risk/getAllRiskAdmin?page=${page}${
+          search ? `&search=${encodeURIComponent(search)}` : ""
+        }`
+      );
 
       if (isSuccessfulResponse(response)) {
         set({

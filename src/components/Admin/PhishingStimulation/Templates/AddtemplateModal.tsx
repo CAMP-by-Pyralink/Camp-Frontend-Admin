@@ -10,7 +10,6 @@ import ReactQuill from "react-quill";
 import QuillToolbar, { modules, formats } from "../../../../utils/QuillToolBar";
 import "react-quill/dist/quill.snow.css";
 import DOMPurify from "dompurify";
-import he from "he";
 import { Loader2 } from "lucide-react";
 
 interface AddTemplateModalProps {
@@ -18,21 +17,38 @@ interface AddTemplateModalProps {
   templateToEdit?: PhishingTemplate | null;
 }
 
-const InsertVariableModal: React.FC<{
+interface InsertVariableModalProps {
   isOpen: boolean;
   onClose: () => void;
   onInsert: (variable: string) => void;
-}> = ({ isOpen, onClose, onInsert }) => {
+}
+
+const InsertVariableModal: React.FC<InsertVariableModalProps> = ({
+  isOpen,
+  onClose,
+  onInsert,
+}) => {
   const variables = [
     { name: "fName", label: "First Name" },
     { name: "lName", label: "Last Name" },
     { name: "department", label: "Department" },
     { name: "companyName", label: "Company Name" },
-
     { name: "URL", label: "Phishing URL" },
   ];
 
   if (!isOpen) return null;
+
+  const handleVariableInsert = (variable: { name: string; label: string }) => {
+    if (variable.name === "URL") {
+      // Insert the URL as a clickable link with the dashboard route
+      const linkHTML = `<a href="\${URL}/dashboard/phished-page" style="color: #2563eb; text-decoration: underline;">\${URL}/dashboard/phished-page</a>`;
+      onInsert(linkHTML);
+    } else {
+      // Insert regular variable
+      onInsert(`\${${variable.name}}`);
+    }
+    onClose();
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -49,15 +65,14 @@ const InsertVariableModal: React.FC<{
           {variables.map((variable) => (
             <button
               key={variable.name}
-              onClick={() => {
-                onInsert(`\${${variable.name}}`);
-                onClose();
-              }}
+              onClick={() => handleVariableInsert(variable)}
               className="w-full text-left p-3 rounded hover:bg-gray-100 flex justify-between items-center"
             >
               <span>{variable.label}</span>
               <span className="text-sm text-gray-500 font-mono">
-                ${`{${variable.name}}`}
+                {variable.name === "URL"
+                  ? `\${URL}/dashboard/phished-page`
+                  : `\${${variable.name}}`}
               </span>
             </button>
           ))}
@@ -75,20 +90,14 @@ const AddTemplateModal: React.FC<AddTemplateModalProps> = ({
     usePhishingStore();
   const [title, setTitle] = useState(templateToEdit?.title || "");
   const [content, setContent] = useState(
-    templateToEdit?.content ? he.decode(templateToEdit.content) : ""
+    templateToEdit?.content
+      ? templateToEdit.content.replace(/&lt;/g, "<").replace(/&gt;/g, ">")
+      : ""
   );
   const [bannerImage, setBannerImage] = useState<string | null>(
     templateToEdit?.bannerImage || null
   );
   const [showVariableModal, setShowVariableModal] = useState(false);
-
-  useEffect(() => {
-    if (templateToEdit) {
-      setTitle(templateToEdit.title);
-      setContent(he.decode(templateToEdit.content));
-      setBannerImage(templateToEdit.bannerImage);
-    }
-  }, [templateToEdit]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -102,10 +111,8 @@ const AddTemplateModal: React.FC<AddTemplateModalProps> = ({
   };
 
   const handleInsertVariable = (variable: string) => {
-    // Get the Quill editor instance
-    const quillEditor = document.querySelector(".ql-editor") as HTMLElement;
-    if (quillEditor) {
-      // Insert the variable at the current cursor position
+    const editor = document.querySelector(".ql-editor") as HTMLElement;
+    if (editor) {
       const selection = window.getSelection();
       if (selection && selection.rangeCount > 0) {
         const range = selection.getRangeAt(0);
@@ -115,27 +122,21 @@ const AddTemplateModal: React.FC<AddTemplateModalProps> = ({
         range.setEndAfter(textNode);
         selection.removeAllRanges();
         selection.addRange(range);
-
-        // Update the content state
-        setContent(quillEditor.innerHTML);
+        setContent(editor.innerHTML);
       } else {
-        // If no selection, append to the content
         setContent((prev) => prev + variable);
       }
     }
   };
 
   const formatContentForEmail = (htmlContent: string) => {
-    // Wrap the content in a professional email template structure
-    const emailTemplate = `
+    return `
       <div style="background-color: #e2e2ff; padding: 3rem 1.5rem; display: flex; flex-direction: column; align-items: center;">
         <div style="clear: both; width: 90%; background-color: #ffffff; margin: auto; padding: 2rem; border-radius: 2rem; display: block;">
           ${htmlContent}
         </div>
       </div>
     `;
-
-    return emailTemplate;
   };
 
   const handleSubmit = async () => {
@@ -144,15 +145,40 @@ const AddTemplateModal: React.FC<AddTemplateModalProps> = ({
       return;
     }
 
-    const sanitizedContent = DOMPurify.sanitize(content);
-    const emailFormattedContent = formatContentForEmail(sanitizedContent);
+    // 1. First get the raw HTML from Quill
+    const rawHTML = content;
 
+    // 2. Manually decode any existing encoded characters (just in case)
+    const decodedHTML = rawHTML
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/&amp;/g, "&")
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'");
+
+    // 3. Sanitize the decoded HTML (security critical!)
+    const sanitizedContent = DOMPurify.sanitize(decodedHTML);
+
+    // 4. Format as email template
+    const emailFormattedContent = `
+    <div style="background-color: #e2e2ff; padding: 3rem 1.5rem; display: flex; flex-direction: column; align-items: center;">
+      <div style="clear: both; width: 90%; background-color: #ffffff; margin: auto; padding: 2rem; border-radius: 2rem; display: block;">
+        ${sanitizedContent}
+      </div>
+    </div>
+  `;
+
+    // 5. Create form data (will be sent as raw HTML)
     const formData: createTemplateData = {
       title,
-      content: emailFormattedContent, // Send HTML formatted content
+      content: emailFormattedContent,
       bannerImage,
     };
 
+    // 6. DEBUG: Log what we're about to send
+    console.log("Final content being sent:", formData.content);
+
+    // 7. Make the API call
     let response;
     if (templateToEdit) {
       response = await updatePhishingTemplate(templateToEdit._id, formData);
@@ -182,7 +208,6 @@ const AddTemplateModal: React.FC<AddTemplateModalProps> = ({
           </h2>
 
           <div className="space-y-5">
-            {/* Upload Cover Image */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Upload Cover image
@@ -206,7 +231,6 @@ const AddTemplateModal: React.FC<AddTemplateModalProps> = ({
               </div>
             </div>
 
-            {/* Title */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Title
@@ -220,7 +244,6 @@ const AddTemplateModal: React.FC<AddTemplateModalProps> = ({
               />
             </div>
 
-            {/* Content */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Content
@@ -231,14 +254,11 @@ const AddTemplateModal: React.FC<AddTemplateModalProps> = ({
                 formats={formats}
                 theme="snow"
                 value={content}
-                onChange={(value: React.SetStateAction<string>) =>
-                  setContent(value)
-                }
+                onChange={setContent}
                 placeholder="Enter your message..."
                 className="h-44"
               />
 
-              {/* Insert Variable Button */}
               <div className="mt-3 flex justify-start">
                 <button
                   type="button"
@@ -271,7 +291,6 @@ const AddTemplateModal: React.FC<AddTemplateModalProps> = ({
         </div>
       </div>
 
-      {/* Insert Variable Modal */}
       <InsertVariableModal
         isOpen={showVariableModal}
         onClose={() => setShowVariableModal(false)}

@@ -64,12 +64,7 @@ interface AssetsStore {
   currentPage: number;
   totalPages: number;
   totalAssets: number;
-  getAllAsset: (data: {
-    page?: number;
-    limit?: number;
-    search?: string;
-    filter?: string;
-  }) => Promise<boolean | null>;
+  getAllAsset: (search?: string, page?: string) => Promise<boolean | null>;
   getSingleAsset: (assetId: string) => Promise<boolean | null>;
   deleteAsset: (assetId: string) => Promise<any>;
   updateAsset: (assetId: string, data: Partial<CreateAssets>) => Promise<any>;
@@ -101,13 +96,15 @@ export const useAssetsStore = create<AssetsStore>((set, get) => ({
       set({ isLoading: false });
     }
   },
-  getAllAsset: async (data) => {
+  getAllAsset: async (page?: string, search?: string) => {
     set({ isLoading: true });
 
     try {
-      const response = await api.get("/asset/getAllAssetsAdmin", {
-        params: { search: data.search, filter: data.filter },
-      });
+      const response = await api.get(
+        `/asset/getAllAssetsAdmin?page=${page}${
+          search ? `&search=${encodeURIComponent(search)}` : ""
+        }`
+      );
 
       if (isSuccessfulResponse(response)) {
         set({
@@ -154,7 +151,7 @@ export const useAssetsStore = create<AssetsStore>((set, get) => ({
 
       if (isSuccessfulResponse(response)) {
         toast.success(response.data?.message);
-        get().getAllAsset({ page: 1, limit: 10 });
+        get().getAllAsset();
         return true;
       }
       return null;

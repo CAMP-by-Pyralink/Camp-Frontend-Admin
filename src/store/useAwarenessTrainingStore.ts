@@ -57,8 +57,8 @@ interface Question {
 
 export interface CreateTrainingData {
   training: any;
-  assignedTo: boolean;
-  progress: any;
+  assignedTo?: boolean;
+  progress?: any;
   // assignedTo: any;
   // progress: any;
   // assignedUsers: any;

@@ -1,10 +1,11 @@
 // import Button from "../../shared/Button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CampaignsTable from "../../components/Admin/PhishingStimulation/Campaigns/CampaignsTable";
 import HeaderTitle from "../../shared/HeaderTitle";
 import PagesHomeLayout from "../../shared/PagesHomeLayout";
 import FilterModal from "../../components/Admin/UserManagement/FilterModal";
 import LockedPage from "../../shared/LockedPage";
+import { useCampaignStore } from "../../store/useCampaignStore";
 
 // Define FilterConfig interface
 interface FilterConfig {
@@ -21,12 +22,26 @@ interface SelectedFilters {
 
 const Campaigns = () => {
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
 
   // State to hold the selected filter values
   const [selectedFilters, setSelectedFilters] = useState({
     department: "",
     status: "",
   });
+  const { getAllCampaigns, campaigns } = useCampaignStore();
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+    }, 500);
+    return () => clearTimeout(timeout);
+  }, [searchTerm]);
+
+  useEffect(() => {
+    getAllCampaigns("1", debouncedSearch);
+  }, [debouncedSearch]);
 
   const handleFilterClick = () => {
     setIsFilterModalOpen((prev) => !prev);
@@ -84,6 +99,8 @@ const Campaigns = () => {
         onExportClick={handleExportClick}
         showFilter={true}
         showExport={true}
+        onSearch={(value) => setSearchTerm(value)} // Handle search input
+        searchTerm={searchTerm} // Pass search term to layout
       >
         <CampaignsTable />
       </PagesHomeLayout>

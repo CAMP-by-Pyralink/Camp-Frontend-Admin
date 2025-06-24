@@ -201,7 +201,7 @@ const TrainningsList: React.FC<TrainningsListProps> = ({
                 {item.title.slice(0, 30)}...
               </h3>
               <p className="text-sm text-[#333333] mt-2">
-                {item.description.slice(0, 100)}...
+                {item.description.slice(0, 30)}...
               </p>
 
               {activeTab === "assigned" &&
@@ -223,7 +223,12 @@ const TrainningsList: React.FC<TrainningsListProps> = ({
                           ) => (
                             <img
                               key={person._id}
-                              src={person.profileImage} // Use profileImage or fallback to default
+                              src={
+                                person.profileImage ||
+                                `https://ui-avatars.com/api/?name=${
+                                  person.fName || ""
+                                }&background=random`
+                              }
                               // alt={`${person.fName} ${person.lName}`}
                               className={`inline-block h-8 w-8 rounded-full object-cover border-2 border-white ${
                                 idx === 0 ? "z-30" : idx === 1 ? "z-20" : "z-10"

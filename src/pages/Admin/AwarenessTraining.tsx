@@ -103,7 +103,7 @@ const AwarenessTraining = () => {
   };
 
   return (
-    <div>
+    <div className="relative">
       <div className="flex justify-between items-center mb-">
         <HeaderTitle
           title="Awareness Training"
@@ -139,41 +139,6 @@ const AwarenessTraining = () => {
             <div className="flex gap-2">
               {/* Filter button commented out */}
             </div>
-            {selectionMode && (
-              <div
-                className="flex items-center gap-4"
-                ref={selectionActionsRef}
-              >
-                <button
-                  className="border border-[#D0D5DD] py-2.5 px-12 rounded-lg text-greyText font-semibold"
-                  onClick={handleAssignClick}
-                >
-                  Assign
-                </button>
-                <button
-                  className="border border-[#B30100] py-2.5 px-12 rounded-lg text-[#FF0301] font-semibold"
-                  onClick={async () => {
-                    if (selectedTrainings.length === 0) return;
-
-                    const confirmDelete = window.confirm(
-                      `Are you sure you want to delete ${selectedTrainings.length} training(s)?`
-                    );
-                    if (!confirmDelete) return;
-
-                    for (const trainingId of selectedTrainings) {
-                      await deleteSingleTraining(trainingId);
-                    }
-
-                    // reset UI states
-                    setSelectionMode(false);
-                    setShowCheckbox(false);
-                    setSelectedTrainings([]);
-                  }}
-                >
-                  Delete
-                </button>
-              </div>
-            )}
           </div>
         </div>
         <div className="mt-8">
@@ -188,6 +153,46 @@ const AwarenessTraining = () => {
           />
         </div>
       </div>
+
+      {/* Fixed Selection Mode Action Buttons */}
+      {selectionMode && (
+        <div
+          className="fixed top-24 right-8 flex items-center gap-4 bg-white p-4 rounded-lg shadow-lg border border-gray-200 z-50"
+          ref={selectionActionsRef}
+        >
+          <span className="text-sm text-gray-600 mr-2">
+            {selectedTrainings.length} selected
+          </span>
+          <button
+            className="border border-[#D0D5DD] py-2.5 px-8 rounded-lg text-greyText font-semibold hover:bg-gray-50 transition-colors"
+            onClick={handleAssignClick}
+          >
+            Assign
+          </button>
+          <button
+            className="border border-[#B30100] py-2.5 px-8 rounded-lg text-[#FF0301] font-semibold hover:bg-red-50 transition-colors"
+            onClick={async () => {
+              if (selectedTrainings.length === 0) return;
+
+              const confirmDelete = window.confirm(
+                `Are you sure you want to delete ${selectedTrainings.length} training(s)?`
+              );
+              if (!confirmDelete) return;
+
+              for (const trainingId of selectedTrainings) {
+                await deleteSingleTraining(trainingId);
+              }
+
+              // reset UI states
+              setSelectionMode(false);
+              setShowCheckbox(false);
+              setSelectedTrainings([]);
+            }}
+          >
+            Delete
+          </button>
+        </div>
+      )}
 
       {createTraining && (
         <CreateTrainningModal setCreateTraining={setCreateTraining} />

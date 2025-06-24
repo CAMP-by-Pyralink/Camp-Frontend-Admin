@@ -1,16 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TemplateLists from "../../components/Admin/PhishingStimulation/Templates/TemplateLists";
 import FilterModal from "../../components/Admin/UserManagement/FilterModal";
 import HeaderTitle from "../../shared/HeaderTitle";
 import PagesHomeLayout from "../../shared/PagesHomeLayout";
 import AddTemplateModal from "../../components/Admin/PhishingStimulation/Templates/AddtemplateModal";
-// import AddTemplateModal from "../../components/Admin/PhishingStimulation/Templates/AddTemplateModal";
+import { usePhishingStore } from "../../store/usePhishingStore";
 
 // Define FilterConfig interface
 interface FilterConfig {
   key: string;
   label: string;
-  type: "select" | "date" | "text"; // Only allow these types
+  type: "select" | "date" | "text";
   options?: { label: string; value: string }[]; // Only for "select" type
 }
 
@@ -22,12 +22,25 @@ interface SelectedFilters {
 const Templates = () => {
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-
-  // State to hold the selected filter values
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [selectedFilters, setSelectedFilters] = useState({
     department: "",
     status: "",
   });
+
+  const { fetchPhishingTemplates, phishingTemplates } = usePhishingStore();
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+    }, 500);
+    return () => clearTimeout(timeout);
+  }, [searchTerm]);
+
+  useEffect(() => {
+    fetchPhishingTemplates(1, debouncedSearch);
+  }, [debouncedSearch]);
 
   const handleAdd = () => {
     setIsAddModalOpen(true);
@@ -93,6 +106,8 @@ const Templates = () => {
         onExportClick={handleExportClick}
         showFilter={true}
         showExport={false}
+        searchTerm={searchTerm} // Add this missing prop
+        onSearch={(value) => setSearchTerm(value)}
       >
         <TemplateLists />
       </PagesHomeLayout>

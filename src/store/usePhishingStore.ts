@@ -56,7 +56,7 @@ interface PhishingStore {
   isDeletingTemplate: boolean;
   isLoading: boolean;
   phishingTemplates: PhishingTemplate[];
-  fetchPhishingTemplates: (page: number) => Promise<void>;
+  fetchPhishingTemplates: (page: number, search?: string) => Promise<void>;
   createPhishingTemplate: (data: createTemplateData) => Promise<any>;
   updatePhishingTemplate: (
     id: string,
@@ -72,10 +72,12 @@ export const usePhishingStore = create<PhishingStore>((set) => ({
   isLoading: false,
   phishingTemplates: [],
 
-  fetchPhishingTemplates: async (page: number) => {
+  fetchPhishingTemplates: async (page: number, search?: string) => {
     try {
       const response: AxiosResponse = await api.get(
-        `/template/getPhishingTemplates?page=${page}`
+        `/template/getPhishingTemplates?page=${page}${
+          search ? `&search=${encodeURIComponent(search)}` : ""
+        }`
       );
       set({ phishingTemplates: response.data.templates });
       console.log("Phishing Templates:", response.data.templates);

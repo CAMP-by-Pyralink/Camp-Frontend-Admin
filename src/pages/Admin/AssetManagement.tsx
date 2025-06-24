@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import RiskList from "../../components/Admin/RiskAssessment/RiskList";
 import downArr from "../../assets/svgs/import-arr.svg";
 import PagesHomeLayout from "../../shared/PagesHomeLayout";
@@ -13,6 +13,7 @@ import HeaderTitle from "../../shared/HeaderTitle";
 import FilterModal from "../../components/Admin/UserManagement/FilterModal";
 import LockedPage from "../../shared/LockedPage";
 import { Link } from "react-router-dom";
+import { useAssetsStore } from "../../store/useAssetsStore";
 
 // Define FilterConfig interface
 interface FilterConfig {
@@ -37,12 +38,27 @@ const AssetManagement = () => {
   const toggleDropdown = () => setIsOpen(!isOpen);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const locked = false;
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
 
   // State to hold the selected filter values
   const [selectedFilters, setSelectedFilters] = useState({
     department: "",
     status: "",
   });
+
+  const { getAllAsset, assets } = useAssetsStore();
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+    }, 500);
+    return () => clearTimeout(timeout);
+  }, [searchTerm]);
+
+  useEffect(() => {
+    getAllAsset("1", debouncedSearch);
+  }, [debouncedSearch]);
 
   const handleAdd = () => {
     // console.log("first");
@@ -177,7 +193,8 @@ const AssetManagement = () => {
         onExportClick={handleExportClick}
         showFilter={true}
         showExport={true}
-        searchTerm={""}
+        searchTerm={searchTerm} // Add this missing prop
+        onSearch={(value) => setSearchTerm(value)}
       >
         {/* <RiskList /> */}
         <AssestList />

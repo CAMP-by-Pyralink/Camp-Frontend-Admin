@@ -28,7 +28,7 @@ interface CampaignStore {
   timezones: any[];
   createCampaign: (data: CreateCampaign, id: any) => Promise<any>;
   sendTestMail: (id: any) => Promise<any>;
-  getAllCampaigns: () => Promise<any>;
+  getAllCampaigns: (page?: string, search?: string) => Promise<any>;
   getSingleCampaign: (id: string) => Promise<any>;
   getTimezone: () => Promise<any>;
 }
@@ -79,11 +79,15 @@ export const useCampaignStore = create<CampaignStore>((set, get) => ({
       set({ isLoading: false });
     }
   },
-  getAllCampaigns: async () => {
+  getAllCampaigns: async (page, search) => {
     set({ isLoading: true });
 
     try {
-      const response = await api.get("/campaign/getAllCampaignAdmin");
+      const response = await api.get(
+        `/campaign/getAllCampaignAdmin?page=${page}${
+          search ? `&search=${encodeURIComponent(search)}` : ""
+        }`
+      );
 
       if (isSuccessfulResponse(response)) {
         set({

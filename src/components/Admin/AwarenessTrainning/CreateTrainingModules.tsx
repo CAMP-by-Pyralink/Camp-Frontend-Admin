@@ -482,7 +482,7 @@ const CreateTrainingModules = ({
   // Update the prepareDataForBackend function to properly handle the text editor content
 
   // Function to properly clean and format the content
-  const cleanEditorContent = (content, lessonType) => {
+  const cleanEditorContent = (content: any, lessonType: any) => {
     if (!content || typeof content !== "string") return "";
 
     // For text & image type, we need special handling
@@ -574,6 +574,31 @@ const CreateTrainingModules = ({
     // Check if any file is currently uploading
     if (isUploading.moduleId !== null && isUploading.lessonId !== null) {
       toast("Please wait, file is still uploading");
+      return;
+    }
+
+    if (!formState.bannerImage) {
+      toast.error("Please upload a banner image");
+      return;
+    }
+    if (!formState.title) {
+      toast.error("Please enter a training title");
+      return;
+    }
+    if (!formState.description) {
+      toast.error("Please enter a training description");
+      return;
+    }
+    if (!formState.startDate) {
+      toast.error("Please select a start date");
+      return;
+    }
+    if (!formState.endDate) {
+      toast.error("Please select an end date");
+      return;
+    }
+    if (new Date(formState.startDate) > new Date(formState.endDate)) {
+      toast.error("End date cannot be before start date");
       return;
     }
 
@@ -701,6 +726,7 @@ const CreateTrainingModules = ({
             className="hidden"
             onChange={handleFileChange}
             accept="image/png, image/jpeg"
+            required
           />
         </div>
         <div>
@@ -713,6 +739,7 @@ const CreateTrainingModules = ({
             className="border border-primary100 py-4 px-3 w-[634px] rounded-md"
             value={formState.title}
             onChange={handleTrainingDetailsChange}
+            required
           />
         </div>
         <div>
@@ -724,6 +751,7 @@ const CreateTrainingModules = ({
             className="border border-primary100 py-2 px-3 w-[634px] h-[102px] rounded-md"
             value={formState.description}
             onChange={handleTrainingDetailsChange}
+            required
           />
         </div>
         <div className="flex gap-4 w-[634px] mb-4">
@@ -737,6 +765,7 @@ const CreateTrainingModules = ({
               className="border border-primary100 py-2 px-3 w-full basis-[50%] rounded-md"
               value={formState.startDate}
               onChange={handleTrainingDetailsChange}
+              required
             />
           </div>
           <div className="w-full">
@@ -749,6 +778,7 @@ const CreateTrainingModules = ({
               className="border border-primary100 py-2 px-3 w-full rounded-md"
               value={formState.endDate}
               onChange={handleTrainingDetailsChange}
+              required
             />
           </div>
         </div>

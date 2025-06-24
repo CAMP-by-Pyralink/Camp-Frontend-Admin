@@ -50,6 +50,7 @@ import CreateTrainingModules from "./components/Admin/AwarenessTrainning/CreateT
 import EditTrainingModules from "./components/Admin/AwarenessTrainning/EditTrainingModules";
 import AddorEditAssets from "./components/Admin/AssetsManagement/AddorEditAssets";
 import PreviewModal from "./components/Admin/PhishingStimulation/Templates/PreviewModal";
+import PhishedPage from "./pages/Admin/PhishedPage";
 
 function App() {
   const { setIsAuthenticated } = useAuthStore();
@@ -175,6 +176,7 @@ function App() {
                 path="deep-web-monitoring"
                 element={<DeepWebMonitoring />}
               />
+              <Route path="/phished-page" element={<PhishedPage />} />
               {/* <Route path="/scan-details" element={<ScanDetails />} /> */}
               <Route path="/scan-details" element={<ScanResult />} />
               <Route path="/settings" element={<Settings />} />

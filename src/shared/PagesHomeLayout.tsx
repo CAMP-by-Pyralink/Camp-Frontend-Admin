@@ -42,7 +42,7 @@ const PagesHomeLayout: React.FC<PagesHomeLayoutProps> = ({
               placeholder="Search"
               value={searchTerm}
               onChange={(e) => onSearch && onSearch(e.target.value)}
-              className="border-b-[0.5px] border-black outline-none px-12 py-2 w-full focus:outline-none"
+              className="border-b-[0.5px] border-black outline-none px-12 py-2 w-full focus:outline-none text-gray-800 placeholder-gray-400"
             />
             <img
               src={searchIcon}
@@ -50,10 +50,9 @@ const PagesHomeLayout: React.FC<PagesHomeLayoutProps> = ({
               className="absolute left-4 top-1/2 transform -translate-y-1/2"
             />
           </div>
-
           {/* Filter and Export Buttons */}
           <div className="flex gap-2">
-            {/* {showFilter && (
+            {showFilter && (
               <div
                 className="flex items-center border border-primary500 px-3 py-[2px] rounded shadow-sm cursor-pointer"
                 onClick={onFilterClick}
@@ -61,8 +60,8 @@ const PagesHomeLayout: React.FC<PagesHomeLayoutProps> = ({
                 <img src={filterIcon} className="mr-2" alt="" />
                 Filter
               </div>
-            )} */}
-            {/* {showExport && (
+            )}
+            {showExport && (
               <div className="relative">
                 <button
                   className="flex items-center bg-primary500 text-white px-4 py-2 rounded-md shadow-sm"
@@ -98,7 +97,7 @@ const PagesHomeLayout: React.FC<PagesHomeLayoutProps> = ({
                   </div>
                 )}
               </div>
-            )} */}
+            )}
           </div>
         </div>
       </div>
