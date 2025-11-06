@@ -1,6 +1,5 @@
 import React from "react";
 
-// Define TypeScript interface for a part
 interface Part {
   id: number;
   name: string;
@@ -10,7 +9,6 @@ interface Part {
   manufacturer: string;
 }
 
-// Sample data for parts
 const parts: Part[] = [
   {
     id: 1,
@@ -30,7 +28,6 @@ const parts: Part[] = [
   },
 ];
 
-// Table header as a separate component
 const TableHeader: React.FC = () => (
   <thead>
     <tr className=" text-left text-greyText text-xs font-bold">

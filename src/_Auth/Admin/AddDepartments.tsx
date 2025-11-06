@@ -41,8 +41,8 @@ const AddDepartments: React.FC<AddDepartmentsProps> = ({
     if (customDepartment && !localDepartments.includes(customDepartment)) {
       const newDepartments = [...localDepartments, customDepartment];
       setLocalDepartments(newDepartments);
-      setCustomDepartment(""); // Clear input
-      setIsCustomInputVisible(false); // Hide input box
+      setCustomDepartment("");
+      setIsCustomInputVisible(false);
     }
   };
 

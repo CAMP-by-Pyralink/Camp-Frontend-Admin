@@ -12,12 +12,9 @@ const api = axios.create({
   },
 });
 
-// Add a request interceptor to attach the bearer token
 api.interceptors.request.use(
   (config) => {
     const token = Cookies.get("token");
-
-    // If token exists, add it to the headers
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -228,11 +225,11 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
       if (response.status === 200) {
         toast.success(response.data.message);
 
-        // Update user state efficiently
+        // Update user state
         set((state) => ({
           currentUser: {
             ...state.currentUser!,
-            ...payload, // Reuse the same payload instead of repeating fields
+            ...payload,
           },
         }));
 
@@ -276,7 +273,7 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
         );
         // toast.success(response.data.message);
         // console.log("Dfad", companyData);
-        return companyDetails; // Return the data for further use if needed
+        return companyDetails;
       }
     } catch (error: any) {
       console.error("Error fetching company details:", error);
@@ -294,7 +291,7 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
         companyName: data.companyName || "",
         companyUrl: data.companyUrl || "",
         companyDepartments: data.companyDepartments || [],
-        profileImage: data.profileImage || "", // This should already be Bas
+        profileImage: data.profileImage || "",
       };
 
       const response: AxiosResponse = await api.patch(

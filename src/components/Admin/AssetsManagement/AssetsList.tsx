@@ -6,7 +6,6 @@ import { useAssetsStore } from "../../../store/useAssetsStore";
 import Loader from "../../../shared/Loader";
 // import useAssetStore from "../../../stores/useAssetStore";
 
-// Define the Asset interface based on your backend response
 interface Asset {
   _id: string;
   assetId?: string; // Will generate this from _id if needed

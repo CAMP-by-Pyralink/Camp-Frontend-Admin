@@ -17,7 +17,7 @@ const WarrantyStep: React.FC<WarrantyStepProps> = ({
       <textarea
         placeholder="Enter warranty details..."
         className="w-full min-h-[200px] border rounded p-3"
-        value={formData.warranty} // Ensure you are using the correct field from formData
+        value={formData.warranty}
         onChange={(e) => {
           const value = e.target.value; // Get the value from the event target
           setFormData((prev) => ({ ...prev, warranty: value }));
